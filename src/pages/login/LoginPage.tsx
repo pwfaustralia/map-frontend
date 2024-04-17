@@ -1,31 +1,27 @@
 import { IonButton, IonCol, IonGrid, IonInput, IonRow } from "@ionic/react";
-import { useStoreActions, useStoreState } from "easy-peasy";
+import { useStoreActions } from "easy-peasy";
 import StoreModel from "../../lib/easy-peasy/models";
 
-import { useRef } from "react";
+import { Suspense, useRef, useState } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import { useHistory } from "react-router";
+import ErrorFallBack from "../../components/ErrorFallBack";
+import UserLogin from "../../components/UserLogin";
 import "./LoginPage.css";
 
 function Login() {
-  const setUserData = useStoreActions<StoreModel>((actions) => actions.user.setUserData);
+  const [isLogginIn, setIsLogginIn] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
   const emailRef = useRef<HTMLIonInputElement>(null);
   const passwordRef = useRef<HTMLIonInputElement>(null);
-  const history = useHistory();
 
-  const fakeLogin = () => {
-    if (!emailRef.current?.value) return;
-    setUserData({
-      name: "Jane Doe",
-      email: emailRef.current?.value,
-    });
-    history.replace("/clients");
+  const login = () => {
+    setIsLogginIn(true);
   };
 
   return (
     <IonGrid style={{ width: "100%" }}>
-      <IonRow class="ion-align-items-center" style={{ height: "100%",
-        background: "#F58C1E"
-       }}>
+      <IonRow class="ion-align-items-center" style={{ height: "100%", background: "#F58C1E" }}>
         <IonCol></IonCol>
         <IonCol
           size="12"
@@ -50,19 +46,38 @@ function Login() {
               paddingInline: 14,
               paddingBottom: 14,
               borderBlockStartWidth: 4,
-              borderRadius: 14,              
+              borderRadius: 14,
             }}
           >
             <h1>Login Page</h1>
-            <IonInput ref={emailRef} label="Email" type="email" fill="outline" labelPlacement="start"></IonInput>
-            <IonInput
-              ref={passwordRef}
-              label="Password"
-              type="password"
-              fill="outline"
-              labelPlacement="start"
-            ></IonInput>
-            <IonButton onClick={fakeLogin}>Sign In</IonButton>
+            {errorMessage && <h4>{errorMessage}</h4>}
+            {!isLogginIn ? (
+              <>
+                <IonInput ref={emailRef} label="Email" type="email" fill="outline" labelPlacement="start"></IonInput>
+                <IonInput
+                  ref={passwordRef}
+                  label="Password"
+                  type="password"
+                  fill="outline"
+                  labelPlacement="start"
+                ></IonInput>
+                <IonButton onClick={login}>Sign In</IonButton>
+              </>
+            ) : (
+              <ErrorBoundary
+                fallback={<ErrorFallBack />}
+                onError={(error: any) => {
+                  if (error.response?.data?.error) {
+                    setErrorMessage(error.response.data.error);
+                  }
+                  setIsLogginIn(false);
+                }}
+              >
+                <Suspense fallback={<h2>Signing in...</h2>}>
+                  <UserLogin email={emailRef.current?.value} password={passwordRef.current?.value} />
+                </Suspense>
+              </ErrorBoundary>
+            )}
           </div>
         </IonCol>
       </IonRow>

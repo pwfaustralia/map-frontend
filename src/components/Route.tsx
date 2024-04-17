@@ -7,6 +7,7 @@ interface RouteProps {
   exact: boolean | undefined;
   path: string;
   children: JSX.Element;
+  redirectUrlIfLoggedIn?: string;
 }
 
 function Route(props: RouteProps) {
@@ -16,8 +17,8 @@ function Route(props: RouteProps) {
   useEffect(() => {
     if (!isLoggedIn) {
       history.replace("/login");
-    } else {
-      history.replace("/clients");
+    } else if (props.redirectUrlIfLoggedIn) {
+      history.replace(props.redirectUrlIfLoggedIn);
     }
   }, []);
 

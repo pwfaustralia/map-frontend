@@ -18,6 +18,7 @@ import "@ionic/react/css/text-alignment.css";
 import "@ionic/react/css/text-transformation.css";
 
 /* Theme variables */
+import { Suspense } from "react";
 import Route from "./components/Route";
 import ClientsPage from "./pages/clients/ClientsPage";
 import LoginPage from "./pages/login/LoginPage";
@@ -28,14 +29,16 @@ setupIonicReact();
 const App: React.FC = () => {
   return (
     <IonApp>
-      <IonReactRouter>
-        <Route exact path="/login">
-          <LoginPage />
-        </Route>
-        <Route exact path="/clients">
-          <ClientsPage />
-        </Route>
-      </IonReactRouter>
+      <Suspense fallback={<h2>Loading...</h2>}>
+        <IonReactRouter>
+          <Route exact path="/login" redirectUrlIfLoggedIn="/clients">
+            <LoginPage />
+          </Route>
+          <Route exact path="/clients">
+            <ClientsPage />
+          </Route>
+        </IonReactRouter>
+      </Suspense>
     </IonApp>
   );
 };

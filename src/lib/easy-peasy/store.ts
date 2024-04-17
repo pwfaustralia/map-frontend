@@ -1,7 +1,7 @@
 import { action, computed, createStore, persist } from "easy-peasy";
 import StoreModel from "./models";
 
-export const userStorage = createStore<StoreModel>(
+export const store = createStore<StoreModel>(
   persist(
     {
       user: {
@@ -20,7 +20,7 @@ export const userStorage = createStore<StoreModel>(
     }
   ),
   {
-    name: "User storage",
+    name: "Global store",
     version: 0.1,
     devTools: !process.env.NODE_ENV || process.env.NODE_ENV === "development",
   }
