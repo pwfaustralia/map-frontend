@@ -23,7 +23,9 @@ function Login() {
 
   return (
     <IonGrid style={{ width: "100%" }}>
-      <IonRow class="ion-align-items-center" style={{ height: "100%" }}>
+      <IonRow class="ion-align-items-center" style={{ height: "100%",
+        background: "#F58C1E"
+       }}>
         <IonCol></IonCol>
         <IonCol
           size="12"
@@ -44,6 +46,11 @@ function Login() {
               display: "flex",
               gap: 20,
               flexDirection: "column",
+              background: "#F58C1E",
+              paddingInline: 14,
+              paddingBottom: 14,
+              borderBlockStartWidth: 4,
+              borderRadius: 14,              
             }}
           >
             <h1>Login Page</h1>
