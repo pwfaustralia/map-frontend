@@ -15,7 +15,7 @@ function Login() {
   const fakeLogin = () => {
     if (!emailRef.current?.value) return;
     setUserData({
-      name: "John Doe",
+      name: "Jane Doe",
       email: emailRef.current?.value,
     });
     history.replace("/clients");
