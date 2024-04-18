@@ -1,7 +1,8 @@
 import { useStoreActions, useStoreState } from "easy-peasy";
 import StoreModel from "../../lib/easy-peasy/models";
-import { IonButton } from "@ionic/react";
+import { IonApp, IonButton, IonList, IonItem, IonLabel, IonContent } from "@ionic/react";
 import { useHistory } from "react-router";
+import "./ClientDashboard.css";
 
 function ClientDashboard() {
   const name = useStoreState<StoreModel>((states) => states.user?.userData?.name);
@@ -14,11 +15,32 @@ function ClientDashboard() {
   };
 
   return (
-    <div>
-      <h1>Dashboard</h1>
-      <h3>Hello {name}</h3>
-      <IonButton onClick={logout}>Logout</IonButton>
-    </div>
+    <IonApp>      
+      <div>
+        <h1>Dashboard</h1>
+        <h3>Hello {name}</h3>
+        <IonButton onClick={logout}>Logout</IonButton>
+      </div>
+      <IonContent color="light">
+      <IonList inset={true}>
+        <IonItem>
+          <IonLabel>Bob Susan</IonLabel>
+        </IonItem>
+        <IonItem>
+          <IonLabel>susan Bob</IonLabel>
+        </IonItem>
+        <IonItem>
+          <IonLabel>Jeremy Jones</IonLabel>
+        </IonItem>
+        <IonItem>
+          <IonLabel>James</IonLabel>
+        </IonItem>
+        <IonItem>
+          <IonLabel>Steve</IonLabel>
+        </IonItem>
+      </IonList>
+    </IonContent>
+    </IonApp>
   );
 }
 

@@ -1,7 +1,8 @@
 import { useStoreActions, useStoreState } from "easy-peasy";
 import StoreModel from "../../lib/easy-peasy/models";
-import { IonButton } from "@ionic/react";
+import { IonApp, IonButton } from "@ionic/react";
 import { useHistory } from "react-router";
+import "./ClientsPage.css";
 
 function ClientsPage() {
   const name = useStoreState<StoreModel>((states) => states.user?.userData?.name);
@@ -14,7 +15,7 @@ function ClientsPage() {
   };
 
   return (
-    <div>
+      <div>
       <h1>Clients Page</h1>
       <h3>Hello {name}</h3>
       <IonButton onClick={logout}>Logout</IonButton>

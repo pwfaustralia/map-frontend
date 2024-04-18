@@ -1,4 +1,4 @@
-import { IonButton, IonCol, IonGrid, IonInput, IonRow } from "@ionic/react";
+import { IonApp, IonButton, IonCol, IonContent, IonGrid, IonInput, IonRow } from "@ionic/react";
 import { useStoreActions } from "easy-peasy";
 import StoreModel from "../../lib/easy-peasy/models";
 
@@ -20,48 +20,21 @@ function Login() {
   };
 
   return (
-    <IonGrid style={{ width: "100%", height: "100%" }}>
-      <IonRow class="ion-align-items-center" style={{ height: "100%", background: "#F58C1E" }}>
-        <IonCol></IonCol>
-        <IonCol
-          size="12"
-          size-sm="4"
-          class="ion-justify-content-center"
-          style={{
-            background: "#ffffff",
-            height: "100%",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <div
-            style={{
-              maxWidth: "400px",
-              margin: "0 auto",
-              width: "100%",
-              display: "flex",
-              gap: 20,
-              flexDirection: "column",
-              background: "#F58C1E",
-              paddingInline: 14,
-              paddingBottom: 14,
-              borderBlockStartWidth: 4,
-              borderRadius: 14,
-            }}
-          >
-            <h1>Login Page</h1>
+    <IonApp className="background">
+          <div className="Login-box">
+            <h1>Login</h1>
             {errorMessage && <h4>{errorMessage}</h4>}
             {!isLogginIn ? (
               <>
-                <IonInput ref={emailRef} label="Email" type="email" fill="outline" labelPlacement="start"></IonInput>
-                <IonInput
+                <IonInput ref={emailRef} label="Email" type="email" fill="outline" labelPlacement="start" ></IonInput>
+                <IonInput 
                   ref={passwordRef}
                   label="Password"
                   type="password"
                   fill="outline"
                   labelPlacement="start"
                 ></IonInput>
-                <IonButton onClick={login}>Sign In</IonButton>
+                <IonButton className="ion-padding" onClick={login}>Sign In</IonButton>
               </>
             ) : (
               <ErrorBoundary
@@ -79,9 +52,7 @@ function Login() {
               </ErrorBoundary>
             )}
           </div>
-        </IonCol>
-      </IonRow>
-    </IonGrid>
+    </IonApp>
   );
 }
 
