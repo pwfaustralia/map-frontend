@@ -20,7 +20,7 @@ function Login() {
   };
 
   return (
-    <IonGrid style={{ width: "100%" }}>
+    <IonGrid style={{ width: "100%", height: "100%" }}>
       <IonRow class="ion-align-items-center" style={{ height: "100%", background: "#F58C1E" }}>
         <IonCol></IonCol>
         <IonCol

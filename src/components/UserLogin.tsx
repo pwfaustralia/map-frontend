@@ -18,7 +18,7 @@ function UserLogin({ email, password }: UserLoginProps) {
 
   if (data?.token) {
     setUserData(data);
-    history.replace("/clients");
+    history.replace(data.default_page);
   }
   return <></>;
 }

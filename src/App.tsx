@@ -1,4 +1,4 @@
-import { IonApp, setupIonicReact } from "@ionic/react";
+import { IonApp, IonRouterOutlet, setupIonicReact } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 
 /* Core CSS required for Ionic components to work properly */
@@ -19,10 +19,11 @@ import "@ionic/react/css/text-transformation.css";
 
 /* Theme variables */
 import { Suspense } from "react";
-import Route from "./components/Route";
 import ClientsPage from "./pages/clients/ClientsPage";
 import LoginPage from "./pages/login/LoginPage";
 import "./theme/variables.css";
+import Route from "./components/Route";
+import ClientDashboard from "./pages/client-dashboard/ClientDashboard";
 
 setupIonicReact();
 
@@ -31,12 +32,23 @@ const App: React.FC = () => {
     <IonApp>
       <Suspense fallback={<h2>Loading...</h2>}>
         <IonReactRouter>
-          <Route exact path="/login" redirectUrlIfLoggedIn="/clients">
-            <LoginPage />
-          </Route>
-          <Route exact path="/clients">
-            <ClientsPage />
-          </Route>
+          <IonRouterOutlet>
+            <Route exact path="/login" redirectIfLoggedIn>
+              <LoginPage />
+            </Route>
+
+            <Route exact path="/clients" scopeName="view-all-clients">
+              <ClientsPage />
+            </Route>
+
+            <Route exact path="/dashboard">
+              <ClientDashboard />
+            </Route>
+
+            <Route>
+              <h1>404</h1>
+            </Route>
+          </IonRouterOutlet>
         </IonReactRouter>
       </Suspense>
     </IonApp>

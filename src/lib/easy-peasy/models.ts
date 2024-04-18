@@ -7,14 +7,14 @@ interface UserRolePermission {
 
 interface UserRole {
   name: string;
-  permissions: UserRolePermission[];
+  role_permissions: UserRolePermission[];
 }
 
 interface User {
   name: string;
   email: string;
   token: string;
-  role: UserRole;
+  user_role: UserRole;
 }
 
 export interface UserModel {
@@ -22,6 +22,7 @@ export interface UserModel {
   isLoggedIn: Computed<UserModel, boolean>;
   logout: Action<UserModel, boolean>;
   setUserData: Action<UserModel, User>;
+  userPermissions: Computed<UserModel, UserRolePermission[] | []>;
 }
 
 export default interface StoreModel {

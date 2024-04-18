@@ -13,6 +13,7 @@ export const store = createStore<StoreModel>(
         setUserData: action((state, payload) => {
           state.userData = payload;
         }),
+        userPermissions: computed((state) => (state.userData ? state.userData.user_role.role_permissions : [])),
       },
     },
     {
