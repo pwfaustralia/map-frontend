@@ -2,6 +2,7 @@ import { IonButton, IonIcon, IonItem, IonLabel, IonList, IonThumbnail } from "@i
 import { person } from "ionicons/icons";
 import { useClients } from "../../services/queries";
 import ClientSkeleton from "./ClientSkeleton";
+import { useMemo } from "react";
 
 interface ClientsListProps {
   pageIndex: number;
@@ -11,7 +12,10 @@ interface ClientsListProps {
 
 function ClientsList({ pageIndex, countPerPage, setPage }: ClientsListProps) {
   const { data: clientsList, isLoading } = useClients(pageIndex, countPerPage);
-  const paginationLinks = new Array(clientsList?.last_page || 0).fill(0).map((q, i) => i + 1);
+  const paginationLinks = useMemo(
+    () => new Array(clientsList?.last_page || 0).fill(0).map((q, i) => i + 1),
+    [clientsList]
+  );
 
   const handlePageClick = (page: number) => {
     setPage(page);
@@ -43,6 +47,7 @@ function ClientsList({ pageIndex, countPerPage, setPage }: ClientsListProps) {
             <ClientSkeleton />
           </IonItem>
         ))}
+        <Pagination />
       </IonList>
     );
   }
