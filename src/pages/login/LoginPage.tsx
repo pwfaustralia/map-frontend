@@ -4,10 +4,9 @@ import { useStoreActions } from "easy-peasy";
 import { useEffect, useRef, useState } from "react";
 import { useHistory } from "react-router";
 import useControlledSWR from "../../hooks/useControlledSWR";
-import { axios } from "../../services/fetcher";
+import { loginUser } from "../../services/api";
 import StoreModel from "../../types/store";
 import "./LoginPage.css";
-import { loginUser } from "../../services/api";
 
 function Login() {
   const [errorMessage, setErrorMessage] = useState(null);
