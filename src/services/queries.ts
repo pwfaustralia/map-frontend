@@ -7,5 +7,6 @@ export function useClients(pageIndex: number, perPage: number) {
     revalidateIfStale: false,
     revalidateOnFocus: false,
     revalidateOnReconnect: false,
+    keepPreviousData: true,
   });
 }
