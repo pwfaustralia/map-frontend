@@ -1,21 +1,5 @@
 import { Action, Computed, computed } from "easy-peasy";
-
-interface UserRolePermission {
-  scope: string;
-  scopeName: string;
-}
-
-interface UserRole {
-  name: string;
-  role_permissions: UserRolePermission[];
-}
-
-interface User {
-  name: string;
-  email: string;
-  token: string | undefined;
-  user_role: UserRole;
-}
+import User, { UserRolePermission } from "./user";
 
 export interface UserModel {
   userData: User | null;

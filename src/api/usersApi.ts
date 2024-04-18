@@ -1,5 +1,5 @@
-import axios from "../lib/axios";
 import { store } from "../lib/easy-peasy/store";
+import { axios } from "../services/fetcher";
 
 const {
   user: { setUserData },

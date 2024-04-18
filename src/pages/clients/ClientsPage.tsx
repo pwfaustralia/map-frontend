@@ -1,7 +1,7 @@
 import { useStoreActions, useStoreState } from "easy-peasy";
-import StoreModel from "../../lib/easy-peasy/models";
 import { IonButton } from "@ionic/react";
 import { useHistory } from "react-router";
+import StoreModel from "../../types/store";
 
 function ClientsPage() {
   const name = useStoreState<StoreModel>((states) => states.user?.userData?.name);

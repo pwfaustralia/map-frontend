@@ -1,8 +1,8 @@
 import { useStoreState } from "easy-peasy";
 import { Route as ReactRoute, useHistory } from "react-router";
 import useSWR from "swr";
-import StoreModel from "../lib/easy-peasy/models";
 import { Suspense, useEffect, useState } from "react";
+import StoreModel from "../types/store";
 
 interface RouteProps {
   exact?: boolean | undefined;
