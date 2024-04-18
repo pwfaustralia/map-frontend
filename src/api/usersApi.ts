@@ -1,16 +1,13 @@
-import axios from "axios";
+import axios from "../lib/axios";
 import { store } from "../lib/easy-peasy/store";
 
-const storeState = store.getState();
-
-const usersApi = axios.create({
-  baseURL: import.meta.env.VITE_API_URL + "/users",
-  headers: {
-    ...(storeState.user.userData?.token ? { Authorization: "Bearer " + storeState.user.userData?.token } : {}),
-  },
-});
+const {
+  user: { setUserData },
+} = store.getActions();
 
 export const loginUser = async (url: string, email: string, password: string) => {
-  const response = await usersApi.post(`${url}`, { email, password });
+  const response = await axios.post(`${url}`, { email, password });
+
+  setUserData(response.data);
   return response.data;
 };

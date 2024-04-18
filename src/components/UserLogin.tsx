@@ -1,8 +1,5 @@
 import useSWR from "swr";
 import { loginUser } from "../api/usersApi";
-import { useHistory } from "react-router";
-import { useStoreActions } from "easy-peasy";
-import StoreModel from "../lib/easy-peasy/models";
 
 interface UserLoginProps {
   email: any;
@@ -10,15 +7,19 @@ interface UserLoginProps {
 }
 
 function UserLogin({ email, password }: UserLoginProps) {
-  const { data } = useSWR(["/login", email, password], ([url, email, password]) => loginUser(url, email, password), {
-    suspense: true,
-  });
-  const setUserData = useStoreActions<StoreModel>((actions) => actions.user.setUserData);
-  const history = useHistory();
-
-  if (data?.token) {
-    setUserData(data);
-    history.replace(data.default_page);
+  const { data } = useSWR(
+    ["/users/login", email, password],
+    ([url, email, password]) => loginUser(url, email, password),
+    {
+      suspense: true,
+    }
+  );
+  if (data?.id) {
+    return (
+      <>
+        <h5>Welcome back {data.name}! You will be redirected to the app shortly, please wait.</h5>
+      </>
+    );
   }
   return <></>;
 }

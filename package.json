@@ -29,7 +29,8 @@
     "react-error-boundary": "^4.0.13",
     "react-router": "^5.3.4",
     "react-router-dom": "^5.3.4",
-    "swr": "^2.2.5"
+    "swr": "^2.2.5",
+    "universal-cookie": "^7.1.4"
   },
   "devDependencies": {
     "@capacitor/cli": "5.6.0",

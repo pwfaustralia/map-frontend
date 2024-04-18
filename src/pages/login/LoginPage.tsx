@@ -1,8 +1,8 @@
 import { IonButton, IonCol, IonGrid, IonInput, IonRow } from "@ionic/react";
-import { useStoreActions } from "easy-peasy";
+import { useStoreState } from "easy-peasy";
 import StoreModel from "../../lib/easy-peasy/models";
 
-import { Suspense, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { useHistory } from "react-router";
 import ErrorFallBack from "../../components/ErrorFallBack";
@@ -14,10 +14,18 @@ function Login() {
   const [errorMessage, setErrorMessage] = useState(null);
   const emailRef = useRef<HTMLIonInputElement>(null);
   const passwordRef = useRef<HTMLIonInputElement>(null);
+  const userData = useStoreState<StoreModel>((states) => states.user.userData);
+  const history = useHistory();
 
   const login = () => {
     setIsLogginIn(true);
   };
+
+  useEffect(() => {
+    if (userData?.default_page) {
+      history.replace(userData.default_page);
+    }
+  }, [userData]);
 
   return (
     <IonGrid style={{ width: "100%", height: "100%" }}>
@@ -64,19 +72,21 @@ function Login() {
                 <IonButton onClick={login}>Sign In</IonButton>
               </>
             ) : (
-              <ErrorBoundary
-                fallback={<ErrorFallBack />}
-                onError={(error: any) => {
-                  if (error.response?.data?.error) {
-                    setErrorMessage(error.response.data.error);
-                  }
-                  setIsLogginIn(false);
-                }}
-              >
-                <Suspense fallback={<h2>Signing in...</h2>}>
-                  <UserLogin email={emailRef.current?.value} password={passwordRef.current?.value} />
-                </Suspense>
-              </ErrorBoundary>
+              !userData && (
+                <ErrorBoundary
+                  fallback={<ErrorFallBack />}
+                  onError={(error: any) => {
+                    if (error.response?.data?.error) {
+                      setErrorMessage(error.response.data.error);
+                    }
+                    setIsLogginIn(false);
+                  }}
+                >
+                  <Suspense fallback={<h2>Signing in...</h2>}>
+                    <UserLogin email={emailRef.current?.value} password={passwordRef.current?.value} />
+                  </Suspense>
+                </ErrorBoundary>
+              )
             )}
           </div>
         </IonCol>

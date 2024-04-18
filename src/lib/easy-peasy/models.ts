@@ -13,7 +13,7 @@ interface UserRole {
 interface User {
   name: string;
   email: string;
-  token: string;
+  token: string | undefined;
   user_role: UserRole;
 }
 

@@ -30,27 +30,25 @@ setupIonicReact();
 const App: React.FC = () => {
   return (
     <IonApp>
-      <Suspense fallback={<h2>Loading...</h2>}>
-        <IonReactRouter>
-          <IonRouterOutlet>
-            <Route exact path="/login" redirectIfLoggedIn>
-              <LoginPage />
-            </Route>
+      <IonReactRouter>
+        <IonRouterOutlet>
+          <Route exact path="/login" redirectIfLoggedIn>
+            <LoginPage />
+          </Route>
 
-            <Route exact path="/clients" scopeName="view-all-clients">
-              <ClientsPage />
-            </Route>
+          <Route exact path="/clients" scopeName="view-all-clients">
+            <ClientsPage />
+          </Route>
 
-            <Route exact path="/dashboard">
-              <ClientDashboard />
-            </Route>
+          <Route exact path="/dashboard">
+            <ClientDashboard />
+          </Route>
 
-            <Route>
-              <h1>404</h1>
-            </Route>
-          </IonRouterOutlet>
-        </IonReactRouter>
-      </Suspense>
+          <Route>
+            <h1>404</h1>
+          </Route>
+        </IonRouterOutlet>
+      </IonReactRouter>
     </IonApp>
   );
 };

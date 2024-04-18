@@ -1,8 +1,8 @@
-import { Store, useStoreState } from "easy-peasy";
-import { useEffect } from "react";
+import { useStoreState } from "easy-peasy";
 import { Route as ReactRoute, useHistory } from "react-router";
-import StoreModel from "../lib/easy-peasy/models";
 import useSWR from "swr";
+import StoreModel from "../lib/easy-peasy/models";
+import { Suspense, useEffect, useState } from "react";
 
 interface RouteProps {
   exact?: boolean | undefined;
@@ -15,40 +15,52 @@ interface RouteProps {
 }
 
 function Route(props: RouteProps) {
-  const { redirectUrlIfLoggedIn = "", scopeName, redirectUrlIfUnauthorized, redirectIfLoggedIn } = props;
+  return (
+    <ReactRoute {...props}>
+      <Suspense fallback={<h3>Loading content...</h3>}>
+        <RouteContent {...props}>{props.children}</RouteContent>
+      </Suspense>
+    </ReactRoute>
+  );
+}
+
+function RouteContent(props: RouteProps) {
+  const { scopeName, redirectUrlIfUnauthorized, redirectIfLoggedIn } = props;
   const { isLoggedIn, userPermissions, userData } = useStoreState<StoreModel>((states) => states.user);
   const history = useHistory();
-
   useSWR(
     ["getUserPermissions"],
     ([]) =>
       new Promise((resolve) => {
+        let redirectUrl = null;
         if (!isLoggedIn) {
-          history.replace("/login");
+          redirectUrl = "/login";
         } else {
           if (redirectIfLoggedIn && userData?.default_page) {
-            history.replace(userData.default_page);
+            redirectUrl = userData.default_page;
           }
         }
 
         if (scopeName) {
           if (userPermissions.findIndex((q: any) => q.scope_name === scopeName) < 0) {
             if (redirectUrlIfUnauthorized) {
-              history.replace(redirectUrlIfUnauthorized);
+              redirectUrl = redirectUrlIfUnauthorized;
             } else if (userData?.default_page) {
-              history.replace(userData.default_page);
+              redirectUrl = userData.default_page;
             }
           }
         }
 
-        resolve(true);
+        resolve(redirectUrl);
       }),
     {
       suspense: true,
+      onSuccess(data) {
+        if (data) history.replace(data);
+      },
     }
   );
-
-  return <ReactRoute {...props}>{props.children}</ReactRoute>;
+  return <>{props.children}</>;
 }
 
 export default Route;

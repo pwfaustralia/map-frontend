@@ -11,6 +11,9 @@ export const store = createStore<StoreModel>(
           state.userData = null;
         }),
         setUserData: action((state, payload) => {
+          if (payload.token) {
+            delete payload.token;
+          }
           state.userData = payload;
         }),
         userPermissions: computed((state) => (state.userData ? state.userData.user_role.role_permissions : [])),
