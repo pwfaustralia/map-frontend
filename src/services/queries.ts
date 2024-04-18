@@ -1,6 +1,9 @@
 import useSWR from "swr";
-import User from "../types/user";
+import Client from "../types/client";
+import { Pagination } from "../types/pagination";
 
-export function useClients() {
-  //   return useSWR<Clients>("/clients");
+export function useClients(pageIndex: number, perPage: number) {
+  return useSWR<Pagination<Client>>(`/clients?page=${pageIndex}&per_page=${perPage}`, {
+    refreshInterval: 0,
+  });
 }
