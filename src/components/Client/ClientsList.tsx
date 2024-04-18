@@ -1,7 +1,7 @@
-import { IonButton, IonIcon, IonItem, IonLabel, IonList, IonSkeletonText, IonThumbnail } from "@ionic/react";
+import { IonButton, IonIcon, IonItem, IonLabel, IonList, IonThumbnail } from "@ionic/react";
+import { person } from "ionicons/icons";
 import { useClients } from "../../services/queries";
 import ClientSkeleton from "./ClientSkeleton";
-import { person } from "ionicons/icons";
 
 interface ClientsListProps {
   pageIndex: number;
@@ -29,7 +29,7 @@ function ClientsList({ pageIndex, countPerPage, setPage }: ClientsListProps) {
         </IonButton>
       ))}
       <IonButton onClick={() => handlePageClick(pageIndex + 1)}>Next</IonButton>
-      <IonButton onClick={() => handlePageClick(clientsList?.last_page)} fill="clear">
+      <IonButton onClick={() => handlePageClick(clientsList?.last_page || 0)} fill="clear">
         Last
       </IonButton>
     </>
