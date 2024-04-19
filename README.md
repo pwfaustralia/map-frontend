@@ -6,6 +6,7 @@ Follow these steps to set up your development environment:
 2. `cd map-app/app`
 3. `npm install`
 4. `npm run dev`
+5. The development version will be exposed in `localhost:3000`
 
 ## Build
 
