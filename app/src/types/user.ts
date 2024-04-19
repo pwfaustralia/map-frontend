@@ -1,6 +1,6 @@
 export interface UserRolePermission {
   scope: string;
-  scopeName: string;
+  scope_name: string;
 }
 
 export interface UserRole {
