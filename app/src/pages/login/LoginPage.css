@@ -22,7 +22,7 @@
 }
 
 .background {
-  background: url(resources/Rectangle1.png);
+  background: url(/static/images/Rectangle1.png);
   background-size: cover;
   background-repeat: no-repeat;
 }
