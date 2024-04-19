@@ -6,7 +6,7 @@ export interface UserModel {
   isLoggedIn: Computed<UserModel, boolean>;
   logout: Action<UserModel, boolean>;
   setUserData: Action<UserModel, User>;
-  userPermissions: Computed<UserModel, UserRolePermission[] | []>;
+  userPermissions: Computed<UserModel, string[] | []>;
 }
 
 export default interface StoreModel {

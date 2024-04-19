@@ -1,27 +1,33 @@
-import { IonApp, IonButton, IonContent, IonItem, IonLabel, IonList } from "@ionic/react";
-import { useStoreActions, useStoreState } from "easy-peasy";
+import { IonButton, IonContent, IonItem, IonLabel, IonList, IonPage, IonSpinner } from "@ionic/react";
+import { useStoreState } from "easy-peasy";
 import { useHistory } from "react-router";
+import useLogoutUser from "../../hooks/useLogoutUser";
 import StoreModel from "../../types/store";
 import "./ClientDashboard.css";
 
 function ClientDashboard() {
-  const name = useStoreState<StoreModel>((states) => states.user?.userData?.name);
-  const logoutUser = useStoreActions<StoreModel>((actions) => actions.user.logout);
+  const {
+    userData: { name },
+    userPermissions,
+  } = useStoreState<StoreModel>((states) => states.user);
+  const { logoutUser, isLoading: isLogoutLoading } = useLogoutUser();
   const history = useHistory();
 
-  const logout = () => {
-    logoutUser();
-    history.replace("/login");
-  };
-
   return (
-    <IonApp>
-      <div>
-        <h1>Dashboard</h1>
-        <h3>Hello {name}</h3>
-        <IonButton onClick={logout}>Logout</IonButton>
-      </div>
+    <IonPage>
       <IonContent color="light">
+        <div>
+          <h1>Dashboard</h1>
+          <h3>Hello {name}</h3>
+          <IonButton onClick={logoutUser} disabled={isLogoutLoading}>
+            Logout
+            {isLogoutLoading && <IonSpinner />}
+          </IonButton>
+          <IonButton onClick={() => history.push("/dashboard")}>Dashboard</IonButton>
+          {userPermissions.includes("view-all-clients") && (
+            <IonButton onClick={() => history.push("/clients")}>Clients</IonButton>
+          )}
+        </div>
         <IonList inset={true}>
           <IonItem>
             <IonLabel>Bob Susan</IonLabel>
@@ -40,7 +46,7 @@ function ClientDashboard() {
           </IonItem>
         </IonList>
       </IonContent>
-    </IonApp>
+    </IonPage>
   );
 }
 

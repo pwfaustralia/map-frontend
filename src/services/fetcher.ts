@@ -1,6 +1,6 @@
-import axioslib from "axios";
+import axios from "axios";
 
-export const axios = axioslib.create({
+export const laravelAxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   withCredentials: true,
   headers: {
@@ -8,6 +8,6 @@ export const axios = axioslib.create({
   },
 });
 
-const fetcher = (url: string) => axios.get(url).then((res) => res.data);
+const fetcher = (url: string) => laravelAxiosInstance.get(url).then((res) => res.data);
 
 export default fetcher;

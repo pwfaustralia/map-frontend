@@ -1,30 +1,30 @@
-import { IonButton, IonContent, IonPage } from "@ionic/react";
-import { useStoreActions, useStoreState } from "easy-peasy";
+import { IonButton, IonContent, IonPage, IonSpinner } from "@ionic/react";
+import { useStoreState } from "easy-peasy";
 import { Suspense, useState } from "react";
-import { useHistory } from "react-router";
 import ClientsList from "../../components/Client/ClientsList";
 import StoreModel from "../../types/store";
 
+import useLogoutUser from "../../hooks/useLogoutUser";
 import "./ClientsPage.css";
+import { useHistory } from "react-router";
+import { useProtectedRoute } from "../../hooks/useProtectedRoute";
 
 function ClientsPage() {
   const [page, setPage] = useState(1);
   const name = useStoreState<StoreModel>((states) => states.user?.userData?.name);
-  const logoutUser = useStoreActions<StoreModel>((actions) => actions.user.logout);
+  const { logoutUser, isLoading: isLogoutLoading } = useLogoutUser();
   const history = useHistory();
-
-  const logout = () => {
-    logoutUser();
-    history.replace("/login");
-  };
-
   return (
     <IonPage>
-      <h1>Clients Page</h1>
-      <h3>Hello {name}</h3>
-      <IonButton onClick={logout}>Logout</IonButton>
-
-      <IonContent>
+      <IonContent color="light">
+        <h1>Clients Page</h1>
+        <h3>Hello {name}</h3>
+        <IonButton onClick={logoutUser} disabled={isLogoutLoading}>
+          Logout
+          {isLogoutLoading && <IonSpinner />}
+        </IonButton>
+        <IonButton onClick={() => history.push("/dashboard")}>Dashboard</IonButton>
+        <IonButton onClick={() => history.push("/clients")}>Clients</IonButton>
         <Suspense fallback={<h2>Loading clients...</h2>}>
           <ClientsList pageIndex={page} setPage={setPage} countPerPage={10} />
         </Suspense>

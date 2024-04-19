@@ -1,19 +1,17 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
-import { StoreProvider } from "easy-peasy";
-import { store } from "./lib/easy-peasy/store";
-import { SWRConfig } from "swr";
-import fetcher from "./services/fetcher";
+import EasyPeasyProvider from "./providers/EasyPeasyProvider";
+import SWRProvider from "./providers/SWRProvider";
 const container = document.getElementById("root");
 const root = createRoot(container!);
 
 root.render(
   <React.StrictMode>
-    <StoreProvider store={store}>
-      <SWRConfig value={{ fetcher }}>
+    <EasyPeasyProvider>
+      <SWRProvider>
         <App />
-      </SWRConfig>
-    </StoreProvider>
+      </SWRProvider>
+    </EasyPeasyProvider>
   </React.StrictMode>
 );

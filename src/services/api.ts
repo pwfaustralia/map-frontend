@@ -1,6 +1,12 @@
-import { axios } from "./fetcher";
+import { laravelAxiosInstance } from "./fetcher";
 
 export const loginUser = async ([url, email, password]: string[]) => {
-  const response = await axios.post(url, { email, password });
+  if (!url) return null;
+  const response = await laravelAxiosInstance.post(url, { email, password });
+  return response.data;
+};
+
+export const logoutUser = async () => {
+  const response = await laravelAxiosInstance.post("/users/logout");
   return response.data;
 };

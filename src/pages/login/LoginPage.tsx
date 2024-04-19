@@ -7,20 +7,25 @@ import useControlledSWR from "../../hooks/useControlledSWR";
 import { loginUser } from "../../services/api";
 import StoreModel from "../../types/store";
 import "./LoginPage.css";
+import useSWR from "swr";
+import { useLoginUser } from "../../services/mutations";
 
 function Login() {
   const [errorMessage, setErrorMessage] = useState(null);
+  const [isLoggingIn, setIsLogginIn] = useState(false);
   const emailRef = useRef<HTMLIonInputElement>(null);
   const passwordRef = useRef<HTMLIonInputElement>(null);
   const setUserData = useStoreActions<StoreModel>((actions) => actions.user.setUserData);
   const {
     data: userData,
-    start: handleSignin,
-    error,
     isLoading,
-    pause: stopSignin,
-  } = useControlledSWR(["/users/login", emailRef.current?.value, passwordRef.current?.value], loginUser);
+    error,
+  } = useLoginUser(emailRef.current?.value + "", passwordRef.current?.value + "", isLoggingIn);
   const history = useHistory();
+
+  const handleSignin = () => {
+    setIsLogginIn(true);
+  };
 
   useEffect(() => {
     if (userData?.id) {
@@ -32,7 +37,7 @@ function Login() {
   useEffect(() => {
     if (error) {
       setErrorMessage(error?.response?.data?.error || "No response from server");
-      stopSignin();
+      setIsLogginIn(false);
     }
   }, [error]);
 

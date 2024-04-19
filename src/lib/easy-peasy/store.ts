@@ -13,7 +13,9 @@ export const store = createStore<StoreModel>(
         setUserData: action((state, payload) => {
           state.userData = payload;
         }),
-        userPermissions: computed((state) => (state.userData ? state.userData.user_role.role_permissions : [])),
+        userPermissions: computed(
+          (state) => state?.userData?.user_role?.role_permissions.map((q) => q.scope_name) || []
+        ),
       },
     },
     {
@@ -22,7 +24,7 @@ export const store = createStore<StoreModel>(
   ),
   {
     name: "Global store",
-    version: 0.1,
+    version: 0.2,
     devTools: !process.env.NODE_ENV || process.env.NODE_ENV === "development",
   }
 );

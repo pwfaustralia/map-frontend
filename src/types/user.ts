@@ -9,7 +9,9 @@ export interface UserRole {
 }
 
 export default interface User {
+  id: string;
   name: string;
   email: string;
   user_role: UserRole;
+  default_page: string;
 }
