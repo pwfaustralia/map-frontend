@@ -4,15 +4,14 @@ import { Suspense, useState } from "react";
 import ClientsList from "../../components/Client/ClientsList";
 import StoreModel from "../../types/store";
 
+import { useHistory } from "react-router";
 import useLogoutUser from "../../hooks/useLogoutUser";
 import "./ClientsPage.css";
-import { useHistory } from "react-router";
-import { useProtectedRoute } from "../../hooks/useProtectedRoute";
 
 function ClientsPage() {
   const [page, setPage] = useState(1);
   const name = useStoreState<StoreModel>((states) => states.user?.userData?.name);
-  const { logoutUser, isLoading: isLogoutLoading } = useLogoutUser();
+  const { logoutUser, isMutating: isLogoutLoading } = useLogoutUser();
   const history = useHistory();
   return (
     <IonPage>

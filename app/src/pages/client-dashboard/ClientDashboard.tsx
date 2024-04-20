@@ -10,7 +10,7 @@ function ClientDashboard() {
     userData: { name },
     userPermissions,
   } = useStoreState<StoreModel>((states) => states.user);
-  const { logoutUser, isLoading: isLogoutLoading } = useLogoutUser();
+  const { logoutUser, isMutating: isLogoutLoading } = useLogoutUser();
   const history = useHistory();
 
   return (

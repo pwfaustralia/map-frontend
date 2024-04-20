@@ -1,17 +1,16 @@
 import { useStoreActions } from "easy-peasy";
 import { useEffect } from "react";
 import { useHistory } from "react-router";
+import { useLogoutUser as useLogoutUserMutation } from "../services/mutations";
 import StoreModel from "../types/store";
-import useControlledSWR from "./useControlledSWR";
-import { logoutUser as logoutUserAPI } from "../services/api";
 
 function useLogoutUser() {
-  const { data, start, isLoading } = useControlledSWR("logout", logoutUserAPI);
+  const { data, trigger, isMutating } = useLogoutUserMutation();
   const logout = useStoreActions<StoreModel>((actions) => actions.user.logout);
   const history = useHistory();
 
   const logoutUser = () => {
-    start();
+    trigger();
   };
   useEffect(() => {
     if (data?.success) {
@@ -19,7 +18,7 @@ function useLogoutUser() {
       history.replace("/login");
     }
   }, [data]);
-  return { logoutUser, isLoading };
+  return { logoutUser, isMutating };
 }
 
 export default useLogoutUser;

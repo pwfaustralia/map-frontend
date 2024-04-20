@@ -3,28 +3,21 @@ import { IonApp, IonButton, IonInput } from "@ionic/react";
 import { useStoreActions } from "easy-peasy";
 import { useEffect, useRef, useState } from "react";
 import { useHistory } from "react-router";
-import useControlledSWR from "../../hooks/useControlledSWR";
-import { loginUser } from "../../services/api";
+import { useLoginUser } from "../../services/mutations";
 import StoreModel from "../../types/store";
 import "./LoginPage.css";
-import useSWR from "swr";
-import { useLoginUser } from "../../services/mutations";
 
 function Login() {
   const [errorMessage, setErrorMessage] = useState(null);
-  const [isLoggingIn, setIsLogginIn] = useState(false);
   const emailRef = useRef<HTMLIonInputElement>(null);
   const passwordRef = useRef<HTMLIonInputElement>(null);
   const setUserData = useStoreActions<StoreModel>((actions) => actions.user.setUserData);
-  const {
-    data: userData,
-    isLoading,
-    error,
-  } = useLoginUser(emailRef.current?.value + "", passwordRef.current?.value + "", isLoggingIn);
+  const { data: userData, trigger, isMutating, error } = useLoginUser();
   const history = useHistory();
 
   const handleSignin = () => {
-    setIsLogginIn(true);
+    if (!emailRef.current?.value || !passwordRef.current?.value) return;
+    trigger({ email: emailRef.current.value + "", password: passwordRef.current.value + "" });
   };
 
   useEffect(() => {
@@ -37,7 +30,6 @@ function Login() {
   useEffect(() => {
     if (error) {
       setErrorMessage(error?.response?.data?.error || "No response from server");
-      setIsLogginIn(false);
     }
   }, [error]);
 
@@ -46,7 +38,7 @@ function Login() {
       <div className="Login-box">
         <h1>Login</h1>
         {errorMessage && <h4>{errorMessage}</h4>}
-        {isLoading && <h2>Signing in...</h2>}
+        {isMutating && <h2>Signing in...</h2>}
         <>
           <IonInput
             ref={emailRef}
@@ -54,7 +46,7 @@ function Login() {
             type="email"
             fill="outline"
             labelPlacement="start"
-            disabled={isLoading}
+            disabled={isMutating}
           ></IonInput>
           <IonInput
             ref={passwordRef}
@@ -62,9 +54,9 @@ function Login() {
             type="password"
             fill="outline"
             labelPlacement="start"
-            disabled={isLoading}
+            disabled={isMutating}
           ></IonInput>
-          <IonButton onClick={handleSignin} disabled={isLoading}>
+          <IonButton onClick={handleSignin} disabled={isMutating}>
             Sign In
           </IonButton>
         </>
