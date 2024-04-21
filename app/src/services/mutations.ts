@@ -1,10 +1,10 @@
 import useSWRMutation from "swr/mutation";
 import { loginUser, logoutUser } from "./api";
 
-export function useLoginUser() {
+export function useLoginUserMutation() {
   return useSWRMutation("/users/login", loginUser);
 }
 
-export function useLogoutUser() {
+export function useLogoutUserMutation() {
   return useSWRMutation("/users/logout", logoutUser);
 }

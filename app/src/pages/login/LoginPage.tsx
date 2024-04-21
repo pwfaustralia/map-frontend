@@ -1,31 +1,23 @@
 import { IonApp, IonButton, IonInput } from "@ionic/react";
 
-import { useStoreActions } from "easy-peasy";
 import { useEffect, useRef, useState } from "react";
-import { useHistory } from "react-router";
-import { useLoginUser } from "../../services/mutations";
-import StoreModel from "../../types/store";
+import useLoginUser from "../../hooks/useLoginUser";
 import "./LoginPage.css";
 
 function Login() {
-  const [errorMessage, setErrorMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const emailRef = useRef<HTMLIonInputElement>(null);
   const passwordRef = useRef<HTMLIonInputElement>(null);
-  const setUserData = useStoreActions<StoreModel>((actions) => actions.user.setUserData);
-  const { data: userData, trigger, isMutating, error } = useLoginUser();
-  const history = useHistory();
+  const { loginUser, isMutating, error } = useLoginUser();
 
   const handleSignin = () => {
-    if (!emailRef.current?.value || !passwordRef.current?.value) return;
-    trigger({ email: emailRef.current.value + "", password: passwordRef.current.value + "" });
-  };
-
-  useEffect(() => {
-    if (userData?.id) {
-      setUserData(userData);
-      history.replace(userData.default_page);
+    setErrorMessage(null);
+    if (!emailRef.current?.value || !passwordRef.current?.value) {
+      setErrorMessage("Invalid email/password.");
+      return;
     }
-  }, [userData]);
+    loginUser(emailRef.current.value + "", passwordRef.current.value + "");
+  };
 
   useEffect(() => {
     if (error) {

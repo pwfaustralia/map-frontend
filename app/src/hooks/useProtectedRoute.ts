@@ -1,16 +1,17 @@
-import { useStoreActions, useStoreState } from "easy-peasy";
+import { useStoreState } from "easy-peasy";
+import { useEffect } from "react";
 import { useHistory } from "react-router";
 import useSWR from "swr";
 import { useUserData } from "../services/queries";
 import { ProtectedRouteProps } from "../types/props";
 import StoreModel from "../types/store";
-import { useEffect } from "react";
+import useLogoutUser from "./useLogoutUser";
 
 export function useProtectedRoute(props: ProtectedRouteProps) {
   const { scopeName, redirectUrlIfUnauthorized, redirectIfLoggedIn } = props;
   const { isLoggedIn } = useStoreState<StoreModel>((states) => states.user);
-  const logoutUser = useStoreActions<StoreModel>((actions) => actions.user.logout);
-  const { data: userData, isLoading } = useUserData(isLoggedIn);
+  const { logoutUser } = useLogoutUser();
+  const { data: userData, isLoading } = useUserData(isLoggedIn, true);
   const history = useHistory();
 
   useSWR(
@@ -49,9 +50,8 @@ export function useProtectedRoute(props: ProtectedRouteProps) {
   useEffect(() => {
     if (!isLoading && !userData) {
       logoutUser();
-      history.replace("/login");
     }
-  }, [userData, isLoading]);
+  }, [isLoading]);
 
   return { userData, isLoading, isLoggedIn };
 }

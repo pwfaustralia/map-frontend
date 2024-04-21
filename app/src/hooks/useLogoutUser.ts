@@ -1,7 +1,7 @@
 import { useStoreActions } from "easy-peasy";
 import { useEffect } from "react";
 import { useHistory } from "react-router";
-import { useLogoutUser as useLogoutUserMutation } from "../services/mutations";
+import { useLogoutUserMutation } from "../services/mutations";
 import StoreModel from "../types/store";
 
 function useLogoutUser() {
