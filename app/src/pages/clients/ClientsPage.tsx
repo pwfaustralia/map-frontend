@@ -7,6 +7,7 @@ import StoreModel from "../../types/store";
 import { useHistory } from "react-router";
 import useLogoutUser from "../../hooks/useLogoutUser";
 import "./ClientsPage.css";
+import { Link } from "react-router-dom";
 
 function ClientsPage() {
   const [page, setPage] = useState(1);
@@ -22,8 +23,8 @@ function ClientsPage() {
           Logout
           {isLogoutLoading && <IonSpinner />}
         </IonButton>
-        <IonButton onClick={() => history.push("/dashboard")}>Dashboard</IonButton>
-        <IonButton onClick={() => history.push("/clients")}>Clients</IonButton>
+        <Link to="/dashboard">Dashboard</Link>&nbsp;
+        <Link to="/clients">Clients</Link>
         <Suspense fallback={<h2>Loading clients...</h2>}>
           <ClientsList pageIndex={page} setPage={setPage} countPerPage={10} />
         </Suspense>

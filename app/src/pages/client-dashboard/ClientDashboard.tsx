@@ -4,6 +4,8 @@ import { useHistory } from "react-router";
 import useLogoutUser from "../../hooks/useLogoutUser";
 import StoreModel from "../../types/store";
 import "./ClientDashboard.css";
+import { Link } from "react-router-dom";
+import { useSWRConfig } from "swr";
 
 function ClientDashboard() {
   const {
@@ -23,10 +25,8 @@ function ClientDashboard() {
             Logout
             {isLogoutLoading && <IonSpinner />}
           </IonButton>
-          <IonButton onClick={() => history.push("/dashboard")}>Dashboard</IonButton>
-          {userPermissions.includes("view-all-clients") && (
-            <IonButton onClick={() => history.push("/clients")}>Clients</IonButton>
-          )}
+          <Link to="/dashboard">Dashboard</Link>&nbsp;
+          <Link to="/clients">Clients</Link>
         </div>
         <IonList inset={true}>
           <IonItem>

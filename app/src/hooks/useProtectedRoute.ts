@@ -1,21 +1,17 @@
 import { useStoreState } from "easy-peasy";
-import { useEffect } from "react";
-import { useHistory } from "react-router";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router";
 import useSWR from "swr";
 import { useUserData } from "../services/queries";
 import { ProtectedRouteProps } from "../types/props";
 import StoreModel from "../types/store";
-import useLogoutUser from "./useLogoutUser";
 
 export function useProtectedRoute(props: ProtectedRouteProps) {
   const { scopeName, redirectUrlIfUnauthorized, redirectIfLoggedIn } = props;
   const { isLoggedIn } = useStoreState<StoreModel>((states) => states.user);
-  const { logoutUser } = useLogoutUser();
-  const { data: userData, isLoading } = useUserData(isLoggedIn, true);
-  const history = useHistory();
-
-  useSWR(
-    userData ? "user-permissions" : null,
+  const { data: userData, isLoading: isUserDataLoading } = useUserData(isLoggedIn, true);
+  const { data: redirectUrl = "/login", isLoading: isUserPermissionsLoading } = useSWR(
+    userData ? "user-permissions-" + props.path : null,
     ([]) =>
       new Promise((resolve) => {
         if (userData) {
@@ -34,24 +30,30 @@ export function useProtectedRoute(props: ProtectedRouteProps) {
               }
             }
           }
-          resolve(redirectUrl);
+          setTimeout(() => {
+            resolve(redirectUrl);
+          }, 2000);
         }
       }),
     {
       suspense: true,
-      onSuccess: (data) => {
-        if (data) {
-          history.replace(data);
-        }
-      },
     }
   );
+  const [isLoading, setIsloading] = useState(isUserPermissionsLoading || isUserDataLoading);
+  const location = useLocation();
 
   useEffect(() => {
-    if (!isLoading && !userData) {
-      logoutUser();
+    if (props.path) {
+      if (location.pathname !== props.path) {
+        setIsloading(true);
+      } else {
+        setIsloading(isUserPermissionsLoading || isUserDataLoading);
+      }
+    } else {
+      // path not found
+      setIsloading(false);
     }
-  }, [isLoading]);
+  }, [location, isUserPermissionsLoading, isUserDataLoading]);
 
-  return { userData, isLoading, isLoggedIn };
+  return { userData, isLoading, isUserDataLoading, isUserPermissionsLoading, redirectUrl, isLoggedIn };
 }

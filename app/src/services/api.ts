@@ -11,3 +11,8 @@ export const logoutUser = async (url: string) => {
   const response = await laravelAxiosInstance.post("/users/logout");
   return response.data;
 };
+
+export const authUser = async () => {
+  const response = await laravelAxiosInstance.get("/users/me");
+  return response.data;
+};
