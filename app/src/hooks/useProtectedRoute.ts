@@ -1,7 +1,7 @@
 import { useStoreState } from "easy-peasy";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router";
-import useSWR from "swr";
+import useSWR, { useSWRConfig } from "swr";
 import { useUserData } from "../services/queries";
 import { ProtectedRouteProps } from "../types/props";
 import StoreModel from "../types/store";
@@ -40,9 +40,15 @@ export function useProtectedRoute(props: ProtectedRouteProps) {
     }
   );
   const [isLoading, setIsloading] = useState(isUserPermissionsLoading || isUserDataLoading);
+  const { cache } = useSWRConfig();
   const location = useLocation();
 
   useEffect(() => {
+    let cacheExists = cache.get("user-permissions-" + location.pathname);
+    if (cacheExists) {
+      setIsloading(false);
+      return;
+    }
     if (props.path) {
       if (location.pathname !== props.path) {
         setIsloading(true);
@@ -53,7 +59,7 @@ export function useProtectedRoute(props: ProtectedRouteProps) {
       // path not found
       setIsloading(false);
     }
-  }, [location, isUserPermissionsLoading, isUserDataLoading]);
+  }, [location, isUserPermissionsLoading, isUserDataLoading, cache]);
 
   return { userData, isLoading, isUserDataLoading, isUserPermissionsLoading, redirectUrl, isLoggedIn };
 }
