@@ -23,7 +23,9 @@ import ClientsPage from "./pages/clients/ClientsPage";
 import LoginPage from "./pages/login/LoginPage";
 import "./theme/variables.css";
 import Route from "./components/Route";
+import { Route as PublicRoute } from "react-router";
 import ClientDashboard from "./pages/client-dashboard/ClientDashboard";
+import PublicPage from "./pages/some-page/PublicPage";
 
 setupIonicReact();
 
@@ -32,6 +34,9 @@ const App: React.FC = () => {
     <IonApp>
       <IonReactRouter>
         <IonRouterOutlet>
+          <PublicRoute exact path="/public">
+            <PublicPage />
+          </PublicRoute>
           <Route exact path="/login" redirectIfLoggedIn>
             <LoginPage />
           </Route>
