@@ -15,7 +15,7 @@ export function useProtectedRoute(props: ProtectedRouteProps) {
     ([]) =>
       new Promise((resolve) => {
         if (userData) {
-          let redirectUrl = null;
+          let redirectUrl: string | null = null;
 
           if (redirectIfLoggedIn && userData?.default_page) {
             redirectUrl = userData.default_page;
