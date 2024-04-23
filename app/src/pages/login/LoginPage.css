@@ -1,5 +1,18 @@
-.login-form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+.login-page {
+  --login-form-gap: 20px;
+  .login__form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--login-form-gap);
+    ion-button {
+      margin-top: calc(50px - var(--login-form-gap));
+    }
+  }
+  .login__forgot_password {
+    text-align: center;
+    margin-top: calc(130px - var(--login-form-gap));
+    & > *:last-of-type {
+      font-weight: 600;
+    }
+  }
 }

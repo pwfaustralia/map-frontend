@@ -19,11 +19,12 @@ import "@ionic/react/css/text-transformation.css";
 
 /* Theme variables */
 import Route from "./components/templates/Route";
+import LoginTemplate from "./components/templates/login/LoginTemplate";
 import ClientDashboard from "./pages/client-dashboard/ClientDashboard";
 import ClientsPage from "./pages/clients/ClientsPage";
 import LoginPage from "./pages/login/LoginPage";
+import "./theme/breakpoints.css";
 import "./theme/variables.css";
-import LoginTemplate from "./components/templates/login/LoginTemplate";
 
 setupIonicReact();
 

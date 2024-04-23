@@ -1,9 +1,10 @@
+import { lockClosed, mail } from "ionicons/icons";
 import { useEffect, useRef, useState } from "react";
-import useLoginUser from "../../hooks/useLoginUser";
-import "./LoginPage.css";
 import Button from "../../components/atoms/button/Button";
 import Input from "../../components/atoms/input/Input";
-import { mail, lockClosed } from "ionicons/icons";
+import useLoginUser from "../../hooks/useLoginUser";
+import "./LoginPage.css";
+import { IonText } from "@ionic/react";
 
 function Login() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -28,29 +29,33 @@ function Login() {
 
   return (
     <>
-      <h1>Login</h1>
       {errorMessage && <h4>{errorMessage}</h4>}
       {isMutating && <h2>Signing in...</h2>}
-      <section className="login-form">
-        <Input
-          innerRef={emailRef}
-          type="email"
-          fill="outline"
-          disabled={isMutating}
-          placeholder="Enter your email"
-          icon={mail}
-        ></Input>
-        <Input
-          innerRef={passwordRef}
-          type="password"
-          fill="outline"
-          disabled={isMutating}
-          placeholder="Enter your password"
-          icon={lockClosed}
-        ></Input>
-        <Button onClick={handleSignin} disabled={isMutating} color="primary">
-          Sign In
-        </Button>
+      <section className="login-page">
+        <div className="login__form">
+          <Input
+            innerRef={emailRef}
+            type="email"
+            fill="outline"
+            disabled={isMutating}
+            placeholder="Enter your email"
+            icon={mail}
+          ></Input>
+          <Input
+            innerRef={passwordRef}
+            type="password"
+            fill="outline"
+            disabled={isMutating}
+            placeholder="Enter your password"
+            icon={lockClosed}
+          ></Input>
+          <Button onClick={handleSignin} disabled={isMutating} color="primary">
+            Sign In
+          </Button>
+          <IonText className="login__forgot_password">
+            Forgot your password? <IonText color="secondary">Reset Password</IonText>
+          </IonText>
+        </div>
       </section>
     </>
   );

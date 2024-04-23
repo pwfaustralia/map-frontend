@@ -26,6 +26,14 @@ function ProtectedRoute(props: ProtectedRouteProps) {
   );
   const isUnauthenticated = useMemo(() => !isLoggedIn, [isLoggedIn]);
 
+  const showMessage = (message: string, position: "top" | "middle" | "bottom") => {
+    present({
+      message,
+      duration: 1500,
+      position: position,
+    });
+  };
+
   useEffect(() => {
     if (!isLoading) {
       if (isUnauthenticated) {
@@ -35,14 +43,6 @@ function ProtectedRoute(props: ProtectedRouteProps) {
       }
     }
   }, [isLoading, isUnauthenticated, isUnauthorized]);
-
-  const showMessage = (message: string, position: "top" | "middle" | "bottom") => {
-    present({
-      message,
-      duration: 1500,
-      position: position,
-    });
-  };
 
   if (isLoading) {
     return <></>;

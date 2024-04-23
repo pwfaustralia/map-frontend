@@ -15,7 +15,9 @@ function LoginTemplate(props: LoginTemplateProps) {
           <IonCol sizeXs="12" sizeSm="3" sizeLg="4"></IonCol>
           <IonCol sizeXs="12" sizeSm="9" sizeLg="8" style={{ background: "#fff" }}>
             <section>
-              <IonText>Welcome to your Mortgage Action Plan</IonText>
+              <IonText className="form__header--text">
+                Welcome to your <IonText color="secondary">Mortgage Action Plan</IonText>
+              </IonText>
               {children}
             </section>
           </IonCol>

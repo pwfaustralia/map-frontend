@@ -31,4 +31,12 @@
       }
     }
   }
+  .form__header--text {
+    font-size: 50px;
+    margin-bottom: 50px;
+    display: block;
+    & > *:last-of-type {
+      font-weight: bold;
+    }
+  }
 }
