@@ -25,7 +25,7 @@ function ClientsPage() {
         </IonButton>
         <Link to="/dashboard">Dashboard</Link>&nbsp;
         <Link to="/clients">Clients</Link>
-        <ClientsTable countPerPage={10} />
+        <ClientsTable countPerPage={20} />
         {/* <ClientsList pageIndex={page} setPage={setPage} countPerPage={10} /> */}
       </IonContent>
     </IonPage>

@@ -5,8 +5,8 @@ import { Pagination } from "../types/pagination";
 import User from "../types/user";
 import fetcher from "./fetcher";
 
-export function useClients(pageIndex: number = 1, perPage: number = 10) {
-  return useSWR<Pagination<Client>>(`/clients?page=${pageIndex}&per_page=${perPage}`, fetcher, {
+export function useClients(url: string) {
+  return useSWR<Pagination<Client>>(url, fetcher, {
     errorRetryCount: 3,
     shouldRetryOnError: true,
   });
