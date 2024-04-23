@@ -19,7 +19,6 @@ export function useProtectedRoute(props: ProtectedRouteProps) {
         redirectUrl = userData.default_page;
       }
 
-      console.log("p", userData.user_role.role_permissions);
       if (scopeName) {
         if (userData.user_role.role_permissions.findIndex((q: any) => q.scope_name === scopeName) < 0) {
           if (redirectUrlIfUnauthorized) {
@@ -37,7 +36,6 @@ export function useProtectedRoute(props: ProtectedRouteProps) {
   useEffect(() => {
     if (userData) {
       setIsLoading(true);
-      console.log(getRedirectUrl());
       setRedirectUrl(getRedirectUrl());
       setIsLoading(false);
     } else {

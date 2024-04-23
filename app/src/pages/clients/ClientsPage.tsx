@@ -1,13 +1,13 @@
 import { IonButton, IonContent, IonPage, IonSpinner } from "@ionic/react";
 import { useStoreState } from "easy-peasy";
-import { Suspense, useState } from "react";
-import ClientsList from "../../components/molecules/lists/ClientsList";
+import { useState } from "react";
 import StoreModel from "../../types/store";
 
 import { useHistory } from "react-router";
+import { Link } from "react-router-dom";
+import ClientsTable from "../../components/organisms/clients-table/ClientsTable";
 import useLogoutUser from "../../hooks/useLogoutUser";
 import "./ClientsPage.css";
-import { Link } from "react-router-dom";
 
 function ClientsPage() {
   const [page, setPage] = useState(1);
@@ -25,9 +25,8 @@ function ClientsPage() {
         </IonButton>
         <Link to="/dashboard">Dashboard</Link>&nbsp;
         <Link to="/clients">Clients</Link>
-        <Suspense fallback={<h2>Loading clients...</h2>}>
-          <ClientsList pageIndex={page} setPage={setPage} countPerPage={10} />
-        </Suspense>
+        <ClientsTable countPerPage={10} />
+        {/* <ClientsList pageIndex={page} setPage={setPage} countPerPage={10} /> */}
       </IonContent>
     </IonPage>
   );
