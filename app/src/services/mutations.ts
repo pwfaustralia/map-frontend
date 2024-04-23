@@ -5,6 +5,6 @@ export function useLoginUserMutation() {
   return useSWRMutation("/users/login", loginUser);
 }
 
-export function useLogoutUserMutation() {
-  return useSWRMutation("/users/logout", logoutUser);
+export function useLogoutUserMutation(config?: any) {
+  return useSWRMutation("/users/logout", logoutUser, config);
 }

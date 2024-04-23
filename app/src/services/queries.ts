@@ -1,5 +1,5 @@
 import moment from "moment";
-import useSWR from "swr";
+import useSWR, { SWRConfiguration } from "swr";
 import Client from "../types/client";
 import { Pagination } from "../types/pagination";
 import User from "../types/user";
@@ -12,10 +12,10 @@ export function useClients(url: string) {
   });
 }
 
-export function useUserData(isLoggedIn: boolean, suspense: boolean = true) {
+export function useUserData(isLoggedIn: boolean, config: SWRConfiguration) {
   return useSWR<User>(isLoggedIn ? "/users/me" : null, {
-    suspense,
     revalidateOnReconnect: true,
     refreshInterval: () => moment.duration(import.meta.env.VITE_REAUTH_TIME || 60, "minutes").asMilliseconds(),
+    ...config,
   });
 }
