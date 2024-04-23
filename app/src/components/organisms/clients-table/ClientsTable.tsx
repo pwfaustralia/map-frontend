@@ -44,9 +44,9 @@ function ClientsTable(props: ClientsTableProps) {
       searchParams.q = "*";
       let filter_by: string[] = [];
       columnFilters.forEach(({ id, value }) => {
-        filter_by.push(`${id}:=${value}`);
+        filter_by.push(`${id}:=\`${value}\``);
       });
-      searchParams.filter_by = filter_by.join("&&");
+      searchParams.filter_by = filter_by.join(" && ");
     }
     if (sorting.length) {
       searchParams.q = "*";
@@ -56,6 +56,7 @@ function ClientsTable(props: ClientsTableProps) {
       searchParams.q = globalFilter;
     }
     Object.keys(searchParams).forEach((k) => {
+      searchParams[k] = encodeURIComponent(searchParams[k]);
       url += `&${k}=${searchParams[k]}`;
     });
     return url;
