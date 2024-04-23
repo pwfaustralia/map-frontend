@@ -1,8 +1,9 @@
-import { IonApp, IonButton, IonInput } from "@ionic/react";
-
 import { useEffect, useRef, useState } from "react";
 import useLoginUser from "../../hooks/useLoginUser";
 import "./LoginPage.css";
+import Button from "../../components/atoms/button/Button";
+import Input from "../../components/atoms/input/Input";
+import { mail, lockClosed } from "ionicons/icons";
 
 function Login() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -26,34 +27,32 @@ function Login() {
   }, [error]);
 
   return (
-    <IonApp className="background">
-      <div className="Login-box">
-        <h1>Login</h1>
-        {errorMessage && <h4>{errorMessage}</h4>}
-        {isMutating && <h2>Signing in...</h2>}
-        <>
-          <IonInput
-            ref={emailRef}
-            label="Email"
-            type="email"
-            fill="outline"
-            labelPlacement="start"
-            disabled={isMutating}
-          ></IonInput>
-          <IonInput
-            ref={passwordRef}
-            label="Password"
-            type="password"
-            fill="outline"
-            labelPlacement="start"
-            disabled={isMutating}
-          ></IonInput>
-          <IonButton onClick={handleSignin} disabled={isMutating}>
-            Sign In
-          </IonButton>
-        </>
-      </div>
-    </IonApp>
+    <>
+      <h1>Login</h1>
+      {errorMessage && <h4>{errorMessage}</h4>}
+      {isMutating && <h2>Signing in...</h2>}
+      <section className="login-form">
+        <Input
+          innerRef={emailRef}
+          type="email"
+          fill="outline"
+          disabled={isMutating}
+          placeholder="Enter your email"
+          icon={mail}
+        ></Input>
+        <Input
+          innerRef={passwordRef}
+          type="password"
+          fill="outline"
+          disabled={isMutating}
+          placeholder="Enter your password"
+          icon={lockClosed}
+        ></Input>
+        <Button onClick={handleSignin} disabled={isMutating} color="primary">
+          Sign In
+        </Button>
+      </section>
+    </>
   );
 }
 

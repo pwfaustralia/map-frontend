@@ -1,7 +1,7 @@
 import { IonButton, IonIcon, IonItem, IonLabel, IonList, IonThumbnail } from "@ionic/react";
 import { person } from "ionicons/icons";
-import { useClients } from "../../services/queries";
-import ClientSkeleton from "./ClientSkeleton";
+import { useClients } from "../../../services/queries";
+import ClientSkeleton from "../../atoms/skeleton/ClientSkeleton";
 import { useMemo } from "react";
 
 interface ClientsListProps {

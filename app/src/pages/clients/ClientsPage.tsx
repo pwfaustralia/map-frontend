@@ -1,7 +1,7 @@
 import { IonButton, IonContent, IonPage, IonSpinner } from "@ionic/react";
 import { useStoreState } from "easy-peasy";
 import { Suspense, useState } from "react";
-import ClientsList from "../../components/Client/ClientsList";
+import ClientsList from "../../components/molecules/lists/ClientsList";
 import StoreModel from "../../types/store";
 
 import { useHistory } from "react-router";

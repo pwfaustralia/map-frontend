@@ -1,9 +1,8 @@
+import { useIonToast } from "@ionic/react";
 import { Suspense, useEffect, useMemo } from "react";
 import { Route as ReactRoute, Redirect } from "react-router";
-import { useProtectedRoute } from "../hooks/useProtectedRoute";
-import { ProtectedRouteProps } from "../types/props";
-import { useIonToast } from "@ionic/react";
-import { useSWRConfig } from "swr";
+import { useProtectedRoute } from "../../hooks/useProtectedRoute";
+import { ProtectedRouteProps } from "../../types/props";
 
 const publicPaths = ["/login"];
 

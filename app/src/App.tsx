@@ -18,14 +18,12 @@ import "@ionic/react/css/text-alignment.css";
 import "@ionic/react/css/text-transformation.css";
 
 /* Theme variables */
-import { Suspense } from "react";
+import Route from "./components/templates/Route";
+import ClientDashboard from "./pages/client-dashboard/ClientDashboard";
 import ClientsPage from "./pages/clients/ClientsPage";
 import LoginPage from "./pages/login/LoginPage";
 import "./theme/variables.css";
-import Route from "./components/Route";
-import { Route as PublicRoute } from "react-router";
-import ClientDashboard from "./pages/client-dashboard/ClientDashboard";
-import PublicPage from "./pages/some-page/PublicPage";
+import LoginTemplate from "./components/templates/login/LoginTemplate";
 
 setupIonicReact();
 
@@ -34,11 +32,10 @@ const App: React.FC = () => {
     <IonApp>
       <IonReactRouter>
         <IonRouterOutlet>
-          <PublicRoute exact path="/public">
-            <PublicPage />
-          </PublicRoute>
           <Route exact path="/login" redirectIfLoggedIn>
-            <LoginPage />
+            <LoginTemplate>
+              <LoginPage />
+            </LoginTemplate>
           </Route>
 
           <Route exact path="/clients" scopeName="view-all-clients">

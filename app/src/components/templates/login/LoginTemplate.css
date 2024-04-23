@@ -1,0 +1,34 @@
+.login-template {
+  ion-grid {
+    --ion-grid-padding: 0;
+    height: 100%;
+    width: 100%;
+    ion-row,
+    ion-col {
+      height: 100%;
+    }
+    @media all and (max-width: 576px) {
+      ion-col {
+        height: 30%;
+      }
+    }
+    ion-row ion-col:first-of-type {
+      background-color: #f4911e;
+      background-image: url("/static/images/logo 1.png"), url("/static/images/Girl-on-the-bike-transparent 1.png");
+      background-repeat: no-repeat, no-repeat;
+      background-position:
+        center,
+        bottom center;
+    }
+    ion-row ion-col:last-of-type {
+      align-items: center;
+      justify-content: center;
+      display: flex;
+      padding: 0 40px;
+      & > * {
+        width: 100%;
+        max-width: 522px;
+      }
+    }
+  }
+}
