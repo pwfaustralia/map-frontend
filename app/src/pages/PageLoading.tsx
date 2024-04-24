@@ -1,12 +1,10 @@
-import { IonApp, IonContent } from "@ionic/react";
+import { IonContent } from "@ionic/react";
 
 function PageLoading() {
   return (
-    <IonApp>
-      <IonContent>
-        <h1>Loading page...</h1>
-      </IonContent>
-    </IonApp>
+    <IonContent>
+      <h1>Loading page...</h1>
+    </IonContent>
   );
 }
 

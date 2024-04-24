@@ -37,7 +37,7 @@ function Login() {
             innerRef={emailRef}
             type="email"
             fill="outline"
-            value="mark2@pwf.com.au"
+            value="hello@pwf.com.au"
             disabled={isMutating}
             placeholder="Enter your email"
             icon={mail}
@@ -45,7 +45,7 @@ function Login() {
           <Input
             innerRef={passwordRef}
             type="password"
-            value="Pwf@2024"
+            value="LK^3gxs8!!8&hu"
             fill="outline"
             disabled={isMutating}
             placeholder="Enter your password"

@@ -16,7 +16,6 @@ function useLoginUser() {
     if (userData?.id) {
       setUserData(userData);
       history.replace(userData.default_page);
-      history.go(0);
     }
   }, [userData]);
   return { loginUser, isMutating, error };
