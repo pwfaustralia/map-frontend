@@ -18,13 +18,15 @@ import "@ionic/react/css/text-alignment.css";
 import "@ionic/react/css/text-transformation.css";
 
 /* Theme variables */
-import Route from "./components/templates/Route";
-import LoginTemplate from "./components/templates/login/LoginTemplate";
+import DashboardTemplate from "./components/templates/dashboard/default/DashboardTemplate";
+import LoginTemplate from "./components/templates/login/default/LoginTemplate";
+import Route from "./pages/Route";
 import ClientDashboard from "./pages/client-dashboard/ClientDashboard";
 import ClientsPage from "./pages/clients/ClientsPage";
 import LoginPage from "./pages/login/LoginPage";
 import "./theme/breakpoints.css";
 import "./theme/variables.css";
+import PageNotFound from "./pages/PageNotFound";
 
 setupIonicReact();
 
@@ -40,15 +42,19 @@ const App: React.FC = () => {
           </Route>
 
           <Route exact path="/clients" scopeName="view-all-clients">
-            <ClientsPage />
+            <DashboardTemplate>
+              <ClientsPage />
+            </DashboardTemplate>
           </Route>
 
           <Route exact path="/dashboard">
-            <ClientDashboard />
+            <DashboardTemplate>
+              <ClientDashboard />
+            </DashboardTemplate>
           </Route>
 
           <Route>
-            <h1>404</h1>
+            <PageNotFound />
           </Route>
         </IonRouterOutlet>
       </IonReactRouter>

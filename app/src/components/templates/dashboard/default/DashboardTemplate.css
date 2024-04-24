@@ -1,0 +1,9 @@
+.dashboard__template {
+  --ion-grid-padding: 0;
+  height: 100%;
+  width: 100%;
+  ion-row,
+  ion-col {
+    height: 100%;
+  }
+}

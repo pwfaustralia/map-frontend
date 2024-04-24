@@ -1,33 +1,43 @@
-import { IonButton, IonContent, IonPage, IonSpinner } from "@ionic/react";
-import { useStoreState } from "easy-peasy";
-import { useState } from "react";
+import { IonButton, IonSpinner, useIonViewWillEnter, useIonViewWillLeave } from "@ionic/react";
+import { useStoreActions, useStoreState } from "easy-peasy";
 import StoreModel from "../../types/store";
 
-import { useHistory } from "react-router";
-import { Link } from "react-router-dom";
+import Links from "../../components/atoms/Links";
 import ClientsTable from "../../components/organisms/clients-table/ClientsTable";
+import { PageTemplateKeys } from "../../components/templates/dashboard/default/types";
 import useLogoutUser from "../../hooks/useLogoutUser";
 import "./ClientsPage.css";
 
 function ClientsPage() {
-  const [page, setPage] = useState(1);
   const name = useStoreState<StoreModel>((states) => states.user?.userData?.name);
   const { logoutUser, isMutating: isLogoutLoading } = useLogoutUser();
-  const history = useHistory();
+  const setPart = useStoreActions<StoreModel>((actions) => actions.page.setTemplatePart);
+
+  useIonViewWillEnter(() => {
+    setPart({
+      templateName: PageTemplateKeys.DASHBOARD,
+      parts: {
+        "toolbar-search": <h1>Client Page</h1>,
+      },
+    });
+  }, []);
+  useIonViewWillLeave(() => {
+    setPart({
+      templateName: PageTemplateKeys.DASHBOARD,
+      parts: null,
+    });
+  }, []);
   return (
-    <IonPage>
-      <IonContent color="light">
-        <h1>Clients Page</h1>
-        <h3>Hello {name}</h3>
-        <IonButton onClick={logoutUser} disabled={isLogoutLoading}>
-          Logout
-          {isLogoutLoading && <IonSpinner />}
-        </IonButton>
-        <Link to="/dashboard">Dashboard</Link>&nbsp;
-        <Link to="/clients">Clients</Link>
-        <ClientsTable countPerPage={20} />
-      </IonContent>
-    </IonPage>
+    <>
+      <h1>Clients Page</h1>
+      <h3>Hello {name}</h3>
+      <IonButton onClick={logoutUser} disabled={isLogoutLoading}>
+        Logout
+        {isLogoutLoading && <IonSpinner />}
+      </IonButton>
+      <Links />
+      <ClientsTable countPerPage={20} />
+    </>
   );
 }
 

@@ -14,7 +14,7 @@ export function useProtectedRoute(props: ProtectedRouteProps) {
   const { data: userData, isLoading: isUserDataLoading } = useUserData(isLoggedIn, {
     suspense: true,
     onError: (error) => {
-      if (error.response.status === 401) {
+      if (error.response.status !== 200) {
         logoutUser();
       }
     },
@@ -50,7 +50,7 @@ export function useProtectedRoute(props: ProtectedRouteProps) {
     } else {
       setIsLoading(false);
     }
-  }, [isUserDataLoading]);
+  }, [userData]);
 
   return { userData, isLoading, isUserDataLoading, redirectUrl, isLoggedIn };
 }

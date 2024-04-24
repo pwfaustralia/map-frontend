@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import LoginTemplate from "../../../components/templates/login/LoginTemplate";
+import LoginTemplate from "../../../components/templates/login/default/LoginTemplate";
 
 const meta = {
   title: "Templates/Login Template",

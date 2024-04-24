@@ -14,7 +14,6 @@ export function useClients(url: string) {
 
 export function useUserData(isLoggedIn: boolean, config: SWRConfiguration) {
   return useSWR<User>(isLoggedIn ? "/users/me" : null, {
-    revalidateOnReconnect: true,
     refreshInterval: () => moment.duration(import.meta.env.VITE_REAUTH_TIME || 60, "minutes").asMilliseconds(),
     ...config,
   });

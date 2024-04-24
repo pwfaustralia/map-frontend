@@ -3,6 +3,7 @@ import {
   MRT_ColumnFiltersState,
   MRT_PaginationState,
   MRT_SortingState,
+  MRT_TableHeadCellFilterContainer,
   useMaterialReactTable,
 } from "material-react-table";
 import { useEffect, useMemo, useState } from "react";
@@ -10,6 +11,7 @@ import { useClients } from "../../../services/queries";
 import Client from "../../../types/client";
 import { Pagination } from "../../../types/pagination";
 import MaterialTable from "../../molecules/table/MaterialTable";
+import Input from "../../atoms/input/Input";
 
 interface ClientsTableProps {
   countPerPage: number;
@@ -105,8 +107,14 @@ function ClientsTable(props: ClientsTableProps) {
       setPagination(newValue);
     },
   });
-
-  return <MaterialTable table={table} />;
+  return (
+    <>
+      <MaterialTable table={table} />
+      {table.getLeafHeaders().map((header) => (
+        <MRT_TableHeadCellFilterContainer key={header.id} header={header} table={table} in />
+      ))}
+    </>
+  );
 }
 
 export default ClientsTable;

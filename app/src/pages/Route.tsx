@@ -1,17 +1,32 @@
 import { useIonToast } from "@ionic/react";
+import { useStoreActions } from "easy-peasy";
 import { Suspense, useEffect, useMemo } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import { Route as ReactRoute, Redirect } from "react-router";
-import { useProtectedRoute } from "../../hooks/useProtectedRoute";
-import { ProtectedRouteProps } from "../../types/props";
+import { useProtectedRoute } from "../hooks/useProtectedRoute";
+import { ProtectedRouteProps } from "../types/props";
+import StoreModel from "../types/store";
+import PageError from "./PageError";
+import PageLoading from "./PageLoading";
 
 const publicPaths = ["/login"];
 
 function Route(props: ProtectedRouteProps) {
+  const logoutUser = useStoreActions<StoreModel>((actions) => actions.user.logout);
   return (
     <ReactRoute {...props}>
-      <Suspense fallback={<h2>Loading page...</h2>}>
-        <ProtectedRoute {...props}>{props.children}</ProtectedRoute>
-      </Suspense>
+      <ErrorBoundary
+        fallback={<PageError />}
+        onError={() => {
+          setTimeout(() => {
+            logoutUser();
+          }, 3000);
+        }}
+      >
+        <Suspense fallback={<PageLoading />}>
+          <ProtectedRoute {...props}>{props.children}</ProtectedRoute>
+        </Suspense>
+      </ErrorBoundary>
     </ReactRoute>
   );
 }
@@ -45,7 +60,7 @@ function ProtectedRoute(props: ProtectedRouteProps) {
   }, [isLoading, isUnauthenticated, isUnauthorized]);
 
   if (isLoading) {
-    return <></>;
+    return <PageLoading />;
   }
 
   if (isUnauthenticated && props.path !== "/login") {
