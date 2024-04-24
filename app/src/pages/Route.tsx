@@ -18,9 +18,10 @@ function Route(props: ProtectedRouteProps) {
       <ErrorBoundary
         fallback={<PageError />}
         onError={() => {
+          logoutUser();
           setTimeout(() => {
-            logoutUser();
-          }, 3000);
+            history.go(0);
+          }, 2000);
         }}
       >
         <Suspense fallback={<PageLoading />}>
