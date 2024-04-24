@@ -7,6 +7,7 @@ import ClientsTable from "../../components/organisms/clients-table/ClientsTable"
 import { PageTemplateKeys } from "../../components/templates/dashboard/default/types";
 import useLogoutUser from "../../hooks/useLogoutUser";
 import "./ClientsPage.css";
+import { useHistory } from "react-router";
 
 function ClientsPage() {
   const name = useStoreState<StoreModel>((states) => states.user?.userData?.name);

@@ -12,9 +12,12 @@ import Client from "../../../types/client";
 import { Pagination } from "../../../types/pagination";
 import MaterialTable from "../../molecules/table/MaterialTable";
 import Input from "../../atoms/input/Input";
+import { useHistory } from "react-router";
+import queryString from "query-string";
 
 interface ClientsTableProps {
   countPerPage: number;
+  onQuery?: (url: string) => void;
 }
 
 function fetchClientsData(url: string) {
@@ -31,13 +34,37 @@ function fetchClientsData(url: string) {
 }
 
 function ClientsTable(props: ClientsTableProps) {
-  const { countPerPage } = props;
-  const [globalFilter, setGlobalFilter] = useState("");
-  const [sorting, setSorting] = useState<MRT_SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>([]);
+  const { filter_by, page, per_page, q, sort_by } = queryString.parse(location.search);
+  const { countPerPage, onQuery = () => {} } = props;
+  const getSortBy = (): any => {
+    let sort = (sort_by + "").split(":");
+    if (sort.length === 2) {
+      return [{ id: sort[0], desc: sort[1] === "desc" }];
+    }
+    return [];
+  };
+  const getFilterBy = (): any => {
+    if (!filter_by) return [];
+    return (filter_by + "")
+      .split("&&")
+      .map((q) => {
+        let f = q.trim().split(":=");
+        if (f.length === 2) {
+          return {
+            id: f[0],
+            value: f[1].replaceAll("`", ""),
+          };
+        }
+        return null;
+      })
+      .filter((q) => !!q);
+  };
+  const [globalFilter, setGlobalFilter] = useState(q || "");
+  const [sorting, setSorting] = useState<MRT_SortingState>(getSortBy());
+  const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>(getFilterBy());
   const [pagination, setPagination] = useState<MRT_PaginationState>({
-    pageIndex: 1,
-    pageSize: countPerPage,
+    pageIndex: parseInt(page + "") || 1,
+    pageSize: parseInt(per_page + "") || countPerPage,
   });
   const key = useMemo(() => {
     let url = `/clients?page=${pagination.pageIndex}&per_page=${pagination.pageSize}`;
@@ -63,6 +90,7 @@ function ClientsTable(props: ClientsTableProps) {
     });
     return url;
   }, [pagination, globalFilter, columnFilters, sorting]);
+  const history = useHistory();
 
   const { tableData: clientsTableData, isLoading } = fetchClientsData(key);
 
@@ -94,6 +122,7 @@ function ClientsTable(props: ClientsTableProps) {
     state: { pagination, isLoading, sorting, columnFilters, globalFilter },
     manualSorting: true,
     manualFiltering: true,
+    enableGlobalFilter: true,
     manualPagination: true,
     rowCount: clientsTableData?.total,
     onGlobalFilterChange: setGlobalFilter,
@@ -107,6 +136,11 @@ function ClientsTable(props: ClientsTableProps) {
       setPagination(newValue);
     },
   });
+  useEffect(() => {
+    if (key && !isLoading) {
+      history.replace(key);
+    }
+  }, [key, isLoading]);
   return (
     <>
       <MaterialTable table={table} />
