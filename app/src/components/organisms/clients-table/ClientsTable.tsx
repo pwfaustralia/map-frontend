@@ -126,7 +126,7 @@ function ClientsTable(props: ClientsTableProps) {
         header: "Town",
       },
       {
-        accessorKey: "physical_address.street",
+        accessorKey: "physical_address.street_name",
         header: "Street",
       },
     ],

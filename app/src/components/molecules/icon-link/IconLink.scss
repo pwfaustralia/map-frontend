@@ -1,0 +1,13 @@
+.c-icon-link {
+  margin: 14px;
+  font-weight: 400;
+  &__active {
+    background: #fff;
+    color: var(--ion-color-primary) !important;
+    border-radius: 5px;
+    font-weight: bold;
+    ion-icon {
+      filter: invert(1);
+    }
+  }
+}
