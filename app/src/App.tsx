@@ -24,7 +24,6 @@ import Route from "./pages/Route";
 import ClientDashboard from "./pages/client-dashboard/ClientDashboard";
 import ClientsPage from "./pages/clients/ClientsPage";
 import LoginPage from "./pages/login/LoginPage";
-import "./theme/breakpoints.css";
 import "./theme/variables.css";
 import PageNotFound from "./pages/PageNotFound";
 

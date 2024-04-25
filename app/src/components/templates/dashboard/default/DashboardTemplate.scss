@@ -1,0 +1,32 @@
+.DashboardTemplate {
+  --ion-grid-padding: 0;
+  --ion-grid-column-padding: 0;
+  height: 100%;
+  width: 100%;
+  & > ion-row,
+  & > ion-col {
+    height: 100%;
+  }
+  & > ion-row {
+    & > ion-col:first-of-type {
+      background-color: var(--ion-color-primary);
+    }
+    & > ion-col:last-of-type {
+      ion-toolbar {
+        --background: #ffffff;
+        --padding-bottom: 26px;
+        --padding-top: 26px;
+        --padding-start: 37px;
+        --padding-end: 37px;
+      }
+      ion-content {
+        --background: #f6f6f6f6;
+        --padding-bottom: 25px;
+        --padding-top: 25px;
+        --padding-start: 38px;
+        --padding-end: 38px;
+        --offset-bottom: -115px !important;
+      }
+    }
+  }
+}

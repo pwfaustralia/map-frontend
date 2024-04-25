@@ -1,0 +1,12 @@
+.Filter {
+  & > ion-row {
+    flex-wrap: wrap;
+    gap: 7px;
+    & > * {
+      $inputMaxWidth: 352px;
+      flex: 1 $inputMaxWidth;
+      max-width: $inputMaxWidth;
+      display: block;
+    }
+  }
+}

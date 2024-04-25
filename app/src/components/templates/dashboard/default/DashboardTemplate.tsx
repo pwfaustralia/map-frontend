@@ -1,10 +1,10 @@
-import { IonCol, IonContent, IonGrid, IonPage, IonRow } from "@ionic/react";
+import { IonCol, IonContent, IonGrid, IonPage, IonRow, IonToolbar } from "@ionic/react";
 
 import { useStoreState } from "easy-peasy";
-import StoreModel from "../../../../types/store";
-import "./DashboardTemplate.css";
-import { DashboardTemplatePartKeys, PageTemplateKeys } from "./types";
 import { isValidElement } from "react";
+import StoreModel from "../../../../types/store";
+import "./DashboardTemplate.scss";
+import { DashboardTemplatePartKeys, PageTemplateKeys } from "./types";
 
 function DashboardTemplate({ children }: { children: JSX.Element }) {
   const pageTemplates = useStoreState<StoreModel>((states) => states.page);
@@ -20,14 +20,18 @@ function DashboardTemplate({ children }: { children: JSX.Element }) {
 
   return (
     <IonPage>
-      <IonContent>
-        <IonGrid className="dashboard__template">
-          <IonRow>
-            <IonCol>{getTemplatePart("toolbar-search")}</IonCol>
-            <IonCol>{children}</IonCol>
-          </IonRow>
-        </IonGrid>
-      </IonContent>
+      <IonGrid className="DashboardTemplate">
+        <IonRow>
+          <IonCol size="1.5"></IonCol>
+          <IonCol size="10.5">
+            <IonToolbar>
+              <div slot="start">{getTemplatePart("toolbar-search")}</div>
+              <div slot="end">{getTemplatePart("toolbar-avatar")}</div>
+            </IonToolbar>
+            <IonContent>{children}</IonContent>
+          </IonCol>
+        </IonRow>
+      </IonGrid>
     </IonPage>
   );
 }

@@ -1,4 +1,4 @@
-import { IonButton, IonSpinner, useIonViewWillEnter, useIonViewWillLeave } from "@ionic/react";
+import { IonButton, IonContent, IonPage, IonSpinner, useIonViewWillEnter, useIonViewWillLeave } from "@ionic/react";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import StoreModel from "../../types/store";
 
@@ -19,15 +19,16 @@ function ClientsPage() {
       templateName: PageTemplateKeys.DASHBOARD,
       parts: {
         "toolbar-search": <h1>Client Page</h1>,
+        "toolbar-avatar": <h1>avatar</h1>,
       },
     });
-  }, []);
+  });
   useIonViewWillLeave(() => {
     setPart({
       templateName: PageTemplateKeys.DASHBOARD,
       parts: null,
     });
-  }, []);
+  });
   return (
     <>
       <h1>Clients Page</h1>

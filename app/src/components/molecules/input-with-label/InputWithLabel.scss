@@ -1,0 +1,18 @@
+.InputWithLabel {
+  & > ion-row {
+    justify-content: space-between;
+  }
+  &__label_col {
+    display: flex;
+    align-items: center;
+  }
+  &__input {
+    --background: #ffffff;
+    --border-radius: 10px;
+    --padding-start: 10px;
+    box-shadow: 2px 2px 3.6px rgba(0, 0, 0, 0.1);
+    .input-highlight {
+      display: none;
+    }
+  }
+}

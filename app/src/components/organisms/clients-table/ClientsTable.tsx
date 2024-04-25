@@ -14,6 +14,7 @@ import MaterialTable from "../../molecules/table/MaterialTable";
 import Input from "../../atoms/input/Input";
 import { useHistory } from "react-router";
 import queryString from "query-string";
+import Filter from "../../molecules/filter/Filter";
 
 interface ClientsTableProps {
   countPerPage: number;
@@ -102,15 +103,23 @@ function ClientsTable(props: ClientsTableProps) {
       },
       {
         accessorKey: "last_name",
-        header: "Last Name",
+        header: "Family  Name",
       },
       {
         accessorKey: "email",
-        header: "Email",
+        header: "Email Address",
       },
       {
         accessorKey: "mobile_phone",
         header: "Mobile Phone",
+      },
+      {
+        accessorKey: "physical_address.town",
+        header: "Town",
+      },
+      {
+        accessorKey: "physical_address.street",
+        header: "Street",
       },
     ],
     []
@@ -120,6 +129,7 @@ function ClientsTable(props: ClientsTableProps) {
     columns,
     data: clientsTableData?.data || [],
     state: { pagination, isLoading, sorting, columnFilters, globalFilter },
+    initialState: { columnVisibility: { firstName: false } },
     manualSorting: true,
     manualFiltering: true,
     enableGlobalFilter: true,
@@ -143,10 +153,16 @@ function ClientsTable(props: ClientsTableProps) {
   }, [key, isLoading]);
   return (
     <>
+      <Filter
+        filters={columns.reduce((a, v: any) => ({ ...a, [v.accessorKey]: { label: v.header, value: "" } }), {})}
+        onFilter={(val) => {
+          setColumnFilters(val);
+        }}
+      />
       <MaterialTable table={table} />
-      {table.getLeafHeaders().map((header) => (
+      {/* {table.getLeafHeaders().map((header) => (
         <MRT_TableHeadCellFilterContainer key={header.id} header={header} table={table} in />
-      ))}
+      ))} */}
     </>
   );
 }
