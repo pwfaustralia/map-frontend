@@ -1,4 +1,4 @@
-import { IonButton, IonContent, IonPage, IonSpinner, useIonViewWillEnter, useIonViewWillLeave } from "@ionic/react";
+import { useIonViewWillEnter, useIonViewWillLeave } from "@ionic/react";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import StoreModel from "../../types/store";
 
@@ -7,7 +7,6 @@ import ClientsTable from "../../components/organisms/clients-table/ClientsTable"
 import { PageTemplateKeys } from "../../components/templates/dashboard/default/types";
 import useLogoutUser from "../../hooks/useLogoutUser";
 import "./ClientsPage.css";
-import { useHistory } from "react-router";
 
 function ClientsPage() {
   const name = useStoreState<StoreModel>((states) => states.user?.userData?.name);
@@ -31,13 +30,6 @@ function ClientsPage() {
   });
   return (
     <>
-      <h1>Clients Page</h1>
-      <h3>Hello {name}</h3>
-      <IonButton onClick={logoutUser} disabled={isLogoutLoading}>
-        Logout
-        {isLogoutLoading && <IonSpinner />}
-      </IonButton>
-      <Links />
       <ClientsTable countPerPage={20} />
     </>
   );

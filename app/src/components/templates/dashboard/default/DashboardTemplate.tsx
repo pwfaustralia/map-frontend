@@ -5,6 +5,7 @@ import { isValidElement } from "react";
 import StoreModel from "../../../../types/store";
 import "./DashboardTemplate.scss";
 import { DashboardTemplatePartKeys, PageTemplateKeys } from "./types";
+import Links from "../../../atoms/Links";
 
 function DashboardTemplate({ children }: { children: JSX.Element }) {
   const pageTemplates = useStoreState<StoreModel>((states) => states.page);
@@ -22,7 +23,9 @@ function DashboardTemplate({ children }: { children: JSX.Element }) {
     <IonPage>
       <IonGrid className="DashboardTemplate">
         <IonRow>
-          <IonCol size="1.5"></IonCol>
+          <IonCol size="1.5">
+            <Links />
+          </IonCol>
           <IonCol size="10.5">
             <IonToolbar>
               <div slot="start">{getTemplatePart("toolbar-search")}</div>

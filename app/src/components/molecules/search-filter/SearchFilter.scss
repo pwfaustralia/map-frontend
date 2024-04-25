@@ -3,7 +3,7 @@
     flex-wrap: wrap;
     gap: 7px;
     & > * {
-      $inputMaxWidth: 352px;
+      $inputMaxWidth: 482px;
       flex: 1 $inputMaxWidth;
       max-width: $inputMaxWidth;
       display: block;

@@ -1,20 +1,22 @@
+import { IonCol, IonGrid, IonRow } from "@ionic/react";
 import {
   MRT_ColumnDef,
   MRT_ColumnFiltersState,
   MRT_PaginationState,
   MRT_SortingState,
-  MRT_TableHeadCellFilterContainer,
   useMaterialReactTable,
 } from "material-react-table";
-import { useEffect, useMemo, useState } from "react";
+import queryString from "query-string";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useHistory } from "react-router";
 import { useClients } from "../../../services/queries";
 import Client from "../../../types/client";
 import { Pagination } from "../../../types/pagination";
+import SearchFilter from "../../molecules/search-filter/SearchFilter";
 import MaterialTable from "../../molecules/table/MaterialTable";
-import Input from "../../atoms/input/Input";
-import { useHistory } from "react-router";
-import queryString from "query-string";
-import Filter from "../../molecules/filter/Filter";
+import Button from "../../atoms/button/Button";
+
+import "./ClientsTable.scss";
 
 interface ClientsTableProps {
   countPerPage: number;
@@ -35,8 +37,15 @@ function fetchClientsData(url: string) {
 }
 
 function ClientsTable(props: ClientsTableProps) {
+  const searchFilterRef = useRef<any>({});
   const { filter_by, page, per_page, q, sort_by } = queryString.parse(location.search);
   const { countPerPage, onQuery = () => {} } = props;
+  const [globalFilter, setGlobalFilter] = useState(q || "");
+  const [pagination, setPagination] = useState<MRT_PaginationState>({
+    pageIndex: parseInt(page + "") || 1,
+    pageSize: parseInt(per_page + "") || countPerPage,
+  });
+
   const getSortBy = (): any => {
     let sort = (sort_by + "").split(":");
     if (sort.length === 2) {
@@ -44,6 +53,7 @@ function ClientsTable(props: ClientsTableProps) {
     }
     return [];
   };
+
   const getFilterBy = (): any => {
     if (!filter_by) return [];
     return (filter_by + "")
@@ -60,13 +70,10 @@ function ClientsTable(props: ClientsTableProps) {
       })
       .filter((q) => !!q);
   };
-  const [globalFilter, setGlobalFilter] = useState(q || "");
   const [sorting, setSorting] = useState<MRT_SortingState>(getSortBy());
+
   const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>(getFilterBy());
-  const [pagination, setPagination] = useState<MRT_PaginationState>({
-    pageIndex: parseInt(page + "") || 1,
-    pageSize: parseInt(per_page + "") || countPerPage,
-  });
+
   const key = useMemo(() => {
     let url = `/clients?page=${pagination.pageIndex}&per_page=${pagination.pageSize}`;
     let searchParams: any = {};
@@ -91,6 +98,7 @@ function ClientsTable(props: ClientsTableProps) {
     });
     return url;
   }, [pagination, globalFilter, columnFilters, sorting]);
+
   const history = useHistory();
 
   const { tableData: clientsTableData, isLoading } = fetchClientsData(key);
@@ -146,24 +154,61 @@ function ClientsTable(props: ClientsTableProps) {
       setPagination(newValue);
     },
   });
+
   useEffect(() => {
     if (key && !isLoading) {
       history.replace(key);
     }
   }, [key, isLoading]);
+
   return (
-    <>
-      <Filter
-        filters={columns.reduce((a, v: any) => ({ ...a, [v.accessorKey]: { label: v.header, value: "" } }), {})}
-        onFilter={(val) => {
-          setColumnFilters(val);
-        }}
-      />
+    <section className="ClientsTable">
+      <IonGrid className="ClientsTable__grid">
+        <IonRow>
+          <IonCol size="9">
+            <SearchFilter
+              buttonRefs={{
+                searchFilterButtonRef: searchFilterRef,
+              }}
+              filters={columns.reduce(
+                (a, v: any) => ({
+                  ...a,
+                  [v.accessorKey]: {
+                    label: v.header,
+                    value: columnFilters.find((q) => q.id === v.accessorKey)?.value || "",
+                  },
+                }),
+                {}
+              )}
+              onFilter={(val) => {
+                setColumnFilters(val);
+              }}
+            />
+          </IonCol>
+          <IonCol size="2">
+            <Button
+              onClick={() => {
+                if (searchFilterRef.current?.getFilters) {
+                  setColumnFilters(searchFilterRef.current.getFilters());
+                }
+              }}
+            >
+              Search
+            </Button>
+            <Button
+              onClick={() => {
+                if (searchFilterRef.current?.resetFilters) {
+                  searchFilterRef.current.resetFilters();
+                }
+              }}
+            >
+              Reset
+            </Button>
+          </IonCol>
+        </IonRow>
+      </IonGrid>
       <MaterialTable table={table} />
-      {/* {table.getLeafHeaders().map((header) => (
-        <MRT_TableHeadCellFilterContainer key={header.id} header={header} table={table} in />
-      ))} */}
-    </>
+    </section>
   );
 }
 

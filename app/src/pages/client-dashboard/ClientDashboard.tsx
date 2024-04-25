@@ -33,15 +33,6 @@ function ClientDashboard() {
 
   return (
     <>
-      <div>
-        <h1>Dashboard</h1>
-        <h3>Hello {name}</h3>
-        <IonButton onClick={logoutUser} disabled={isLogoutLoading}>
-          Logout
-          {isLogoutLoading && <IonSpinner />}
-        </IonButton>
-        <Links />
-      </div>
       <IonList inset={true}>
         <IonItem>
           <IonLabel>Bob Susan</IonLabel>
