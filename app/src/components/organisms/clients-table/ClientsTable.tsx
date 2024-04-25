@@ -75,7 +75,7 @@ function ClientsTable(props: ClientsTableProps) {
   const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>(getFilterBy());
 
   const key = useMemo(() => {
-    let url = `/clients?page=${pagination.pageIndex}&per_page=${pagination.pageSize}`;
+    let url = `/clients?page=${pagination.pageIndex + 1}&per_page=${pagination.pageSize}`;
     let searchParams: any = {};
     if (columnFilters.length) {
       searchParams.q = "*";
@@ -132,7 +132,7 @@ function ClientsTable(props: ClientsTableProps) {
     ],
     []
   );
-
+  console.log(pagination);
   const table = useMaterialReactTable({
     columns,
     data: clientsTableData?.data || [],
@@ -148,9 +148,6 @@ function ClientsTable(props: ClientsTableProps) {
     onSortingChange: setSorting,
     onPaginationChange: (updateOrValue: any) => {
       let newValue = updateOrValue(pagination);
-      if (newValue.pageIndex <= 0) {
-        newValue.pageIndex = 1;
-      }
       setPagination(newValue);
     },
   });

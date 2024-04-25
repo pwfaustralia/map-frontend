@@ -1,17 +1,6 @@
-import {
-  IonButton,
-  IonContent,
-  IonItem,
-  IonLabel,
-  IonList,
-  IonPage,
-  IonSpinner,
-  useIonViewWillEnter,
-} from "@ionic/react";
+import { IonItem, IonLabel, IonList, useIonViewWillEnter } from "@ionic/react";
 import { useStoreActions, useStoreState } from "easy-peasy";
-import Links from "../../components/atoms/Links";
 import { PageTemplateKeys } from "../../components/templates/dashboard/default/types";
-import useLogoutUser from "../../hooks/useLogoutUser";
 import StoreModel from "../../types/store";
 import "./ClientDashboard.css";
 
@@ -19,7 +8,6 @@ function ClientDashboard() {
   const {
     userData: { name },
   } = useStoreState<StoreModel>((states) => states.user);
-  const { logoutUser, isMutating: isLogoutLoading } = useLogoutUser();
   const setPart = useStoreActions<StoreModel>((actions) => actions.page.setTemplatePart);
 
   useIonViewWillEnter(() => {
