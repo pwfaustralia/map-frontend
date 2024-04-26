@@ -42,7 +42,7 @@ function ClientsTable(props: ClientsTableProps) {
   const { countPerPage, onQuery = () => {} } = props;
   const [globalFilter, setGlobalFilter] = useState(q || "");
   const [pagination, setPagination] = useState<MRT_PaginationState>({
-    pageIndex: parseInt(page + "") || 1,
+    pageIndex: parseInt(page + "") || 0,
     pageSize: parseInt(per_page + "") || countPerPage,
   });
 
