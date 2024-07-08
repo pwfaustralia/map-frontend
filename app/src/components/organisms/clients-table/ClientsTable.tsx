@@ -20,10 +20,9 @@ import "./ClientsTable.scss";
 
 interface ClientsTableProps {
   countPerPage: number;
-  onQuery?: (url: string) => void;
 }
 
-function fetchClientsData(url: string) {
+export function fetchClientsData(url: string) {
   const [tableData, setTableData] = useState<Pagination<Client> | null>(null);
   const { data, isLoading, mutate } = useClients(url);
 
@@ -40,7 +39,7 @@ function ClientsTable(props: ClientsTableProps) {
   const initialLoad = useRef<boolean>(true);
   const searchFilterRef = useRef<any>({});
   const { filter_by, page, per_page, q, sort_by } = queryString.parse(location.search);
-  const { countPerPage, onQuery = () => {} } = props;
+  const { countPerPage } = props;
   const [globalFilter, setGlobalFilter] = useState(q || "");
   const [pagination, setPagination] = useState<MRT_PaginationState>({
     pageIndex: parseInt(page + "") || 0,
@@ -148,6 +147,7 @@ function ClientsTable(props: ClientsTableProps) {
     onSortingChange: setSorting,
     onPaginationChange: (v: any) => {
       if (initialLoad.current) {
+        // Stop's pagination from changing when component is re-rendered due to initial table data fetching.
         initialLoad.current = false;
       } else {
         setPagination(v(pagination));
@@ -160,6 +160,13 @@ function ClientsTable(props: ClientsTableProps) {
       history.replace(key);
     }
   }, [key, isLoading]);
+
+  useEffect(() => {
+    return () => {
+      // Prevents table from setting pageIndex to 1 when component is re-rendered.
+      initialLoad.current = true;
+    };
+  }, []);
 
   return (
     <section className="ClientsTable">

@@ -3,13 +3,14 @@ import { useStoreActions } from "easy-peasy";
 import { Suspense, useEffect, useMemo } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { Route as ReactRoute, Redirect } from "react-router";
-import { useProtectedRoute } from "../hooks/useProtectedRoute";
-import { ProtectedRouteProps } from "../types/props";
-import StoreModel from "../types/store";
+import { useProtectedRoute } from "../../hooks/useProtectedRoute";
+import { ProtectedRouteProps } from "../../types/props";
+import StoreModel from "../../types/store";
 import PageError from "./PageError";
 import PageLoading from "./PageLoading";
+import { routes } from "../../helpers";
 
-const publicPaths = ["/login"];
+const publicPaths = Object.values(routes.common);
 
 function Route(props: ProtectedRouteProps) {
   const logoutUser = useStoreActions<StoreModel>((actions) => actions.user.logout);
@@ -64,8 +65,8 @@ function ProtectedRoute(props: ProtectedRouteProps) {
     return <PageLoading />;
   }
 
-  if (isUnauthenticated && props.path !== "/login") {
-    return <Redirect to="/login" />;
+  if (isUnauthenticated && props.path !== routes.common.login) {
+    return <Redirect to={routes.common.login} />;
   }
 
   if (isUnauthorized && redirectUrl) {

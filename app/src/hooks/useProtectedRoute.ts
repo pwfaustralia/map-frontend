@@ -11,8 +11,11 @@ export function useProtectedRoute(props: ProtectedRouteProps) {
   const { scopeName, redirectUrlIfUnauthorized, redirectIfLoggedIn } = props;
   const { isLoggedIn } = useStoreState<StoreModel>((states) => states.user);
   const { logoutUser } = useLogoutUser();
+  console.log("a", isLoggedIn);
   const { data: userData, isLoading: isUserDataLoading } = useUserData(isLoggedIn, {
     suspense: true,
+    // Set revalidateOnMount to true if you want to check if user is still logged in every time they navigate the app.
+    // revalidateOnMount: false,
     onError: (error) => {
       if (error.response.status !== 200) {
         logoutUser();

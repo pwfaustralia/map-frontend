@@ -7,15 +7,18 @@ import IconLink from "../../../molecules/icon-link/IconLink";
 import "./DashboardTemplate.scss";
 import { DashboardTemplatePartKeys, PageTemplateKeys } from "./types";
 
+import { routes } from "../../../../helpers";
 import useLogoutUser from "../../../../hooks/useLogoutUser";
+import useUserRole from "../../../../hooks/useUserRole";
 import clientsIcon from "./icons/clients-icon.svg";
 import dashboardIcon from "./icons/dashboard-icon.svg";
 import starIcon from "./icons/star-icon.svg";
 
 function DashboardTemplate({ children }: { children: JSX.Element }) {
-  const pageTemplates = useStoreState<StoreModel>((states) => states.page);
   const templateKey = PageTemplateKeys.DASHBOARD;
+  const pageTemplates = useStoreState<StoreModel>((states) => states.page);
   const { isMutating: isLogoutLoading, logoutUser } = useLogoutUser();
+  const { isAdminOrStaff, isClient, role } = useUserRole();
 
   const getTemplatePart = (partName: DashboardTemplatePartKeys) => {
     if (!pageTemplates[templateKey]) return <></>;
@@ -31,14 +34,18 @@ function DashboardTemplate({ children }: { children: JSX.Element }) {
         <IonRow>
           <IonCol size="1.5">
             <div className="DashboardTemplate__logo"></div>
-            <IconLink to="/dashboard" icon={dashboardIcon} replace={true}>
-              Dashboard
-            </IconLink>
-            <IconLink to="/clients" icon={clientsIcon} replace={true}>
-              Clients
-            </IconLink>
+            {isAdminOrStaff && (
+              <IconLink to={routes.C.dashboard} icon={dashboardIcon} replace={true}>
+                Dashboard
+              </IconLink>
+            )}
+            {isAdminOrStaff && (
+              <IconLink to={routes.AS.clients} icon={clientsIcon} replace={true}>
+                Clients
+              </IconLink>
+            )}
             <IconLink
-              to="/"
+              to="/logout"
               icon={starIcon}
               replace={true}
               onClick={(e) => {

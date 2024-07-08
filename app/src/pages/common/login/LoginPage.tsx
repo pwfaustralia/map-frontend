@@ -1,10 +1,11 @@
 import { lockClosed, mail } from "ionicons/icons";
 import { useEffect, useRef, useState } from "react";
-import Button from "../../components/atoms/button/Button";
-import Input from "../../components/atoms/input/Input";
-import useLoginUser from "../../hooks/useLoginUser";
+import Button from "../../../components/atoms/button/Button";
+import Input from "../../../components/atoms/input/Input";
+import useLoginUser from "../../../hooks/useLoginUser";
 import "./LoginPage.css";
 import { IonText } from "@ionic/react";
+import LoginTemplate from "../../../components/templates/login/default/LoginTemplate";
 
 function Login() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -28,7 +29,7 @@ function Login() {
   }, [error]);
 
   return (
-    <>
+    <LoginTemplate>
       {errorMessage && <h4>{errorMessage}</h4>}
       {isMutating && <h2>Signing in...</h2>}
       <section className="login-page">
@@ -59,7 +60,7 @@ function Login() {
           </IonText>
         </div>
       </section>
-    </>
+    </LoginTemplate>
   );
 }
 

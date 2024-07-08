@@ -18,14 +18,13 @@ import "@ionic/react/css/text-alignment.css";
 import "@ionic/react/css/text-transformation.css";
 
 /* Theme variables */
-import DashboardTemplate from "./components/templates/dashboard/default/DashboardTemplate";
-import LoginTemplate from "./components/templates/login/default/LoginTemplate";
-import Route from "./pages/Route";
-import ClientDashboard from "./pages/client-dashboard/ClientDashboard";
-import ClientsPage from "./pages/clients/ClientsPage";
-import LoginPage from "./pages/login/LoginPage";
+import AS_ClientsPage from "./pages/admins-and-staffs/clients/AS_ClientsPage";
+import C_Dashboard from "./pages/clients/client-dashboard/C_Dashboard";
+import PageNotFound from "./pages/common/PageNotFound";
+import Route from "./pages/common/Route";
+import LoginPage from "./pages/common/login/LoginPage";
 import "./theme/variables.css";
-import PageNotFound from "./pages/PageNotFound";
+import { routes } from "./helpers";
 
 setupIonicReact();
 
@@ -34,22 +33,16 @@ const App: React.FC = () => {
     <IonApp>
       <IonReactRouter>
         <IonRouterOutlet>
-          <Route exact path="/login" redirectIfLoggedIn>
-            <LoginTemplate>
-              <LoginPage />
-            </LoginTemplate>
+          <Route exact path={routes.common.login}>
+            <LoginPage />
           </Route>
 
-          <Route exact path="/clients" scopeName="view-all-clients">
-            <DashboardTemplate>
-              <ClientsPage />
-            </DashboardTemplate>
+          <Route exact path={routes.AS.clients} scopeName="view-all-clients">
+            <AS_ClientsPage />
           </Route>
 
-          <Route exact path="/dashboard">
-            <DashboardTemplate>
-              <ClientDashboard />
-            </DashboardTemplate>
+          <Route exact path={routes.C.dashboard}>
+            <C_Dashboard />
           </Route>
 
           <Route>

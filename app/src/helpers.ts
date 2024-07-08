@@ -1,3 +1,5 @@
+import { getPlatforms } from "@ionic/react";
+
 function revalidation(revalidation: boolean) {
   return {
     revalidateOnFocus: revalidation,
@@ -15,3 +17,19 @@ export function disableRevalidation() {
 export function enableRevalidation() {
   return revalidation(true);
 }
+
+export function isDesktop() {
+  return getPlatforms().indexOf("desktop") >= 0;
+}
+
+export const routes = {
+  common: {
+    login: "/login",
+  },
+  AS: {
+    clients: "/clients",
+  },
+  C: {
+    dashboard: "/dashboard",
+  },
+};

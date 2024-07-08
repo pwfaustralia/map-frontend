@@ -1,0 +1,11 @@
+.SearchWithAutoComplete {
+  &__trigger,
+  &__input {
+    --box-shadow: none;
+    --background: #f6f6f6;
+    --border-radius: 10px;
+  }
+  &__trigger input {
+    cursor: pointer;
+  }
+}

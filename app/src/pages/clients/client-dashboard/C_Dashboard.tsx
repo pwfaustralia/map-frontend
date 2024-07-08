@@ -1,10 +1,11 @@
 import { IonItem, IonLabel, IonList, useIonViewWillEnter } from "@ionic/react";
 import { useStoreActions, useStoreState } from "easy-peasy";
-import { PageTemplateKeys } from "../../components/templates/dashboard/default/types";
-import StoreModel from "../../types/store";
-import "./ClientDashboard.css";
+import { PageTemplateKeys } from "../../../components/templates/dashboard/default/types";
+import StoreModel from "../../../types/store";
+import "./C_Dashboard.css";
+import DashboardTemplate from "../../../components/templates/dashboard/default/DashboardTemplate";
 
-function ClientDashboard() {
+function C_Dashboard() {
   const {
     userData: { name },
   } = useStoreState<StoreModel>((states) => states.user);
@@ -20,7 +21,7 @@ function ClientDashboard() {
   }, []);
 
   return (
-    <>
+    <DashboardTemplate>
       <IonList inset={true}>
         <IonItem>
           <IonLabel>Bob Susan</IonLabel>
@@ -38,8 +39,8 @@ function ClientDashboard() {
           <IonLabel>Steve</IonLabel>
         </IonItem>
       </IonList>
-    </>
+    </DashboardTemplate>
   );
 }
 
-export default ClientDashboard;
+export default C_Dashboard;
