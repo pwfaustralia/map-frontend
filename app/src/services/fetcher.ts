@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 
 export const laravelAxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -8,6 +8,7 @@ export const laravelAxiosInstance = axios.create({
   },
 });
 
-const fetcher = (url: string) => laravelAxiosInstance.get(url).then((res) => res.data);
+const fetcher = (url: string, config?: AxiosRequestConfig) =>
+  laravelAxiosInstance.get(url, config).then((res) => res.data);
 
 export default fetcher;

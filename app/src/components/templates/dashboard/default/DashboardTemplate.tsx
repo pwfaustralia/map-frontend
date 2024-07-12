@@ -1,32 +1,21 @@
 import { IonCol, IonContent, IonGrid, IonPage, IonRow, IonSpinner, IonToolbar } from "@ionic/react";
 
-import { useStoreState } from "easy-peasy";
-import { isValidElement } from "react";
-import StoreModel from "../../../../types/store";
+import { useState } from "react";
 import IconLink from "../../../molecules/icon-link/IconLink";
 import "./DashboardTemplate.scss";
-import { DashboardTemplatePartKeys, PageTemplateKeys } from "./types";
 
 import { routes } from "../../../../helpers";
 import useLogoutUser from "../../../../hooks/useLogoutUser";
 import useUserRole from "../../../../hooks/useUserRole";
+import SearchClientsPopup from "../../../organisms/search-clients-popup/SearchClientsPopup";
 import clientsIcon from "./icons/clients-icon.svg";
 import dashboardIcon from "./icons/dashboard-icon.svg";
 import starIcon from "./icons/star-icon.svg";
 
 function DashboardTemplate({ children }: { children: JSX.Element }) {
-  const templateKey = PageTemplateKeys.DASHBOARD;
-  const pageTemplates = useStoreState<StoreModel>((states) => states.page);
+  const [searchKeyword, setSearchKeyword] = useState<string>();
   const { isMutating: isLogoutLoading, logoutUser } = useLogoutUser();
-  const { isAdminOrStaff, isClient, role } = useUserRole();
-
-  const getTemplatePart = (partName: DashboardTemplatePartKeys) => {
-    if (!pageTemplates[templateKey]) return <></>;
-    if (!pageTemplates[templateKey][partName]) return <></>;
-    let templatePart = pageTemplates[templateKey][partName];
-    if (!isValidElement(templatePart)) return <></>;
-    return templatePart;
-  };
+  const { isAdminOrStaff } = useUserRole();
 
   return (
     <IonPage>
@@ -59,8 +48,21 @@ function DashboardTemplate({ children }: { children: JSX.Element }) {
           </IonCol>
           <IonCol size="10.5">
             <IonToolbar>
-              <div slot="start">{getTemplatePart("toolbar-search")}</div>
-              <div slot="end">{getTemplatePart("toolbar-avatar")}</div>
+              <div slot="start">
+                <SearchClientsPopup
+                  inputProps={{
+                    placeholder: "Search a client here",
+                    animated: true,
+                    onIonInput: (e) => {
+                      setSearchKeyword(e.target?.value || "");
+                      console.log("testing");
+                    },
+                  }}
+                  searchKeyword={searchKeyword}
+                  setSearchKeyWord={setSearchKeyword}
+                />
+              </div>
+              <div slot="end">AVATAR</div>
             </IonToolbar>
             <IonContent>{children}</IonContent>
           </IonCol>

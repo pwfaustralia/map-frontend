@@ -1,4 +1,4 @@
-import { IonCol, IonGrid, IonRow } from "@ionic/react";
+import { IonCol, IonGrid, IonRow, useIonViewWillLeave } from "@ionic/react";
 import {
   MRT_ColumnDef,
   MRT_ColumnFiltersState,
@@ -9,7 +9,7 @@ import {
 import queryString from "query-string";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useHistory } from "react-router";
-import { useClients } from "../../../services/queries";
+import { useSearchClients } from "../../../services/queries";
 import Client from "../../../types/client";
 import { Pagination } from "../../../types/pagination";
 import SearchFilter from "../../molecules/search-filter/SearchFilter";
@@ -22,9 +22,9 @@ interface ClientsTableProps {
   countPerPage: number;
 }
 
-export function fetchClientsData(url: string) {
+export function fetchClientsData(queryParams: string) {
   const [tableData, setTableData] = useState<Pagination<Client> | null>(null);
-  const { data, isLoading, mutate } = useClients(url);
+  const [{ data, isLoading, mutate }, controller] = useSearchClients(queryParams);
 
   useEffect(() => {
     if (data) {
@@ -32,7 +32,7 @@ export function fetchClientsData(url: string) {
     }
   }, [data]);
 
-  return { tableData, isLoading, mutate };
+  return { tableData, isLoading, mutate, controller };
 }
 
 function ClientsTable(props: ClientsTableProps) {
@@ -42,7 +42,7 @@ function ClientsTable(props: ClientsTableProps) {
   const { countPerPage } = props;
   const [globalFilter, setGlobalFilter] = useState(q || "");
   const [pagination, setPagination] = useState<MRT_PaginationState>({
-    pageIndex: parseInt(page + "") || 0,
+    pageIndex: parseInt(page + "") || 1,
     pageSize: parseInt(per_page + "") || countPerPage,
   });
 
@@ -75,7 +75,7 @@ function ClientsTable(props: ClientsTableProps) {
   const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>(getFilterBy());
 
   const key = useMemo(() => {
-    let url = `/clients?page=${pagination.pageIndex + (initialLoad.current ? 0 : 1)}&per_page=${pagination.pageSize}`;
+    let url = `?page=${pagination.pageIndex + (initialLoad.current ? 0 : 1)}&per_page=${pagination.pageSize}`;
     let searchParams: any = {};
     if (columnFilters.length) {
       searchParams.q = "*";
@@ -101,7 +101,7 @@ function ClientsTable(props: ClientsTableProps) {
 
   const history = useHistory();
 
-  const { tableData: clientsTableData, isLoading } = fetchClientsData(key);
+  const { tableData: clientsTableData, isLoading, controller } = fetchClientsData(key);
 
   const columns = useMemo<MRT_ColumnDef<Client>[]>(
     () => [
@@ -150,6 +150,7 @@ function ClientsTable(props: ClientsTableProps) {
         // Stop's pagination from changing when component is re-rendered due to initial table data fetching.
         initialLoad.current = false;
       } else {
+        controller.abort();
         setPagination(v(pagination));
       }
     },
@@ -161,12 +162,12 @@ function ClientsTable(props: ClientsTableProps) {
     }
   }, [key, isLoading]);
 
-  useEffect(() => {
-    return () => {
-      // Prevents table from setting pageIndex to 1 when component is re-rendered.
-      initialLoad.current = true;
-    };
-  }, []);
+  useIonViewWillLeave(() => {
+    // Prevents table from setting pageIndex to 1 when component is re-rendered.
+    initialLoad.current = true;
+    // Cancel search clients API request
+    controller.abort();
+  });
 
   return (
     <section className="ClientsTable">

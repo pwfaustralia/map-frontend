@@ -1,4 +1,4 @@
-.SearchWithAutoComplete {
+.SearchDialog {
   &__trigger,
   &__input {
     --box-shadow: none;
@@ -7,5 +7,10 @@
   }
   &__trigger input {
     cursor: pointer;
+  }
+  &__modal {
+    --width: 800px;
+    --border-radius: 20px;
+    backdrop-filter: blur(3px);
   }
 }

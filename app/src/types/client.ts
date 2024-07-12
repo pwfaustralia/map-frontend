@@ -1,6 +1,7 @@
 export default interface Client {
   id: string;
   first_name: string;
+  full_name: string;
   last_name: string;
   middle_name?: string;
   preferred_name?: string;

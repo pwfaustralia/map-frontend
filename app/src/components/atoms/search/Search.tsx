@@ -1,4 +1,4 @@
-import { IonIcon, IonSearchbar } from "@ionic/react";
+import { IonSearchbar } from "@ionic/react";
 import type { ComponentProps } from "react";
 
 import "./Search.scss";

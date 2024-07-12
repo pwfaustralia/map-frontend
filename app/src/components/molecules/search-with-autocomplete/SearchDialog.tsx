@@ -1,31 +1,21 @@
-import {
-  IonButton,
-  IonButtons,
-  IonContent,
-  IonHeader,
-  IonItem,
-  IonLabel,
-  IonList,
-  IonListHeader,
-  IonModal,
-  IonTitle,
-  IonToolbar,
-  createAnimation,
-} from "@ionic/react";
-import { useRef, type ComponentProps } from "react";
+import { IonButton, IonButtons, IonContent, IonHeader, IonModal, IonToolbar, createAnimation } from "@ionic/react";
+import React, { ReactElement, ReactNode, useRef, type ComponentProps } from "react";
 
-import Search from "../../atoms/search/Search";
-import "./SearchWithAutoComplete.scss";
 import { isDesktop } from "../../../helpers";
+import Search from "../../atoms/search/Search";
+import "./SearchDialog.scss";
+import { SearchClientsContentProps } from "../../organisms/search-clients-popup/SearchClientsPopup";
 
-interface InputWithLabelProps extends ComponentProps<typeof Search> {
+interface SearchDialogProps extends ComponentProps<typeof Search> {
   triggerLabel?: string;
+  children?: ReactElement<SearchClientsContentProps>;
+  onDissmissed?: () => void;
 }
 
-function SearchWithAutoComplete(props: InputWithLabelProps) {
+function SearchDialog(props: SearchDialogProps) {
   const searchRef = useRef<HTMLIonSearchbarElement>(null);
   const modal = useRef<HTMLIonModalElement>(null);
-  const { triggerLabel, ...searchProps } = props;
+  const { children, triggerLabel, onDissmissed = () => {}, ...searchProps } = props;
   const enterAnimation = (baseEl: HTMLElement) => {
     const root = baseEl.shadowRoot;
     const dialogHeight = root?.querySelector('[role="dialog"]')?.getBoundingClientRect().height;
@@ -52,12 +42,12 @@ function SearchWithAutoComplete(props: InputWithLabelProps) {
     return enterAnimation(baseEl).direction("reverse");
   };
   return (
-    <section className="SearchWithAutoComplete">
+    <section className="SearchDialog">
       <Search
         onClick={() => {
           modal.current?.present();
         }}
-        className="SearchWithAutoComplete__trigger"
+        className="SearchDialog__trigger"
         placeholder={triggerLabel || searchProps.placeholder || ""}
       ></Search>
       <IonModal
@@ -67,6 +57,10 @@ function SearchWithAutoComplete(props: InputWithLabelProps) {
         handle={false}
         onDidPresent={() => {
           searchRef.current?.setFocus();
+        }}
+        className="SearchDialog__modal"
+        onDidDismiss={() => {
+          onDissmissed();
         }}
       >
         {!isDesktop() && (
@@ -79,31 +73,12 @@ function SearchWithAutoComplete(props: InputWithLabelProps) {
           </IonHeader>
         )}
         <IonContent className="ion-padding">
-          <Search className="SearchWithAutoComplete__input" innerRef={searchRef} {...searchProps}></Search>
-          <IonList>
-            <IonListHeader>
-              <IonLabel>Video Games</IonLabel>
-            </IonListHeader>
-            <IonItem>
-              <IonLabel>Pokémon Yellow</IonLabel>
-            </IonItem>
-            <IonItem>
-              <IonLabel>Mega Man X</IonLabel>
-            </IonItem>
-            <IonItem>
-              <IonLabel>The Legend of Zelda</IonLabel>
-            </IonItem>
-            <IonItem>
-              <IonLabel>Pac-Man</IonLabel>
-            </IonItem>
-            <IonItem>
-              <IonLabel>Super Mario World</IonLabel>
-            </IonItem>
-          </IonList>
+          <Search className="SearchDialog__input" innerRef={searchRef} {...searchProps}></Search>
+          {React.isValidElement(children) && React.cloneElement(children, { modal })}
         </IonContent>
       </IonModal>
     </section>
   );
 }
 
-export default SearchWithAutoComplete;
+export default SearchDialog;
