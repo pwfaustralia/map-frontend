@@ -7,6 +7,8 @@ import { setupIonicReact } from "@ionic/react";
 const container = document.getElementById("root");
 const root = createRoot(container!);
 
+import "./i18n";
+
 setupIonicReact({
   platform: {
     /** The default `desktop` function returns false for devices with a touchscreen.

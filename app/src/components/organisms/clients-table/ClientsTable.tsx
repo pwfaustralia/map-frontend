@@ -9,13 +9,13 @@ import {
 import queryString from "query-string";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useHistory } from "react-router";
-import { useSearchClients } from "../../../services/queries";
+import { useSearchClientsFast } from "../../../services/queries";
 import Client from "../../../types/client";
-import { Pagination } from "../../../types/pagination";
+import Button from "../../atoms/button/Button";
 import SearchFilter from "../../molecules/search-filter/SearchFilter";
 import MaterialTable from "../../molecules/table/MaterialTable";
-import Button from "../../atoms/button/Button";
 
+import ClientsAdvancedFilters from "../clients-advanced-filters/ClientsAdvancedFilters";
 import "./ClientsTable.scss";
 
 interface ClientsTableProps {
@@ -23,8 +23,8 @@ interface ClientsTableProps {
 }
 
 export function fetchClientsData(queryParams: string) {
-  const [tableData, setTableData] = useState<Pagination<Client> | null>(null);
-  const [{ data, isLoading, mutate }, controller] = useSearchClients(queryParams);
+  const [tableData, setTableData] = useState<any | null>(null);
+  const [{ data, isLoading, mutate }, controller] = useSearchClientsFast([queryParams]);
 
   useEffect(() => {
     if (data) {
@@ -42,7 +42,7 @@ function ClientsTable(props: ClientsTableProps) {
   const { countPerPage } = props;
   const [globalFilter, setGlobalFilter] = useState(q || "");
   const [pagination, setPagination] = useState<MRT_PaginationState>({
-    pageIndex: parseInt(page + "") || 1,
+    pageIndex: parseInt(page + "") || 0,
     pageSize: parseInt(per_page + "") || countPerPage,
   });
 
@@ -74,59 +74,69 @@ function ClientsTable(props: ClientsTableProps) {
 
   const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>(getFilterBy());
 
-  const key = useMemo(() => {
-    let url = `?page=${pagination.pageIndex + (initialLoad.current ? 0 : 1)}&per_page=${pagination.pageSize}`;
-    let searchParams: any = {};
+  const search = useMemo(() => {
+    let url = `?page=${pagination.pageIndex}&per_page=${pagination.pageSize}`;
+    let params: any = {
+      q: "*",
+      page: pagination.pageIndex + 1,
+      per_page: pagination.pageSize,
+      collection: "clients",
+    };
     if (columnFilters.length) {
-      searchParams.q = "*";
+      params.q = "*";
       let filter_by: string[] = [];
       columnFilters.forEach(({ id, value }) => {
-        filter_by.push(`${id}:=\`${value}\``);
+        filter_by.push(`${id.replaceAll("document.", "")}:=\`${value}\``);
       });
-      searchParams.filter_by = filter_by.join(" && ");
+      params.filter_by = filter_by.join(" && ");
     }
     if (sorting.length) {
-      searchParams.q = "*";
-      searchParams.sort_by = `${sorting[0].id}:${sorting[0].desc ? "desc" : "asc"}`;
+      params.q = "*";
+      sorting.forEach((col) => {
+        params.sort_by = `${col.id.replaceAll("document.", "")}:${sorting[0].desc ? "desc" : "asc"},`;
+      });
+      params.sort_by = params.sort_by.split(",");
+      params.sort_by.pop();
+      params.sort_by = params.sort_by.join(",");
     }
     if (globalFilter) {
-      searchParams.q = globalFilter;
+      params.q = globalFilter;
     }
-    Object.keys(searchParams).forEach((k) => {
-      searchParams[k] = encodeURIComponent(searchParams[k]);
-      url += `&${k}=${searchParams[k]}`;
+    Object.keys(params).forEach((k) => {
+      url += `&${k}=${encodeURIComponent(params[k])}`;
     });
-    return url;
+    return { params, url };
   }, [pagination, globalFilter, columnFilters, sorting]);
 
   const history = useHistory();
 
-  const { tableData: clientsTableData, isLoading, controller } = fetchClientsData(key);
+  const { tableData: clientsTableData, isLoading, controller } = fetchClientsData(search.params);
+  const { hits: searchResults, out_of: searchTotal } = clientsTableData?.[0] || { hits: [], total: 0 };
 
   const columns = useMemo<MRT_ColumnDef<Client>[]>(
     () => [
       {
-        accessorKey: "first_name",
+        accessorKey: "document.first_name",
         header: "First Name",
       },
       {
-        accessorKey: "last_name",
+        accessorKey: "document.last_name",
         header: "Family  Name",
       },
       {
-        accessorKey: "email",
+        accessorKey: "document.email",
         header: "Email Address",
       },
       {
-        accessorKey: "mobile_phone",
+        accessorKey: "document.mobile_phone",
         header: "Mobile Phone",
       },
       {
-        accessorKey: "physical_address.town",
+        accessorKey: "document.physical_address.town",
         header: "Town",
       },
       {
-        accessorKey: "physical_address.street_name",
+        accessorKey: "document.physical_address.street_name",
         header: "Street",
       },
     ],
@@ -134,14 +144,14 @@ function ClientsTable(props: ClientsTableProps) {
   );
   const table = useMaterialReactTable({
     columns,
-    data: clientsTableData?.data || [],
+    data: searchResults,
     state: { pagination, isLoading, sorting, columnFilters, globalFilter },
     initialState: { columnVisibility: { firstName: false } },
     manualSorting: true,
     manualFiltering: true,
     enableGlobalFilter: false,
     manualPagination: true,
-    rowCount: clientsTableData?.total,
+    rowCount: searchTotal,
     onGlobalFilterChange: setGlobalFilter,
     onColumnFiltersChange: setColumnFilters,
     onSortingChange: setSorting,
@@ -157,10 +167,10 @@ function ClientsTable(props: ClientsTableProps) {
   });
 
   useEffect(() => {
-    if (key && !isLoading) {
-      history.replace(key);
+    if (search.url && !isLoading) {
+      history.replace(search.url);
     }
-  }, [key, isLoading]);
+  }, [search.url, isLoading]);
 
   useIonViewWillLeave(() => {
     // Prevents table from setting pageIndex to 1 when component is re-rendered.
@@ -214,8 +224,16 @@ function ClientsTable(props: ClientsTableProps) {
             </Button>
           </IonCol>
         </IonRow>
+
+        <IonRow>
+          <IonCol size="3" style={{ paddingRight: "30px" }}>
+            <ClientsAdvancedFilters />
+          </IonCol>
+          <IonCol size="9">
+            <MaterialTable table={table} />
+          </IonCol>
+        </IonRow>
       </IonGrid>
-      <MaterialTable table={table} />
     </section>
   );
 }

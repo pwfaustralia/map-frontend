@@ -55,7 +55,6 @@ function DashboardTemplate({ children }: { children: JSX.Element }) {
                     animated: true,
                     onIonInput: (e) => {
                       setSearchKeyword(e.target?.value || "");
-                      console.log("testing");
                     },
                   }}
                   searchKeyword={searchKeyword}

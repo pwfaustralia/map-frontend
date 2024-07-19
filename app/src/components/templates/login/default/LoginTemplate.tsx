@@ -1,9 +1,10 @@
-import { IonCol, IonGrid, IonPage, IonRow, IonText } from "@ionic/react";
+import { IonCol, IonGrid, IonPage, IonRow } from "@ionic/react";
 
 import "./LoginTemplate.css";
+import Text from "../../../atoms/text/Text";
 
 interface LoginTemplateProps {
-  children?: JSX.Element;
+  children?: React.ReactNode | React.ReactNode[];
 }
 
 function LoginTemplate(props: LoginTemplateProps) {
@@ -15,9 +16,9 @@ function LoginTemplate(props: LoginTemplateProps) {
           <IonCol sizeXs="12" sizeSm="3" sizeLg="4"></IonCol>
           <IonCol sizeXs="12" sizeSm="9" sizeLg="8" style={{ background: "#fff" }}>
             <section>
-              <IonText className="form__header--text">
-                Welcome to your <IonText color="secondary">Mortgage Action Plan</IonText>
-              </IonText>
+              <Text className="form__header--text">
+                Welcome to your <Text color="secondary">Mortgage Action Plan</Text>
+              </Text>
               {children}
             </section>
           </IonCol>

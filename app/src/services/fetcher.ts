@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig } from "axios";
+import axios from "axios";
 
 export const laravelAxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -8,7 +8,13 @@ export const laravelAxiosInstance = axios.create({
   },
 });
 
-const fetcher = (url: string, config?: AxiosRequestConfig) =>
-  laravelAxiosInstance.get(url, config).then((res) => res.data);
+export const typesenseAxiosInstance = axios.create({
+  baseURL: import.meta.env.VITE_TYPESENSE_API_URL,
+  headers: {
+    "X-TYPESENSE-API-KEY": import.meta.env.VITE_TYPESENSE_API_KEY,
+  },
+});
 
-export default fetcher;
+export const laravelFetcher = (config?: any) => laravelAxiosInstance(config).then((res) => res.data);
+
+export const typenseFetcher = (config?: any) => typesenseAxiosInstance(config).then((res) => res.data);

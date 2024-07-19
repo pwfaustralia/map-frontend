@@ -1,12 +1,12 @@
 import { SWRConfig } from "swr";
-import fetcher from "../services/fetcher";
+import { laravelFetcher } from "../services/fetcher";
 import { disableRevalidation } from "../helpers";
 
 function SWRProvider({ children }: { children: JSX.Element }) {
   return (
     <SWRConfig
       value={{
-        fetcher,
+        fetcher: laravelFetcher,
         ...disableRevalidation(),
       }}
     >

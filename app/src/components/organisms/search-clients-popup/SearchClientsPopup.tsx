@@ -1,9 +1,8 @@
-import { IonCol, IonGrid, IonItem, IonLabel, IonList, IonRow, IonSpinner, IonText } from "@ionic/react";
+import { IonCol, IonGrid, IonItem, IonLabel, IonList, IonRow, IonSpinner } from "@ionic/react";
 import { ComponentProps, useEffect, useRef } from "react";
-import useDebounce from "../../../hooks/useDebounce";
-import { useSearchClients } from "../../../services/queries";
-import Chip from "../../atoms/chip/Chip";
+import { useSearchClientsFast } from "../../../services/queries";
 import SearchDialog from "../../molecules/search-with-autocomplete/SearchDialog";
+import Text from "../../atoms/text/Text";
 
 interface SearchClientsPopupProps {
   inputProps?: ComponentProps<typeof SearchDialog>;
@@ -40,8 +39,26 @@ function SearchClientsPopup(props: SearchClientsPopupProps) {
 }
 
 function SearchClientsContent({ searchKeyword, searchRef, modal }: SearchClientsContentProps) {
-  const _searchKeyWord = useDebounce(searchKeyword, 1000);
-  const [{ data, isLoading, isValidating }, controller] = useSearchClients(_searchKeyWord);
+  const [{ data, isLoading, isValidating }, controller] = useSearchClientsFast(
+    searchKeyword
+      ? [
+          {
+            exhaustive_search: true,
+            highlight_full_fields:
+              "first_name,last_name,middle_name,preferred_name,email,home_phone,work_phone,mobile_phone,physical_address.town,physical_address.street_name,fax",
+            collection: "clients",
+            facet_by: "first_name,last_name",
+            q: searchKeyword,
+            query_by:
+              "first_name,last_name,middle_name,preferred_name,email,home_phone,work_phone,mobile_phone,physical_address.town,physical_address.street_name,fax",
+            max_facet_values: 10,
+            page: 1,
+            per_page: 12,
+          },
+        ]
+      : null
+  );
+  const { hits: searchResults, out_of: searchTotal, found } = data?.[0] || { hits: [], total: 0 };
 
   useEffect(() => {
     if (!!searchRef) {
@@ -69,15 +86,6 @@ function SearchClientsContent({ searchKeyword, searchRef, modal }: SearchClients
     );
   };
 
-  if (searchKeyword !== _searchKeyWord && searchKeyword?.length) {
-    return (
-      <>
-        <IonText>Searching for:</IonText>
-        <Chip outline={true}>{searchKeyword}</Chip>
-      </>
-    );
-  }
-
   if (isLoading || isValidating) {
     return (
       <CenterElement>
@@ -86,26 +94,33 @@ function SearchClientsContent({ searchKeyword, searchRef, modal }: SearchClients
     );
   }
 
-  if (!data?.data) {
+  if (!searchKeyword) {
     return (
       <CenterElement>
-        <IonText>Start typing to search!</IonText>
+        <Text>Start typing to search!</Text>
       </CenterElement>
     );
   }
 
-  if (data?.data.length === 0) {
+  if (searchResults.length === 0) {
     return (
       <CenterElement>
-        <IonText>No results</IonText>
+        <Text>No results</Text>
       </CenterElement>
     );
   }
   return (
     <IonList>
-      {data.data.map((q) => (
-        <IonItem key={q.id}>
-          <IonLabel>{q.full_name}</IonLabel>
+      <CenterElement>
+        <Text>
+          {found} out of {searchTotal}
+        </Text>
+      </CenterElement>
+      {searchResults.map((q: any) => (
+        <IonItem key={q.document.id}>
+          <IonLabel>
+            {q.document.first_name} {q.document.last_name}
+          </IonLabel>
         </IonItem>
       ))}
     </IonList>

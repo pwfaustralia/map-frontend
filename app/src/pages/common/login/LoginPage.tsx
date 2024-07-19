@@ -2,10 +2,10 @@ import { lockClosed, mail } from "ionicons/icons";
 import { useEffect, useRef, useState } from "react";
 import Button from "../../../components/atoms/button/Button";
 import Input from "../../../components/atoms/input/Input";
+import LoginTemplate from "../../../components/templates/login/default/LoginTemplate";
 import useLoginUser from "../../../hooks/useLoginUser";
 import "./LoginPage.css";
-import { IonText } from "@ionic/react";
-import LoginTemplate from "../../../components/templates/login/default/LoginTemplate";
+import Text from "../../../components/atoms/text/Text";
 
 function Login() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -55,9 +55,9 @@ function Login() {
           <Button onClick={handleSignin} disabled={isMutating} color="primary">
             Sign In
           </Button>
-          <IonText className="login__forgot_password">
-            Forgot your password? <IonText color="secondary">Reset Password</IonText>
-          </IonText>
+          <Text className="login__forgot_password">
+            Forgot your password? <Text color="secondary">Reset Password</Text>
+          </Text>
         </div>
       </section>
     </LoginTemplate>

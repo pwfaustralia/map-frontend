@@ -3,8 +3,7 @@ import useSWR, { SWRConfiguration, SWRResponse } from "swr";
 import Client from "../types/client";
 import { Pagination } from "../types/pagination";
 import User from "../types/user";
-import fetcher from "./fetcher";
-import { AxiosRequestConfig } from "axios";
+import { laravelFetcher, typenseFetcher } from "./fetcher";
 
 export function useSearchClients(
   queryString: string | null | undefined
@@ -18,7 +17,7 @@ export function useSearchClients(
           ? `/clients?q=${queryString}`
           : `/clients${queryString}`,
       (url) =>
-        fetcher(url, { signal: controller.signal }).then((q) => ({
+        laravelFetcher({ url, method: "GET", signal: controller.signal }).then((q) => ({
           ...q,
           data: q.data.map((qq: any) => ({ ...qq, full_name: qq.first_name + " " + qq.last_name })),
         })),
@@ -30,6 +29,18 @@ export function useSearchClients(
     ),
     controller,
   ];
+}
+
+export function useSearchClientsFast(searches: any): [SWRResponse<any>, AbortController] {
+  const controller = new AbortController();
+  const request = useSWR<any>(searches, (queryString: string) =>
+    typenseFetcher({
+      url: "multi_search",
+      method: "POST",
+      data: { searches },
+    }).then((q) => q.results)
+  );
+  return [request, controller];
 }
 
 export function useUserData(isLoggedIn: boolean, config: SWRConfiguration) {

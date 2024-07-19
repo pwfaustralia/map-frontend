@@ -1,7 +1,8 @@
+import { IonCol, IonGrid, IonRow } from "@ionic/react";
 import type { ComponentProps } from "react";
 import Input from "../../atoms/input/Input";
-import { IonCol, IonGrid, IonRow, IonText } from "@ionic/react";
 
+import Text from "../../atoms/text/Text";
 import "./InputWithLabel.scss";
 
 interface InputWithLabelProps extends ComponentProps<typeof Input> {
@@ -21,7 +22,7 @@ function InputWithLabel(props: InputWithLabelProps) {
     <IonGrid className="InputWithLabel" {...grid}>
       <IonRow>
         <IonCol className="InputWithLabel__label_col" {...labelCol}>
-          <IonText className="InputWithLabel__label">{label}</IonText>
+          <Text className="InputWithLabel__label">{label}</Text>
         </IonCol>
         <IonCol className="InputWithLabel__input_col" {...inputCol}>
           <Input {...inputProps} innerRef={innerRef} additionalClass="InputWithLabel__input" />

@@ -1,0 +1,19 @@
+.AdvancedFilter {
+  width: min(200px, 100%);
+  $indent: 35px;
+  &__modifier {
+    --highlight-color: transparent;
+    margin-left: $indent;
+  }
+  &__input {
+    --background: #ffffff;
+    --border-radius: 10px;
+    --padding-start: 10px;
+    border: 1px solid rgba(151, 151, 151, 0.33);
+    border-radius: 4px;
+    margin-left: $indent;
+    .input-highlight {
+      display: none;
+    }
+  }
+}
