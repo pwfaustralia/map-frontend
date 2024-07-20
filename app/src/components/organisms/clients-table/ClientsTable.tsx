@@ -15,14 +15,15 @@ import Button from "../../atoms/button/Button";
 import SearchFilter from "../../molecules/search-filter/SearchFilter";
 import MaterialTable from "../../molecules/table/MaterialTable";
 
-import ClientsAdvancedFilters from "../clients-advanced-filters/ClientsAdvancedFilters";
+import AdvancedFilters from "../advanced-filters/AdvancedFilters";
 import "./ClientsTable.scss";
+import { getFilterModifierValue } from "../../../helpers";
 
 interface ClientsTableProps {
   countPerPage: number;
 }
 
-export function fetchClientsData(queryParams: string) {
+export function fetchClientsData(queryParams: any) {
   const [tableData, setTableData] = useState<any | null>(null);
   const [{ data, isLoading, mutate }, controller] = useSearchClientsFast([queryParams]);
 
@@ -73,6 +74,7 @@ function ClientsTable(props: ClientsTableProps) {
   const [sorting, setSorting] = useState<MRT_SortingState>(getSortBy());
 
   const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>(getFilterBy());
+  const [advancedFilters, setAdvancedFilters] = useState<{ id: string; value: string; q?: string }[]>([]);
 
   const search = useMemo(() => {
     let url = `?page=${pagination.pageIndex}&per_page=${pagination.pageSize}`;
@@ -82,15 +84,11 @@ function ClientsTable(props: ClientsTableProps) {
       per_page: pagination.pageSize,
       collection: "clients",
     };
-    if (columnFilters.length) {
-      params.q = "*";
-      let filter_by: string[] = [];
-      columnFilters.forEach(({ id, value }) => {
-        filter_by.push(`${id.replaceAll("document.", "")}:=\`${value}\``);
-      });
-      params.filter_by = filter_by.join(" && ");
-    }
-    if (sorting.length) {
+    const filters: any = columnFilters?.length
+      ? columnFilters.map((q) => ({ ...q, value: "=" + q.value }))
+      : advancedFilters;
+
+    if (sorting?.length) {
       params.q = "*";
       sorting.forEach((col) => {
         params.sort_by = `${col.id.replaceAll("document.", "")}:${sorting[0].desc ? "desc" : "asc"},`;
@@ -102,46 +100,65 @@ function ClientsTable(props: ClientsTableProps) {
     if (globalFilter) {
       params.q = globalFilter;
     }
+
+    if (filters.length) {
+      params.q = "*";
+      let filter_by: string[] = [];
+      let qs: string[] = [];
+      let aqs: string[] = [];
+      filters.forEach((f: any) => {
+        let { id, value, q } = f;
+        id = id.replaceAll("document.", "");
+        if (q) {
+          qs.push(q);
+        }
+        aqs.push(id);
+        if (value) filter_by.push(`${id}:${value}`);
+      });
+      if (qs.length) params.q = qs.join(" ");
+      if (aqs.length) params.query_by = aqs.join(",");
+      if (filter_by?.length) params.filter_by = filter_by.join(" && ");
+    }
     Object.keys(params).forEach((k) => {
       url += `&${k}=${encodeURIComponent(params[k])}`;
     });
     return { params, url };
-  }, [pagination, globalFilter, columnFilters, sorting]);
+  }, [pagination, globalFilter, columnFilters, sorting, advancedFilters]);
 
   const history = useHistory();
 
   const { tableData: clientsTableData, isLoading, controller } = fetchClientsData(search.params);
+
   const { hits: searchResults, out_of: searchTotal } = clientsTableData?.[0] || { hits: [], total: 0 };
 
-  const columns = useMemo<MRT_ColumnDef<Client>[]>(
-    () => [
-      {
-        accessorKey: "document.first_name",
-        header: "First Name",
-      },
-      {
-        accessorKey: "document.last_name",
-        header: "Family  Name",
-      },
-      {
-        accessorKey: "document.email",
-        header: "Email Address",
-      },
-      {
-        accessorKey: "document.mobile_phone",
-        header: "Mobile Phone",
-      },
-      {
-        accessorKey: "document.physical_address.town",
-        header: "Town",
-      },
-      {
-        accessorKey: "document.physical_address.street_name",
-        header: "Street",
-      },
-    ],
-    []
-  );
+  const tableColumns = [
+    {
+      accessorKey: "document.first_name",
+      header: "First Name",
+    },
+    {
+      accessorKey: "document.last_name",
+      header: "Family  Name",
+    },
+    {
+      accessorKey: "document.email",
+      header: "Email Address",
+    },
+    {
+      accessorKey: "document.mobile_phone",
+      header: "Mobile Phone",
+    },
+    {
+      accessorKey: "document.physical_address.town",
+      header: "Town",
+    },
+    {
+      accessorKey: "document.physical_address.street_name",
+      header: "Street",
+    },
+  ];
+
+  const columns = useMemo<MRT_ColumnDef<Client>[]>(() => tableColumns, []);
   const table = useMaterialReactTable({
     columns,
     data: searchResults,
@@ -224,10 +241,37 @@ function ClientsTable(props: ClientsTableProps) {
             </Button>
           </IonCol>
         </IonRow>
-
         <IonRow>
           <IonCol size="3" style={{ paddingRight: "30px" }}>
-            <ClientsAdvancedFilters />
+            <AdvancedFilters
+              label="Filter Clients by"
+              disabled={!!columnFilters?.length}
+              onFilter={(all) => {
+                let s: any[] = [];
+                Object.keys(all).forEach((key) => {
+                  let { id, value, modifier, visible } = all[key];
+                  if (value && visible) {
+                    let additionalQuery = {};
+                    if (modifier === "not contains") {
+                      additionalQuery = {
+                        q: `-${value}`,
+                        value: null,
+                      };
+                    }
+                    s.push({
+                      id,
+                      value: getFilterModifierValue(modifier, value),
+                      ...additionalQuery,
+                    });
+                  }
+                });
+                setAdvancedFilters(s);
+              }}
+              filters={tableColumns.map((q) => ({
+                id: q.accessorKey,
+                label: q.header,
+              }))}
+            />
           </IonCol>
           <IonCol size="9">
             <MaterialTable table={table} />

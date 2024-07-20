@@ -1,4 +1,5 @@
 import { IonSelect } from "@ionic/react";
+import classNames from "classnames";
 import type { ComponentProps } from "react";
 
 interface SelectProps extends ComponentProps<typeof IonSelect> {
@@ -10,7 +11,7 @@ function Select(props: SelectProps) {
   const { className, ...selectProps } = props;
 
   return (
-    <IonSelect {...selectProps} className={[className || "", "c-select"].join(" ")}>
+    <IonSelect {...selectProps} className={classNames("c-select", className)}>
       {props.children}
     </IonSelect>
   );

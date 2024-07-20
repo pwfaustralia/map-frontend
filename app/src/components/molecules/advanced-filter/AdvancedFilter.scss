@@ -4,6 +4,9 @@
   &__modifier {
     --highlight-color: transparent;
     margin-left: $indent;
+    &::part(label) {
+      display: none;
+    }
   }
   &__input {
     --background: #ffffff;
