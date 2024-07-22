@@ -33,12 +33,16 @@ function SearchFilter(props: FilterProps) {
   };
 
   const getFilters = () => {
-    return filters.current
+    let f = filters.current
       .map((q: any) => ({
         id: q.key,
         value: q.el.value,
       }))
       .filter((q: any) => q.value.length);
+    if (props.onFilter) {
+      props.onFilter(f);
+    }
+    return f;
   };
 
   const resetFilters = () => {
@@ -57,8 +61,10 @@ function SearchFilter(props: FilterProps) {
 
   useEffect(() => {
     if (props.buttonRefs?.searchFilterButtonRef) {
-      props.buttonRefs.searchFilterButtonRef.current.getFilters = getFilters;
-      props.buttonRefs.searchFilterButtonRef.current.resetFilters = resetFilters;
+      props.buttonRefs.searchFilterButtonRef.current = {
+        getFilters,
+        resetFilters,
+      };
     }
   }, [props.filters]);
 

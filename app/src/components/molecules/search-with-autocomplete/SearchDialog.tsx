@@ -4,7 +4,7 @@ import React, { ReactElement, ReactNode, useRef, type ComponentProps } from "rea
 import { isDesktop } from "../../../helpers";
 import Search from "../../atoms/search/Search";
 import "./SearchDialog.scss";
-import { SearchClientsContentProps } from "../../organisms/search-clients-popup/SearchClientsPopup";
+import { SearchClientsContentProps } from "../../organisms/search-popup/SearchPopup";
 
 interface SearchDialogProps extends ComponentProps<typeof Search> {
   triggerLabel?: string;

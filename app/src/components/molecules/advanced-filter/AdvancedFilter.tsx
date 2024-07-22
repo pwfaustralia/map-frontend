@@ -20,6 +20,7 @@ interface AdvancedFilterProps extends React.HTMLAttributes<HTMLDivElement> {
   checkBoxProps?: CheckboxProps;
   defaultModifier?: string;
   disabled?: boolean;
+  visible?: boolean;
 }
 
 export const advancedFilterDefaultModifiers = ["contains", "starts with", "not contains", "equal", "not equal"];
@@ -36,12 +37,13 @@ function AdvancedFilter(props: AdvancedFilterProps) {
     checkBoxProps,
     className,
     disabled,
+    visible: isToggled,
     ...divProps
   } = props;
   const { onIonChange, ...restCheckBoxProps } = checkBoxProps || {};
   const { onIonChange: onModifierChange } = modifierProps || {};
 
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(isToggled);
   const defaultModValue = defaultModifier || modifiers[0];
   const modifierValue = useRef<string>(defaultModValue);
   const inputRef = useRef<any>();

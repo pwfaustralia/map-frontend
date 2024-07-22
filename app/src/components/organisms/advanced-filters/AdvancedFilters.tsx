@@ -24,7 +24,7 @@ export type AdvancedFilterValues = { [key: string]: FilterValue };
 
 interface AdvancedFiltersProps extends ComponentProps<typeof IonGrid> {
   label?: string;
-  filters?: { label: string; id: string }[];
+  filters?: ({ label: string; id: string; value?: string; visible?: boolean } | any)[];
   advancedFilterProps?: Omit<
     ComponentProps<typeof AdvancedFilter>,
     "children" | "label" | "modifierProps" | "inputProps"
@@ -93,10 +93,12 @@ function AdvancedFilters(props: AdvancedFiltersProps) {
                   {...advancedFilterProps}
                   disabled={disabled}
                   checkBoxProps={{
+                    checked: filter.visible,
                     onIonChange: (e) => {
                       onFilterChange(filter.id, filter.label, e.target.checked);
                     },
                   }}
+                  visible={filter.visible}
                   defaultModifier={allFilterValues.current[filter.id]?.modifier}
                   modifierProps={{
                     ...modifierProps,

@@ -1,23 +1,25 @@
 import { IonCol, IonGrid, IonItem, IonLabel, IonList, IonRow, IonSpinner } from "@ionic/react";
 import { ComponentProps, useEffect, useRef } from "react";
-import { useSearchClientsFast } from "../../../services/queries";
-import SearchDialog from "../../molecules/search-with-autocomplete/SearchDialog";
+import { SWRResponse } from "swr";
 import Text from "../../atoms/text/Text";
+import SearchDialog from "../../molecules/search-with-autocomplete/SearchDialog";
 
-interface SearchClientsPopupProps {
+interface SearchPopupProps extends SearchContentProps {
   inputProps?: ComponentProps<typeof SearchDialog>;
   searchKeyword?: string;
   setSearchKeyWord: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
-export interface SearchClientsContentProps {
+export interface SearchContentProps {
   searchKeyword?: string;
   searchRef?: React.MutableRefObject<any>;
   modal?: React.RefObject<HTMLIonModalElement>;
+  searchParams: object;
+  fetcher: (params: any) => [SWRResponse<any>, AbortController];
 }
 
-function SearchClientsPopup(props: SearchClientsPopupProps) {
-  const { inputProps, searchKeyword, setSearchKeyWord } = props;
+function SearchPopup(props: SearchPopupProps) {
+  const { inputProps, searchKeyword, setSearchKeyWord, ...searchContentProps } = props;
   const searchRef = useRef<any>({});
 
   return (
@@ -33,27 +35,20 @@ function SearchClientsPopup(props: SearchClientsPopupProps) {
         setSearchKeyWord("");
       }}
     >
-      <SearchClientsContent searchKeyword={searchKeyword} searchRef={searchRef} />
+      <SearchContent searchKeyword={searchKeyword} searchRef={searchRef} {...searchContentProps} />
     </SearchDialog>
   );
 }
 
-function SearchClientsContent({ searchKeyword, searchRef, modal }: SearchClientsContentProps) {
-  const [{ data, isLoading, isValidating }, controller] = useSearchClientsFast(
+function SearchContent({ searchKeyword, searchRef, modal, searchParams, fetcher }: SearchContentProps) {
+  const [{ data, isLoading, isValidating }, controller] = fetcher(
     searchKeyword
       ? [
           {
-            exhaustive_search: true,
-            highlight_full_fields:
-              "first_name,last_name,middle_name,preferred_name,email,home_phone,work_phone,mobile_phone,physical_address.town,physical_address.street_name,fax",
-            collection: "clients",
-            facet_by: "first_name,last_name",
-            q: searchKeyword,
-            query_by:
-              "first_name,last_name,middle_name,preferred_name,email,home_phone,work_phone,mobile_phone,physical_address.town,physical_address.street_name,fax",
-            max_facet_values: 10,
-            page: 1,
-            per_page: 12,
+            ...searchParams,
+            ...{
+              q: searchKeyword,
+            },
           },
         ]
       : null
@@ -127,4 +122,4 @@ function SearchClientsContent({ searchKeyword, searchRef, modal }: SearchClients
   );
 }
 
-export default SearchClientsPopup;
+export default SearchPopup;
