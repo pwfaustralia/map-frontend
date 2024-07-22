@@ -10,7 +10,16 @@ import { ComponentProps, useRef } from "react";
 import Text from "../../atoms/text/Text";
 import "./AdvancedFilters.scss";
 
-type FilterValue = { id: string; label: string; modifier: string; value: string; visible: boolean; index: number };
+export type FilterValue = {
+  id: string;
+  label: string;
+  modifier: string;
+  value: string | null;
+  visible: boolean;
+  index: number;
+  q?: string;
+  query_by?: string;
+};
 export type AdvancedFilterValues = { [key: string]: FilterValue };
 
 interface AdvancedFiltersProps extends ComponentProps<typeof IonGrid> {

@@ -15,9 +15,9 @@ import Button from "../../atoms/button/Button";
 import SearchFilter from "../../molecules/search-filter/SearchFilter";
 import MaterialTable from "../../molecules/table/MaterialTable";
 
-import AdvancedFilters from "../advanced-filters/AdvancedFilters";
+import { getFilterModifierValue, getSearchParams, getTypesenseSearchQuery } from "../../../helpers";
+import AdvancedFilters, { FilterValue } from "../advanced-filters/AdvancedFilters";
 import "./ClientsTable.scss";
-import { getFilterModifierValue } from "../../../helpers";
 
 interface ClientsTableProps {
   countPerPage: number;
@@ -37,100 +37,26 @@ export function fetchClientsData(queryParams: any) {
 }
 
 function ClientsTable(props: ClientsTableProps) {
+  const history = useHistory();
   const initialLoad = useRef<boolean>(true);
   const searchFilterRef = useRef<any>({});
-  const { filter_by, page, per_page, q, sort_by } = queryString.parse(location.search);
+  const { page, per_page, q } = queryString.parse(location.search);
   const { countPerPage } = props;
   const [globalFilter, setGlobalFilter] = useState(q || "");
   const [pagination, setPagination] = useState<MRT_PaginationState>({
     pageIndex: parseInt(page + "") || 0,
     pageSize: parseInt(per_page + "") || countPerPage,
   });
-
-  const getSortBy = (): any => {
-    let sort = (sort_by + "").split(":");
-    if (sort.length === 2) {
-      return [{ id: sort[0], desc: sort[1] === "desc" }];
-    }
-    return [];
-  };
-
-  const getFilterBy = (): any => {
-    if (!filter_by) return [];
-    return (filter_by + "")
-      .split("&&")
-      .map((q) => {
-        let f = q.trim().split(":=");
-        if (f.length === 2) {
-          return {
-            id: f[0],
-            value: f[1].replaceAll("`", ""),
-          };
-        }
-        return null;
-      })
-      .filter((q) => !!q);
-  };
-  const [sorting, setSorting] = useState<MRT_SortingState>(getSortBy());
-
-  const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>(getFilterBy());
-  const [advancedFilters, setAdvancedFilters] = useState<{ id: string; value: string; q?: string }[]>([]);
-
-  const search = useMemo(() => {
-    let url = `?page=${pagination.pageIndex}&per_page=${pagination.pageSize}`;
-    let params: any = {
-      q: "*",
-      page: pagination.pageIndex + 1,
-      per_page: pagination.pageSize,
-      collection: "clients",
-    };
-    const filters: any = columnFilters?.length
-      ? columnFilters.map((q) => ({ ...q, value: "=" + q.value }))
-      : advancedFilters;
-
-    if (sorting?.length) {
-      params.q = "*";
-      sorting.forEach((col) => {
-        params.sort_by = `${col.id.replaceAll("document.", "")}:${sorting[0].desc ? "desc" : "asc"},`;
-      });
-      params.sort_by = params.sort_by.split(",");
-      params.sort_by.pop();
-      params.sort_by = params.sort_by.join(",");
-    }
-    if (globalFilter) {
-      params.q = globalFilter;
-    }
-
-    if (filters.length) {
-      params.q = "*";
-      let filter_by: string[] = [];
-      let qs: string[] = [];
-      let aqs: string[] = [];
-      filters.forEach((f: any) => {
-        let { id, value, q } = f;
-        id = id.replaceAll("document.", "");
-        if (q) {
-          qs.push(q);
-        }
-        aqs.push(id);
-        if (value) filter_by.push(`${id}:${value}`);
-      });
-      if (qs.length) params.q = qs.join(" ");
-      if (aqs.length) params.query_by = aqs.join(",");
-      if (filter_by?.length) params.filter_by = filter_by.join(" && ");
-    }
-    Object.keys(params).forEach((k) => {
-      url += `&${k}=${encodeURIComponent(params[k])}`;
-    });
-    return { params, url };
-  }, [pagination, globalFilter, columnFilters, sorting, advancedFilters]);
-
-  const history = useHistory();
-
+  const { sort_by, filter_by } = getSearchParams(location.search);
+  const [sorting, setSorting] = useState<MRT_SortingState>(sort_by);
+  const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>(filter_by);
+  const [advancedFilters, setAdvancedFilters] = useState<FilterValue[]>([]);
+  const search = useMemo(
+    () => getTypesenseSearchQuery({ pagination, globalFilter, columnFilters, sorting, advancedFilters }),
+    [pagination, globalFilter, columnFilters, sorting, advancedFilters]
+  );
   const { tableData: clientsTableData, isLoading, controller } = fetchClientsData(search.params);
-
-  const { hits: searchResults, out_of: searchTotal } = clientsTableData?.[0] || { hits: [], total: 0 };
-
+  const { hits: searchResults = [], out_of: searchTotal = 0 } = clientsTableData?.[0] || { hits: [], total: 0 };
   const tableColumns = [
     {
       accessorKey: "document.first_name",
@@ -157,7 +83,6 @@ function ClientsTable(props: ClientsTableProps) {
       header: "Street",
     },
   ];
-
   const columns = useMemo<MRT_ColumnDef<Client>[]>(() => tableColumns, []);
   const table = useMaterialReactTable({
     columns,
@@ -247,22 +172,11 @@ function ClientsTable(props: ClientsTableProps) {
               label="Filter Clients by"
               disabled={!!columnFilters?.length}
               onFilter={(all) => {
-                let s: any[] = [];
+                let s: FilterValue[] = [];
                 Object.keys(all).forEach((key) => {
-                  let { id, value, modifier, visible } = all[key];
+                  let { value, visible } = all[key];
                   if (value && visible) {
-                    let additionalQuery = {};
-                    if (modifier === "not contains") {
-                      additionalQuery = {
-                        q: `-${value}`,
-                        value: null,
-                      };
-                    }
-                    s.push({
-                      id,
-                      value: getFilterModifierValue(modifier, value),
-                      ...additionalQuery,
-                    });
+                    s.push(getFilterModifierValue(all[key]));
                   }
                 });
                 setAdvancedFilters(s);
