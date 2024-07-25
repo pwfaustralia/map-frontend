@@ -14,11 +14,12 @@ export type FilterValue = {
   id: string;
   label: string;
   modifier: string;
-  value: string | null;
+  value?: string | null;
   visible: boolean;
   index: number;
   q?: string;
   query_by?: string;
+  inputValue?: string;
 };
 export type AdvancedFilterValues = { [key: string]: FilterValue };
 
@@ -52,7 +53,12 @@ function AdvancedFilters(props: AdvancedFiltersProps) {
 
   const onFilterChange = (id: string, label: string, visible: boolean, value?: any, modifier?: any) => {
     if (!onFilter) return;
-    if (value) value = value.toString();
+
+    const allFilters = allFilterValues.current;
+    let inputValue = "";
+    if (typeof value === "string") {
+      inputValue = value;
+    } else if (allFilters[id]?.inputValue) inputValue = allFilters[id]?.inputValue;
 
     const defaultMods =
       allFilterValues.current[id]?.modifier ||
@@ -65,10 +71,10 @@ function AdvancedFilters(props: AdvancedFiltersProps) {
       label,
       modifier,
       visible,
-      value,
-      index: Object.keys(allFilterValues.current).length + 1,
+      inputValue,
+      index: Object.keys(allFilters).length + 1,
     };
-    modifier = allFilterValues.current[id] = res;
+    allFilterValues.current[id] = res;
     onFilter(allFilterValues.current, res);
   };
 
@@ -85,37 +91,44 @@ function AdvancedFilters(props: AdvancedFiltersProps) {
             let bb = allFilterValues.current[b.id];
             return aa?.visible && bb?.visible ? aa.index - bb.index : 0;
           })
-          .map((filter) => (
-            <IonRow key={filter.id}>
-              <IonCol>
-                <AdvancedFilter
-                  label={filter.label}
-                  {...advancedFilterProps}
-                  disabled={disabled}
-                  checkBoxProps={{
-                    checked: filter.visible,
-                    onIonChange: (e) => {
-                      onFilterChange(filter.id, filter.label, e.target.checked);
-                    },
-                  }}
-                  visible={filter.visible}
-                  defaultModifier={allFilterValues.current[filter.id]?.modifier}
-                  modifierProps={{
-                    ...modifierProps,
-                    onIonChange: (e) => {
-                      onFilterChange(filter.id, filter.label, true, null, e.target.value);
-                    },
-                  }}
-                  inputProps={{
-                    ...inputProps,
-                    onKeyUp: (e) => {
-                      onFilterChange(filter.id, filter.label, true, e.currentTarget.value);
-                    },
-                  }}
-                />
-              </IonCol>
-            </IonRow>
-          ))}
+          .map((filter) => {
+            let inputValue = allFilterValues.current[filter.id]?.inputValue || "";
+            if (inputValue === "undefined") {
+              inputValue = "";
+            }
+            return (
+              <IonRow key={filter.id}>
+                <IonCol>
+                  <AdvancedFilter
+                    label={filter.label}
+                    {...advancedFilterProps}
+                    disabled={disabled}
+                    checkBoxProps={{
+                      checked: filter.visible,
+                      onIonChange: (e) => {
+                        onFilterChange(filter.id, filter.label, e.target.checked);
+                      },
+                    }}
+                    visible={filter.visible}
+                    defaultModifier={allFilterValues.current[filter.id]?.modifier}
+                    modifierProps={{
+                      ...modifierProps,
+                      onIonChange: (e) => {
+                        onFilterChange(filter.id, filter.label, true, null, e.target.value);
+                      },
+                    }}
+                    inputProps={{
+                      ...inputProps,
+                      value: inputValue,
+                      onKeyUp: (e) => {
+                        onFilterChange(filter.id, filter.label, true, e.currentTarget.value);
+                      },
+                    }}
+                  />
+                </IonCol>
+              </IonRow>
+            );
+          })}
     </IonGrid>
   );
 }

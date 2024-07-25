@@ -21,6 +21,7 @@ import {
 } from "../../../helpers";
 import AdvancedFilters, { FilterValue } from "../../organisms/advanced-filters/AdvancedFilters";
 import "./TableWithFilters.scss";
+import useDebounce from "../../../hooks/useDebounce";
 
 interface TableWithFiltersProps {
   countPerPage: number;
@@ -66,13 +67,15 @@ function TableWithFilters(props: TableWithFiltersProps) {
   const [sorting, setSorting] = useState<MRT_SortingState>(sort_by);
   const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>(filter_by);
   const [advancedFilters, setAdvancedFilters] = useState<FilterValue[]>([]);
+  const advancedFiltersDebounced = useDebounce<FilterValue[]>(advancedFilters, 1000);
+
   const getSearchQuery = (searchParams: any = {}) => {
     return getTypesenseSearchQuery({
       pagination,
       globalFilter,
       columnFilters,
       sorting,
-      advancedFilters,
+      advancedFilters: advancedFiltersDebounced,
       ...searchParams,
     });
   };
@@ -102,6 +105,12 @@ function TableWithFilters(props: TableWithFiltersProps) {
       }
     },
   });
+  const tableAdvancedFilters = tableColumns.map((q) => ({
+    id: q.accessorKey,
+    label: q.header,
+    value: removeSearchSymbols(advancedFilters.find((qq) => qq.id === q.accessorKey)?.inputValue || ""),
+    visible: advancedFilters.find((qq) => qq.id === q.accessorKey)?.visible,
+  }));
 
   useIonViewWillLeave(() => {
     // Prevents table from setting pageIndex to 1 when component is re-rendered.
@@ -109,7 +118,6 @@ function TableWithFilters(props: TableWithFiltersProps) {
     // Cancel search API request
     controller.abort();
   });
-
   return (
     <section className="TableWithFilters">
       <IonGrid className="TableWithFilters__grid">
@@ -175,12 +183,7 @@ function TableWithFilters(props: TableWithFiltersProps) {
                 });
                 setAdvancedFilters(s);
               }}
-              filters={tableColumns.map((q) => ({
-                id: q.accessorKey,
-                label: q.header,
-                value: removeSearchSymbols(advancedFilters.find((qq) => qq.id === q.accessorKey)?.value || ""),
-                visible: advancedFilters.find((qq) => qq.id === q.accessorKey)?.visible,
-              }))}
+              filters={tableAdvancedFilters}
             />
           </IonCol>
           <IonCol size="9">

@@ -17,6 +17,19 @@ function DashboardTemplate({ children }: { children: React.ReactNode | React.Rea
   const [searchKeyword, setSearchKeyword] = useState<string>();
   const { isMutating: isLogoutLoading, logoutUser } = useLogoutUser();
   const { isAdminOrStaff } = useUserRole();
+  const searchableFields = [
+    "first_name",
+    "last_name",
+    "middle_name",
+    "preferred_name",
+    "email",
+    "home_phone",
+    "work_phone",
+    "mobile_phone",
+    "physical_address.town",
+    "physical_address.street_name",
+    "fax",
+  ];
 
   return (
     <IonPage>
@@ -62,15 +75,11 @@ function DashboardTemplate({ children }: { children: React.ReactNode | React.Rea
                   setSearchKeyWord={setSearchKeyword}
                   fetcher={useSearchClientsFast}
                   searchParams={{
-                    exhaustive_search: true,
-                    highlight_full_fields:
-                      "first_name,last_name,middle_name,preferred_name,email,home_phone,work_phone,mobile_phone,physical_address.town,physical_address.street_name,fax",
+                    highlight_full_fields: searchableFields.join(","),
                     collection: "clients",
-                    facet_by: "first_name,last_name",
-                    query_by:
-                      "first_name,last_name,middle_name,preferred_name,email,home_phone,work_phone,mobile_phone,physical_address.town,physical_address.street_name,fax",
-                    max_facet_values: 10,
+                    query_by: searchableFields.join(","),
                     page: 1,
+                    num_typos: searchableFields.map((q) => 10).join(","),
                     per_page: 12,
                   }}
                 />

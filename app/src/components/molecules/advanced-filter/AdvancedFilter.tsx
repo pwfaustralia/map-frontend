@@ -77,7 +77,6 @@ function AdvancedFilter(props: AdvancedFilterProps) {
                 onModifierChange(e);
               }
               modifierValue.current = e.target.value;
-              inputRef.current.value = "";
             }}
           >
             {modifiers.map((mod) => (

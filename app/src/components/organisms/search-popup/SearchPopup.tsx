@@ -114,7 +114,18 @@ function SearchContent({ searchKeyword, searchRef, modal, searchParams, fetcher 
       {searchResults.map((q: any) => (
         <IonItem key={q.document.id}>
           <IonLabel>
-            {q.document.first_name} {q.document.last_name}
+            <h1>
+              {q.document.first_name} {q.document.last_name}
+            </h1>
+            <p>
+              {q.highlights.map((h: any, id: any) => {
+                return (
+                  <Text key={id} style={{ marginRight: 10 }}>
+                    {h.field}: <span dangerouslySetInnerHTML={{ __html: h.value }} />
+                  </Text>
+                );
+              })}
+            </p>
           </IonLabel>
         </IonItem>
       ))}

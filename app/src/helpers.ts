@@ -27,24 +27,27 @@ export function isDesktop() {
 
 export function getFilterModifierValue(filterValue: FilterValue): FilterValue {
   const filter: FilterValue = filterValue;
-  const { modifier, value } = filterValue;
+  const { modifier, value, inputValue } = filterValue;
+
+  if (inputValue === "") return filter;
 
   switch (modifier) {
     case "starts with":
-      filter.value = `${value}*`;
+      filter.value = `${inputValue}*`;
       break;
     case "contains":
-      filter.value = `${value}`;
+      filter.value = null;
+      filter.q = `${inputValue}`;
       break;
     case "not contains":
       filter.value = null;
-      filter.q = `-${value}`;
+      filter.q = `-${inputValue}`;
       break;
     case "equal":
-      filter.value = `=${value}`;
+      filter.value = `=${inputValue}`;
       break;
     case "not equal":
-      filter.value = `!=${value}`;
+      filter.value = `!=${inputValue}`;
       break;
   }
 
@@ -102,7 +105,9 @@ export function getTypesenseSearchQuery(
     collection: "clients",
   };
   const filters: any = (
-    columnFilters?.length ? columnFilters.map((q) => ({ ...q, value: "=" + q.value })) : advancedFilters
+    columnFilters?.length
+      ? columnFilters.map((q) => ({ ...q, value: "=" + q.value }))
+      : advancedFilters.filter((q) => q.visible)
   ).filter((q) => q.value !== "undefined" && q.value !== "");
 
   if (sorting?.length) {
