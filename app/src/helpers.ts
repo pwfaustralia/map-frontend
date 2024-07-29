@@ -167,6 +167,7 @@ export const routes = {
   },
   AS: {
     clients: "/clients",
+    "add-client": "/add-client",
   },
   C: {
     dashboard: "/dashboard",

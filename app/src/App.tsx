@@ -25,6 +25,8 @@ import Route from "./pages/common/Route";
 import LoginPage from "./pages/common/login/LoginPage";
 import "./theme/variables.css";
 import { routes } from "./helpers";
+import AS_AddClientPage from "./pages/admins-and-staffs/add-client/AS_AddClientPage";
+import DashboardTemplate from "./components/templates/dashboard/default/DashboardTemplate";
 
 setupIonicReact();
 
@@ -39,6 +41,9 @@ const App: React.FC = () => {
 
           <Route exact path={routes.AS.clients} scopeName="view-all-clients">
             <AS_ClientsPage />
+          </Route>
+          <Route exact path={routes.AS["add-client"]} scopeName="create-clients">
+            <AS_AddClientPage />
           </Route>
 
           <Route exact path={routes.C.dashboard}>

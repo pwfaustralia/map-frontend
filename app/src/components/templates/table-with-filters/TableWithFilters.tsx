@@ -31,6 +31,7 @@ interface TableWithFiltersProps {
   filterByLabel?: string;
   searchLabel?: string;
   resetLabel?: string;
+  buttons?: React.ReactNode;
 }
 
 export function fetchData(queryParams: any, fetcher: (config: any) => [SWRResponse<any>, AbortController]) {
@@ -54,6 +55,7 @@ function TableWithFilters(props: TableWithFiltersProps) {
     filterByLabel = "Filter by",
     searchLabel = "Search",
     resetLabel = "Reset",
+    buttons,
   } = props;
   const initialLoad = useRef<boolean>(true);
   const searchFilterRef = useRef<any>({});
@@ -121,8 +123,8 @@ function TableWithFilters(props: TableWithFiltersProps) {
   return (
     <section className="TableWithFilters">
       <IonGrid className="TableWithFilters__grid">
-        <IonRow>
-          <IonCol size="9">
+        <IonRow style={{ gap: "20px" }}>
+          <IonCol size="8">
             <SearchFilter
               buttonRefs={{
                 searchFilterButtonRef: searchFilterRef,
@@ -146,8 +148,9 @@ function TableWithFilters(props: TableWithFiltersProps) {
             />
           </IonCol>
 
-          <IonCol size="2">
+          <IonCol size="1.5">
             <Button
+              variant="secondary"
               onClick={() => {
                 if (searchFilterRef.current?.getFilters) {
                   setColumnFilters(searchFilterRef.current.getFilters());
@@ -157,6 +160,7 @@ function TableWithFilters(props: TableWithFiltersProps) {
               {searchLabel}
             </Button>
             <Button
+              variant="outlined"
               onClick={() => {
                 if (searchFilterRef.current?.resetFilters) {
                   searchFilterRef.current.resetFilters();
@@ -166,6 +170,7 @@ function TableWithFilters(props: TableWithFiltersProps) {
               {resetLabel}
             </Button>
           </IonCol>
+          {buttons && <IonCol size="1.5">{buttons}</IonCol>}
         </IonRow>
         <IonRow>
           <IonCol size="3" style={{ paddingRight: "30px" }}>

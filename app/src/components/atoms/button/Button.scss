@@ -1,0 +1,17 @@
+ion-button.c-button {
+  width: 100%;
+  --ion-color-primary-contrast: #ffffff;
+  --box-shadow: none;
+  font-weight: bold;
+  text-transform: capitalize;
+  &.secondary {
+    --background: var(--ion-color-secondary);
+  }
+  &.outlined {
+    --background: #ffffff;
+    --ripple-color: var(--ion-color-primary);
+    color: var(--ion-color-secondary);
+    border: 2px solid var(--ion-color-primary);
+    border-radius: 5px;
+  }
+}

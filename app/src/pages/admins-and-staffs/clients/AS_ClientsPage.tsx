@@ -1,7 +1,10 @@
+import { Link } from "react-router-dom";
 import DashboardTemplate from "../../../components/templates/dashboard/default/DashboardTemplate";
 import TableWithFilters from "../../../components/templates/table-with-filters/TableWithFilters";
 import { useSearchClientsFast } from "../../../services/queries";
 import "./AS_ClientsPage.css";
+import { routes } from "../../../helpers";
+import Button from "../../../components/atoms/button/Button";
 
 function AS_ClientsPage() {
   const tableColumns = [
@@ -37,6 +40,11 @@ function AS_ClientsPage() {
         tableColumns={tableColumns}
         fetcher={useSearchClientsFast}
         filterByLabel="Filter clients by"
+        buttons={
+          <Link to={routes.AS["add-client"]} replace={true}>
+            <Button>Add New Client</Button>
+          </Link>
+        }
       />
     </DashboardTemplate>
   );
