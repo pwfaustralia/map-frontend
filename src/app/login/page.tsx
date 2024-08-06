@@ -1,7 +1,10 @@
+'use client';
+
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { signIn } from 'next-auth/react';
 
 export default function LoginPage() {
   return (
@@ -34,7 +37,13 @@ export default function LoginPage() {
               </div>
               <Input id="password" type="password" required />
             </div>
-            <Button type="submit" className="w-full">
+            <Button
+              type="submit"
+              className="w-full"
+              onClick={() => {
+                signIn('laravel-passport');
+              }}
+            >
               Login
             </Button>
             <Button variant="outline" className="w-full">
