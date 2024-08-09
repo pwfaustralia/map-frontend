@@ -15,3 +15,8 @@ export const POST = async (request: NextRequest) => {
 
   return NextResponse.json(login);
 };
+
+export const GET = async (request: NextRequest) => {
+  const s = await fetchLaravel('/users/me').then((response) => response.json());
+  return NextResponse.json(s);
+};

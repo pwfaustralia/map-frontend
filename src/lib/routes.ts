@@ -3,5 +3,7 @@ export const LARAVEL_API_ROUTES = {
 };
 
 export const NEXT_APP_ROUTES = {
+  home: '/',
+  login: '/login',
   dashboard: '/dashboard',
 };
