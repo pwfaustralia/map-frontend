@@ -1,13 +1,12 @@
 import { authOptions } from '@/lib-server/auth-options';
 import SessionWrapper from '@/lib-server/session-wrapper';
+import { NEXT_APP_ROUTES } from '@/lib/routes';
 import type { Metadata } from 'next';
 import { getServerSession } from 'next-auth/next';
 import { Inter } from 'next/font/google';
-import './globals.css';
-import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
-import { NEXT_APP_ROUTES } from '@/lib/routes';
 import { redirect } from 'next/navigation';
+import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -24,8 +23,9 @@ export default async function RootLayout({
   const session = await getServerSession(authOptions);
   const headersList = headers();
   const nextUrl = new URL(headersList.get('x-url') || '');
+  const isLoggedIn = !!session?.user.accessToken;
 
-  if (!session?.user?.name) {
+  if (!isLoggedIn) {
     (() => {
       if (nextUrl.pathname === NEXT_APP_ROUTES.login) return;
       redirect(process.env.NEXT_BASE_URL + NEXT_APP_ROUTES.login);

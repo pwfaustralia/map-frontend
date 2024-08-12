@@ -4,8 +4,6 @@ import { EmailPasswordSchema } from '@/lib/schema/auth';
 import { NextAuthOptions } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 
-// TO DO: set-cookie after login https://stackoverflow.com/questions/67594977/how-to-send-httponly-cookies-client-side-when-using-next-auth-credentials-provid
-
 export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   session: {
@@ -27,12 +25,10 @@ export const authOptions: NextAuthOptions = {
         try {
           const login = await fetchAbsolute(LARAVEL_API_ROUTES.login, {
             method: 'post',
-            credentials: 'include',
             body: JSON.stringify(credentials.data),
             cache: 'no-cache',
           });
           const loginData = await login.json();
-
           if (!loginData.id) {
             throw new Error(loginData.error || 'Invalid email or password');
           }
@@ -44,11 +40,21 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async session(params: any) {
-      return params.session;
+    async session({ session, token }) {
+      if (token.user) {
+        session.user = token.user;
+      }
+      return session;
     },
-    async signIn(params: any) {
-      return params;
+    async signIn({ user }) {
+      if (!user.accessToken) return false;
+      return true;
+    },
+    async jwt({ token, user }) {
+      if (user) {
+        token.user = user as any;
+      }
+      return token;
     },
   },
   pages: {
