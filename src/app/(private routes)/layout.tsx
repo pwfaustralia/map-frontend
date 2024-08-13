@@ -53,7 +53,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
           ))}
         </div>
       </div>
-      <div className="w-full">
+      <div className="w-full h-screen overflow-auto">
         <div className="bg-white min-h-[80px] flex align-center px-[37px] py-[26px] justify-between">
           <Input placeholder="Search a client here" />
           <Button
@@ -67,7 +67,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
             Sign out
           </Button>
         </div>
-        {children}
+        <div className=" py-[25px] px-[36px]">{children}</div>
       </div>
     </div>
   );

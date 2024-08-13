@@ -23,13 +23,7 @@ export const POST = async (request: NextRequest) => {
 
 export const GET = async () => {
   try {
-    const session = await getServerSession(authOptions);
-    const profile = await fetchLaravel('/users/me', {
-      headers: {
-        Cookie: session?.user.accessToken!,
-      },
-    }).then((response) => response.json());
-
+    const profile = await fetchLaravel('/users/me').then((response) => response.json());
     return NextResponse.json(profile);
   } catch (e) {
     return NextResponse.json({ success: 0, message: 'Invalid response' }, { status: 400 });

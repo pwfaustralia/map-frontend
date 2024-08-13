@@ -20,6 +20,7 @@ const config = {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         grey: 'hsl(var(--grey))',
+        skeleton: 'hsl(var(--skeleton))',
         primary: {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',
