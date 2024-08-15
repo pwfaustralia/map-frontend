@@ -13,33 +13,53 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import {
   ColumnFiltersState,
-  SortingState,
-  VisibilityState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  SortingState,
   useReactTable,
+  VisibilityState,
 } from '@tanstack/react-table';
 import { ChevronDown } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
-import { SearchResponse, SearchResponseHit } from 'typesense/lib/Typesense/Documents';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { SearchResponse } from 'typesense/lib/Typesense/Documents';
+import { MultiSearchRequestSchema } from 'typesense/lib/Typesense/MultiSearch';
 import { clientsTableColumnDef } from './_clients-table';
 
 export default function ClientsPage() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const _pageIndex = parseInt(searchParams.get('page') + '');
   const [sorting, setSorting] = useState<SortingState>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [pagination, setPagination] = useState({
-    pageIndex: 0,
+    pageIndex: !isNaN(_pageIndex) ? _pageIndex : 1,
     pageSize: 15,
   });
+  const [activeResultIndex, setActiveResultIndex] = useState(0);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [searchResults, setSearchResults] = useState<SearchResponse<any>[]>([]);
-  const [data, setData] = useState<SearchResponseHit<any>[]>([]);
+  const data = useMemo(() => searchResults?.[activeResultIndex]?.hits || [], [searchResults, activeResultIndex]);
   const [rowSelection, setRowSelection] = useState({});
   const tableData = useMemo(() => (isLoading ? Array(10).fill({}) : data), [isLoading, data]);
+  const totalRecords = searchResults?.[activeResultIndex]?.found || 0;
+  const canNextPage = pagination.pageIndex * pagination.pageSize < totalRecords;
+  const canBackPage = pagination.pageIndex > 1;
+
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set(name, value);
+      return params.toString();
+    },
+    [searchParams]
+  );
+
   const tableColumns = useMemo(
     () =>
       isLoading
@@ -54,15 +74,16 @@ export default function ClientsPage() {
   const table = useReactTable({
     data: tableData,
     columns: tableColumns,
+    manualPagination: true,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    onPaginationChange: setPagination,
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    onPaginationChange: setPagination,
     state: {
       sorting,
       columnFilters,
@@ -72,26 +93,23 @@ export default function ClientsPage() {
     },
   });
 
-  useEffect(() => {
-    if (!isLoading && searchResults) {
-      setData(searchResults?.[0].hits || []);
-    }
-  }, [isLoading, searchResults]);
+  const fetchData = async (params: MultiSearchRequestSchema) => {
+    let query = await typesenseMultiSearch({
+      searches: [params],
+    });
+    setSearchResults(query.results);
+    setIsLoading(false);
+  };
 
   useEffect(() => {
-    (async () => {
-      let query = await typesenseMultiSearch({
-        searches: [
-          {
-            q: '*',
-            collection: 'clients',
-          },
-        ],
-      });
-      setSearchResults(query.results);
-      setIsLoading(false);
-    })();
-  }, []);
+    router.push(pathname + '?' + createQueryString('page', pagination.pageIndex.toString()));
+    fetchData({
+      q: '*',
+      collection: 'clients',
+      page: pagination.pageIndex,
+      per_page: pagination.pageSize,
+    });
+  }, [pagination]);
 
   return (
     <div className="w-full">
@@ -166,15 +184,10 @@ export default function ClientsPage() {
           {table.getFilteredSelectedRowModel().rows.length} of {searchResults?.[0]?.found} row(s) selected.
         </div>
         <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
+          <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!canBackPage}>
             Previous
           </Button>
-          <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
+          <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!canNextPage}>
             Next
           </Button>
         </div>

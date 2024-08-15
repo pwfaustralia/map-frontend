@@ -12,7 +12,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
-import { SearchResponseHit } from 'typesense/lib/Typesense/Documents';
 
 export const clientsTableColumnDef: ColumnDef<any>[] = [
   {
@@ -48,7 +47,9 @@ export const clientsTableColumnDef: ColumnDef<any>[] = [
   },
   {
     id: 'physical_address-street_name',
-    accessorKey: 'document.physical_address-street_name',
+    accessorFn: (originalRow) => {
+      return originalRow.document['physical_address.street_name'];
+    },
     header: 'Address',
     cell: ({ row }) => <div className="capitalize">{row.getValue('physical_address-street_name')}</div>,
   },

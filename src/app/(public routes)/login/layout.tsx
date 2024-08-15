@@ -7,7 +7,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <div className="w-full h-full flex items-center justify-center lg:py-0 py-[46px]">
           <img src="/images/cc-logo.png" alt="Credit Connection" className="lg:w-[365px] w-[80%] max-w-[365px]" />
         </div>
-        <div className="hidden w-full flex justify-center lg:block">
+        <div className="hidden w-full justify-center lg:flex">
           <img src="/images/girl-on-the-bike.png" width="278" height="267" />
         </div>
       </div>
