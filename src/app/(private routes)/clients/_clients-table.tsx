@@ -4,14 +4,16 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { TableFilter } from '@/lib/types';
 import { ColumnDef } from '@tanstack/react-table';
-import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
+import { ArrowUpDown, MoreHorizontal, SlidersHorizontal } from 'lucide-react';
 
 export const clientsTableColumnDef: ColumnDef<any>[] = [
   {
@@ -37,6 +39,7 @@ export const clientsTableColumnDef: ColumnDef<any>[] = [
     id: 'last_name',
     accessorKey: 'document.last_name',
     header: 'Family Name',
+    enableHiding: false,
     cell: ({ row }) => <div className="capitalize">{row.getValue('last_name')}</div>,
   },
   {
@@ -56,27 +59,51 @@ export const clientsTableColumnDef: ColumnDef<any>[] = [
   {
     id: 'home_phone',
     accessorKey: 'document.home_phone',
-    header: 'Home Phone',
+    header: ({ column }) => {
+      return (
+        <Button variant="ghost-2" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+          Home Phone
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
     cell: ({ row }) => <div className="capitalize">{row.getValue('home_phone')}</div>,
   },
   {
     id: 'work_phone',
     accessorKey: 'document.work_phone',
-    header: 'Work Phone',
+    header: ({ column }) => {
+      return (
+        <Button variant="ghost-2" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+          Work Phone
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
     cell: ({ row }) => <div className="capitalize">{row.getValue('work_phone')}</div>,
   },
   {
     id: 'mobile_phone',
     accessorKey: 'document.mobile_phone',
-    header: 'Mobile Phone',
+    header: ({ column }) => {
+      return (
+        <Button variant="ghost-2" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+          Mobile Phone
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    enableSorting: true,
+    sortingFn: 'basic',
     cell: ({ row }) => <div className="capitalize">{row.getValue('mobile_phone')}</div>,
   },
   {
     id: 'email',
     accessorKey: 'document.email',
+    enableHiding: false,
     header: ({ column }) => {
       return (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+        <Button variant="ghost-2" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
           Email
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -87,13 +114,39 @@ export const clientsTableColumnDef: ColumnDef<any>[] = [
   {
     id: 'actions',
     enableHiding: false,
+    header: ({ table }) => (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost-2" className="ml-auto">
+            <SlidersHorizontal className="h-5 w-5" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          {table
+            .getAllColumns()
+            .filter((column) => column.getCanHide())
+            .map((column) => {
+              return (
+                <DropdownMenuCheckboxItem
+                  key={column.id}
+                  className="capitalize"
+                  checked={column.getIsVisible()}
+                  onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                >
+                  {column.id.replaceAll('_', ' ')}
+                </DropdownMenuCheckboxItem>
+              );
+            })}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    ),
     cell: ({ row }) => {
       const payment = row.original;
 
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
+            <Button variant="ghost-2" className="h-8 w-8 p-0">
               <span className="sr-only">Open menu</span>
               <MoreHorizontal className="h-4 w-4" />
             </Button>
@@ -110,5 +163,37 @@ export const clientsTableColumnDef: ColumnDef<any>[] = [
         </DropdownMenu>
       );
     },
+  },
+];
+export const clientsTableFilters: TableFilter[] = [
+  {
+    id: 'email',
+    label: 'Email',
+    modifier: 'contains',
+  },
+  {
+    id: 'first_name',
+    label: 'First Name',
+    modifier: 'contains',
+  },
+  {
+    id: 'last_name',
+    label: 'Last Name',
+    modifier: 'contains',
+  },
+  {
+    id: 'address',
+    label: 'Address',
+    modifier: 'contains',
+  },
+  {
+    id: 'work_phone',
+    label: 'Work Phone',
+    modifier: 'contains',
+  },
+  {
+    id: 'mobile_phone',
+    label: 'Mobile Phone',
+    modifier: 'contains',
   },
 ];

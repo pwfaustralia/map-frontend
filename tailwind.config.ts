@@ -16,10 +16,13 @@ const config = {
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
-        ring: 'hsl(var(--ring))',
+        ring: 'hsla(var(--ring))',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         grey: 'hsl(var(--grey))',
+        'grey-2': 'hsla(var(--grey-2))',
+        'grey-3': 'hsla(var(--grey-3))',
+        'input-bg': 'hsl(var(--input-bg))',
         skeleton: 'hsl(var(--skeleton))',
         primary: {
           DEFAULT: 'hsl(var(--primary))',

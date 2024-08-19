@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-[512px,1fr] xl:min-h-[800px]">
+    <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-[512px,1fr] xl:min-h-[800px] h-screen">
       <div className="bg-primary lg:flex flex-col lg:pb-0 pb-[46px]">
         <div className="w-full h-full flex items-center justify-center lg:py-0 py-[46px]">
           <img src="/images/cc-logo.png" alt="Credit Connection" className="lg:w-[365px] w-[80%] max-w-[365px]" />
