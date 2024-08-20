@@ -43,18 +43,41 @@ export const clientsTableColumnDef: ColumnDef<any>[] = [
     cell: ({ row }) => <div className="capitalize">{row.getValue('last_name')}</div>,
   },
   {
+    id: 'middle_name',
+    accessorKey: 'document.middle_name',
+    enableHiding: true,
+    header: 'First Name',
+    cell: ({ row }) => <div className="capitalize">{row.getValue('middle_name')}</div>,
+  },
+  {
     id: 'first_name',
     accessorKey: 'document.first_name',
     header: 'First Name',
     cell: ({ row }) => <div className="capitalize">{row.getValue('first_name')}</div>,
   },
   {
-    id: 'physical_address-street_name',
+    id: 'preferred_name',
+    accessorKey: 'document.preferred_name',
+    header: 'Preferred Name',
+    enableHiding: true,
+    cell: ({ row }) => <div className="capitalize">{row.getValue('preferred_name')}</div>,
+  },
+  {
+    id: 'street_name',
     accessorFn: (originalRow) => {
       return originalRow.document['physical_address.street_name'];
     },
-    header: 'Address',
-    cell: ({ row }) => <div className="capitalize">{row.getValue('physical_address-street_name')}</div>,
+    header: 'Street Address',
+    cell: ({ row }) => <div className="capitalize">{row.getValue('street_name')}</div>,
+  },
+  {
+    id: 'town_name',
+    accessorFn: (originalRow) => {
+      return originalRow.document['physical_address.town'];
+    },
+    header: 'Town',
+    enableHiding: true,
+    cell: ({ row }) => <div className="capitalize">{row.getValue('town_name')}</div>,
   },
   {
     id: 'home_phone',
@@ -126,10 +149,12 @@ export const clientsTableColumnDef: ColumnDef<any>[] = [
             .getAllColumns()
             .filter((column) => column.getCanHide())
             .map((column) => {
+              const allowedToAdd = table.getVisibleFlatColumns().length < 10;
               return (
                 <DropdownMenuCheckboxItem
                   key={column.id}
                   className="capitalize"
+                  disabled={!allowedToAdd && !column.getIsVisible()}
                   checked={column.getIsVisible()}
                   onCheckedChange={(value) => column.toggleVisibility(!!value)}
                 >
@@ -141,7 +166,7 @@ export const clientsTableColumnDef: ColumnDef<any>[] = [
       </DropdownMenu>
     ),
     cell: ({ row }) => {
-      const payment = row.original;
+      const client = row.original;
 
       return (
         <DropdownMenu>
@@ -153,12 +178,12 @@ export const clientsTableColumnDef: ColumnDef<any>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(payment.id)}>
-              Copy payment ID
+            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(client.document.id)}>
+              Copy ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
+            <DropdownMenuItem>View</DropdownMenuItem>
+            <DropdownMenuItem>Edit</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
@@ -169,7 +194,7 @@ export const clientsTableFilters: TableFilter[] = [
   {
     id: 'email',
     label: 'Email',
-    modifier: 'equals',
+    modifier: 'contains',
   },
   {
     id: 'first_name',
@@ -182,8 +207,23 @@ export const clientsTableFilters: TableFilter[] = [
     modifier: 'contains',
   },
   {
+    id: 'preferred_name',
+    label: 'Preferred Name',
+    modifier: 'contains',
+  },
+  {
+    id: 'middle_name',
+    label: 'Middle Name',
+    modifier: 'contains',
+  },
+  {
     id: 'physical_address.street_name',
-    label: 'Address',
+    label: 'Street Address',
+    modifier: 'contains',
+  },
+  {
+    id: 'physical_address.town',
+    label: 'Town',
     modifier: 'contains',
   },
   {

@@ -53,7 +53,9 @@ export default function ClientsPage() {
   });
   const [activeResultIndex, setActiveResultIndex] = useState(0);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
+    ['preferred_name', 'middle_name', 'town_name'].reduce((prev, column) => ({ ...prev, [column]: false }), {})
+  );
   const [searchResults, setSearchResults] = useState<SearchResponse<any>[]>([]);
   const data = useMemo(() => searchResults?.[activeResultIndex]?.hits || [], [searchResults, activeResultIndex]);
   const [rowSelection, setRowSelection] = useState({});
@@ -176,7 +178,10 @@ export default function ClientsPage() {
 
   const handleFilterTable = () => {
     searchFilter('');
-    router.push(pathname + '?page=1');
+    setPagination({
+      ...pagination,
+      pageIndex: 1,
+    });
     fetchData({
       q: '*',
       collection: 'clients',
@@ -188,7 +193,10 @@ export default function ClientsPage() {
 
   const handleResetTableFilters = () => {
     resetFilters();
-    router.push(pathname + '?page=1');
+    setPagination({
+      ...pagination,
+      pageIndex: 1,
+    });
     fetchData({
       q: '*',
       collection: 'clients',
@@ -203,7 +211,7 @@ export default function ClientsPage() {
   };
 
   useEffect(() => {
-    router.push(
+    router.replace(
       pathname +
         '?' +
         serialize({
@@ -217,6 +225,7 @@ export default function ClientsPage() {
       per_page: pagination.pageSize,
       ...getTypesenseSearchParams(),
     });
+    table.resetRowSelection();
   }, [pagination, staleFilters]);
 
   return (
