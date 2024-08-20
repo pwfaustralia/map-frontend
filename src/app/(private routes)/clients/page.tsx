@@ -4,6 +4,7 @@ import { typesenseMultiSearch } from '@/app/(typesense data)/actions';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   Select,
   SelectContent,
@@ -16,8 +17,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import useTableFilter from '@/lib/hooks/table-filter-hook';
-import { TableFilterModifiers } from '@/lib/types';
-import { getSorting } from '@/lib/utils';
+import { TableFilterContext, TableFilterModifier } from '@/lib/types';
 import {
   ColumnFiltersState,
   flexRender,
@@ -31,21 +31,24 @@ import {
 } from '@tanstack/react-table';
 import { Search } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { ChangeEvent, useEffect, useMemo, useState } from 'react';
 import { SearchResponse } from 'typesense/lib/Typesense/Documents';
 import { MultiSearchRequestSchema } from 'typesense/lib/Typesense/MultiSearch';
 import { clientsTableColumnDef, clientsTableFilters } from './_clients-table';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { serialize } from '@/lib/utils';
+import clsx from 'clsx';
 
 export default function ClientsPage() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const _pageIndex = parseInt(searchParams.get('page') + '');
+  const paramsDef = {
+    page: parseInt(searchParams.get('page') + ''),
+  };
   const [sorting, setSorting] = useState<SortingState>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [pagination, setPagination] = useState({
-    pageIndex: !isNaN(_pageIndex) ? _pageIndex : 1,
+    pageIndex: !isNaN(paramsDef.page) ? paramsDef.page : 1,
     pageSize: 15,
   });
   const [activeResultIndex, setActiveResultIndex] = useState(0);
@@ -56,17 +59,9 @@ export default function ClientsPage() {
   const [rowSelection, setRowSelection] = useState({});
   const tableData = useMemo(() => (isLoading ? Array(10).fill({}) : data), [isLoading, data]);
   const totalRecords = searchResults?.[activeResultIndex]?.found || 0;
-  const canNextPage = pagination.pageIndex * pagination.pageSize < totalRecords;
+  const totalPage = Math.round(totalRecords / pagination.pageSize);
+  const canNextPage = pagination.pageIndex < totalPage;
   const canBackPage = pagination.pageIndex > 1;
-
-  const createQueryString = useCallback(
-    (name: string, value: string) => {
-      const params = new URLSearchParams(searchParams.toString());
-      params.set(name, value);
-      return params.toString();
-    },
-    [searchParams]
-  );
 
   const tableColumns = useMemo(
     () =>
@@ -79,8 +74,70 @@ export default function ClientsPage() {
     [isLoading, clientsTableColumnDef]
   );
 
-  const { filters, getFilter } = useTableFilter({
+  const { filters, staleFilters, getFilter, getTypesenseSearchParams, resetFilters, searchFilter } = useTableFilter({
     defaultValue: clientsTableFilters,
+    modifierOptions: [
+      {
+        modifier: 'starts with',
+        valueTransformer: (id, value) => `${id}:\`${value}*\``,
+        modifierInputComponent: (filter, context: TableFilterContext) => (
+          <Input
+            defaultValue={filter.value}
+            type="text"
+            placeholder={filter.label}
+            onChange={(e) => {
+              if (context.filter?.id) context.setValue(e.target.value);
+            }}
+          />
+        ),
+      },
+      {
+        modifier: 'equals',
+        valueTransformer: (id, value) => `${id}:=\`${value}\``,
+        modifierInputComponent: (filter, context: TableFilterContext) => (
+          <Input
+            defaultValue={filter.value}
+            type="text"
+            placeholder={filter.label}
+            onChange={(e) => {
+              if (context.filter?.id) context.setValue(e.target.value);
+            }}
+          />
+        ),
+      },
+      {
+        modifier: 'contains',
+        appendQueryBy: true,
+        appendSearchText: true,
+        appendFilterBy: false,
+        infix: true,
+        valueTransformer: (id, value) => `${id}:\`${value}\``,
+        modifierInputComponent: (filter, context: TableFilterContext) => (
+          <Input
+            defaultValue={filter.value}
+            type="text"
+            placeholder={filter.label}
+            onChange={(e) => {
+              if (context.filter?.id) context.setValue(e.target.value);
+            }}
+          />
+        ),
+      },
+      {
+        modifier: 'not equals',
+        valueTransformer: (id, value) => `${id}:!\`${value}\``,
+        modifierInputComponent: (filter, context: TableFilterContext) => (
+          <Input
+            defaultValue={filter.value}
+            type="text"
+            placeholder={filter.label}
+            onChange={(e) => {
+              if (context.filter?.id) context.setValue(e.target.value);
+            }}
+          />
+        ),
+      },
+    ],
   });
 
   const table = useReactTable({
@@ -99,6 +156,7 @@ export default function ClientsPage() {
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     onPaginationChange: setPagination,
+    pageCount: Math.ceil(searchResults?.[0]?.found / pagination.pageSize),
     state: {
       sorting,
       columnFilters,
@@ -116,44 +174,72 @@ export default function ClientsPage() {
     setIsLoading(false);
   };
 
-  useEffect(() => {
-    console.log(getSorting(sorting), sorting);
-  }, [sorting]);
+  const handleFilterTable = () => {
+    searchFilter('');
+    router.push(pathname + '?page=1');
+    fetchData({
+      q: '*',
+      collection: 'clients',
+      page: 1,
+      exhaustive_search: true,
+      ...getTypesenseSearchParams(),
+    });
+  };
+
+  const handleResetTableFilters = () => {
+    resetFilters();
+    router.push(pathname + '?page=1');
+    fetchData({
+      q: '*',
+      collection: 'clients',
+      page: 1,
+      per_page: pagination.pageSize,
+    });
+  };
+
+  const handleSearchFilter = (event: ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    searchFilter(value);
+  };
 
   useEffect(() => {
-    router.push(pathname + '?' + createQueryString('page', pagination.pageIndex.toString()));
+    router.push(
+      pathname +
+        '?' +
+        serialize({
+          page: pagination.pageIndex.toString(),
+        })
+    );
     fetchData({
       q: '*',
       collection: 'clients',
       page: pagination.pageIndex,
       per_page: pagination.pageSize,
+      ...getTypesenseSearchParams(),
     });
-  }, [pagination]);
+  }, [pagination, staleFilters]);
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
-        <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn('email')?.getFilterValue() as string) ?? ''}
-          onChange={(event) => table.getColumn('email')?.setFilterValue(event.target.value)}
-          className="max-w-sm"
-        />
-      </div>
       <div className="flex items-start gap-4">
         <div className="sticky top-[20px]">
           <ScrollArea className="bg-white rounded-[20px] border border-grey-2 min-w-[400px]">
             <div className="max-h-[calc(_100vh_-_190px_)]">
               <div className="flex flex-col items-start gap-3 sticky top-0 bg-white z-10 p-5 full">
                 <h1 className="text-[20px] font-bold">Filter Clients by</h1>
-                <Input iconLeft={<Search className="opacity-[0.4]" />} placeholder="Search" full />
+                <Input
+                  iconLeft={<Search className="opacity-[0.4]" />}
+                  placeholder="Search"
+                  full
+                  onChange={(event) => handleSearchFilter(event)}
+                />
               </div>
               <div className="p-[25px] flex gap-4 flex-col ">
-                {filters.map(({ id, active, label, modifier, modifierOptions }) => (
-                  <div key={id} className="flex flex-col gap-3">
+                {filters.map(({ id, active, label, modifier, modifierOptions, hidden }) => (
+                  <div key={id} className={clsx('flex flex-col gap-3 select-none', { hidden })}>
                     <div className="flex items-center gap-2">
                       <Checkbox
-                        defaultChecked={active}
+                        checked={active}
                         onCheckedChange={(checked: boolean) => {
                           getFilter(id).toggleActive(checked);
                         }}
@@ -167,7 +253,7 @@ export default function ClientsPage() {
                       <div className="flex flex-col gap-3 pl-5">
                         <div>
                           <Select
-                            onValueChange={(value: TableFilterModifiers) => {
+                            onValueChange={(value: TableFilterModifier) => {
                               getFilter(id).setModifier(value);
                             }}
                             value={modifier}
@@ -178,34 +264,26 @@ export default function ClientsPage() {
                             <SelectContent>
                               <SelectGroup>
                                 <SelectLabel>Modifier</SelectLabel>
-                                {modifierOptions?.map((option: string) => (
-                                  <SelectItem key={option} value={option} className="capitalize">
-                                    {option}
+                                {modifierOptions?.map(({ modifier }) => (
+                                  <SelectItem key={modifier} value={modifier} className="capitalize">
+                                    {modifier}
                                   </SelectItem>
                                 ))}
                               </SelectGroup>
                             </SelectContent>
                           </Select>
                         </div>
-                        <div>
-                          <Input
-                            variant="ghost"
-                            onChange={(event) => {
-                              let value = event.target.value;
-                              getFilter(id)
-                                .setValue(value)
-                                .formatValue((val) => val + 'testing');
-                            }}
-                          />
-                        </div>
+                        <div>{getFilter(id).selectedModifier?.renderComponent()}</div>
                       </div>
                     )}
                   </div>
                 ))}
               </div>
               <div className="flex items-center gap-3 sticky bottom-0 bg-white z-10 shadow-[0_-5px_4px_rgba(0,0,0,0.05)] p-5">
-                <Button className="w-full">Apply Filter</Button>
-                <Button variant="outline" className="w-full">
+                <Button className="w-full" onClick={() => handleFilterTable()}>
+                  Apply Filter
+                </Button>
+                <Button variant="outline" className="w-full" onClick={() => handleResetTableFilters()}>
                   Clear
                 </Button>
               </div>
@@ -254,6 +332,7 @@ export default function ClientsPage() {
               {table.getFilteredSelectedRowModel().rows.length} of {searchResults?.[0]?.found} row(s) selected.
             </div>
             <div className="space-x-2">
+              Page {pagination.pageIndex} of {totalPage}
               <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!canBackPage}>
                 Previous
               </Button>

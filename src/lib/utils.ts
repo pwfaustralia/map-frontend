@@ -13,3 +13,12 @@ export function getSorting(sorting: SortingState) {
     .slice(0, 3)
     .join(',');
 }
+
+export function serialize(obj: Record<string, any>) {
+  var str = [];
+  for (var p in obj)
+    if (obj.hasOwnProperty(p)) {
+      str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]));
+    }
+  return str.join('&');
+}

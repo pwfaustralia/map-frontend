@@ -169,7 +169,7 @@ export const clientsTableFilters: TableFilter[] = [
   {
     id: 'email',
     label: 'Email',
-    modifier: 'contains',
+    modifier: 'equals',
   },
   {
     id: 'first_name',
@@ -182,7 +182,7 @@ export const clientsTableFilters: TableFilter[] = [
     modifier: 'contains',
   },
   {
-    id: 'address',
+    id: 'physical_address.street_name',
     label: 'Address',
     modifier: 'contains',
   },

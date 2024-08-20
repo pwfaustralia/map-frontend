@@ -1,5 +1,5 @@
 import { fetchAbsolute } from '@/lib/fetcher';
-import { LARAVEL_API_ROUTES } from '@/lib/routes';
+import { NEXT_API_ROUTES } from '@/lib/routes';
 import { EmailPasswordSchema } from '@/lib/schema/auth';
 import { NextAuthOptions } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
@@ -23,7 +23,7 @@ export const authOptions: NextAuthOptions = {
           throw new Error(credentials.error?.message);
         }
         try {
-          const login = await fetchAbsolute(LARAVEL_API_ROUTES.login, {
+          const login = await fetchAbsolute(NEXT_API_ROUTES.laravelLogin, {
             method: 'post',
             body: JSON.stringify(credentials.data),
             cache: 'no-cache',

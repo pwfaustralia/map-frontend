@@ -1,5 +1,5 @@
-export const LARAVEL_API_ROUTES = {
-  login: '/auth/credentials',
+export const NEXT_API_ROUTES = {
+  laravelLogin: '/auth/credentials',
 };
 
 export const NEXT_APP_ROUTES = {
