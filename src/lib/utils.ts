@@ -1,6 +1,8 @@
 import { SortingState } from '@tanstack/react-table';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { CLIENT_ROUTES, INTERNAL_ROUTES, NEXT_APP_ROUTES } from './routes';
+import { IUser, UserRoles } from './types';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -21,4 +23,26 @@ export function serialize(obj: Record<string, any>) {
       str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]));
     }
   return str.join('&');
+}
+
+export function isClientUser(role: string) {
+  return role === UserRoles.CLIENT;
+}
+
+export function getPrivateRoutes() {
+  return Object.values(INTERNAL_ROUTES)
+    .concat(Object.values(CLIENT_ROUTES))
+    .map(({ path }) => path);
+}
+
+export function getUserRedirectPage(user: IUser, path: string, callback?: (url: string) => void) {
+  let url = '';
+  if (path === NEXT_APP_ROUTES.login) url = NEXT_APP_ROUTES.dashboard;
+  if (isClientUser(user.user_role.role_name)) {
+    let hasClientProfile = user.clients.length > 0;
+    if (!hasClientProfile) url = '/no-profile';
+  }
+
+  if (callback) callback(url);
+  return url;
 }

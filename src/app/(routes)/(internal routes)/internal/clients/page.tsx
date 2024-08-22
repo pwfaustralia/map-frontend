@@ -1,6 +1,6 @@
 'use client';
 
-import { typesenseMultiSearch } from '@/app/(typesense data)/actions';
+import { typesenseMultiSearch } from '@/app/(actions)/(typesense)/actions';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -38,7 +38,7 @@ import { clientsTableColumnDef, clientsTableFilters } from './_clients-table';
 import { serialize } from '@/lib/utils';
 import clsx from 'clsx';
 
-export default function ClientsPage() {
+export default function Internal_ClientsPage() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -178,10 +178,9 @@ export default function ClientsPage() {
 
   const handleFilterTable = () => {
     searchFilter('');
-    setPagination({
-      ...pagination,
-      pageIndex: 1,
-    });
+    if (pagination.pageIndex != 1) {
+      table.setPageIndex(1);
+    }
     fetchData({
       q: '*',
       collection: 'clients',
@@ -193,10 +192,9 @@ export default function ClientsPage() {
 
   const handleResetTableFilters = () => {
     resetFilters();
-    setPagination({
-      ...pagination,
-      pageIndex: 1,
-    });
+    if (pagination.pageIndex != 1) {
+      table.setPageIndex(1);
+    }
     fetchData({
       q: '*',
       collection: 'clients',

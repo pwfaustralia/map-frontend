@@ -1,10 +1,11 @@
 import { authOptions } from '@/lib-server/auth-options';
 import SessionWrapper from '@/lib-server/session-wrapper';
 import { NEXT_APP_ROUTES } from '@/lib/routes';
+import { getPrivateRoutes, getUserRedirectPage } from '@/lib/utils';
 import type { Metadata } from 'next';
 import { getServerSession } from 'next-auth/next';
 import { Inter } from 'next/font/google';
-import { headers } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import './globals.css';
 
@@ -23,17 +24,18 @@ export default async function RootLayout({
   const session = await getServerSession(authOptions);
   const headersList = headers();
   const nextUrl = new URL(headersList.get('x-url') || '');
-  const isLoggedIn = !!session?.user.accessToken;
+  const isLoggedIn = cookies().get(process.env.LARAVEL_ACCESSTOKEN_COOKIE_KEY!) !== undefined && !session?.error;
 
   if (!isLoggedIn) {
-    (() => {
-      if (nextUrl.pathname === NEXT_APP_ROUTES.login) return;
+    if (getPrivateRoutes().includes(nextUrl.pathname)) {
       redirect(process.env.NEXT_BASE_URL + NEXT_APP_ROUTES.login);
-    })();
+    }
   } else {
-    (() => {
-      if (nextUrl.pathname === NEXT_APP_ROUTES.login) redirect(process.env.NEXT_BASE_URL + NEXT_APP_ROUTES.dashboard);
-    })();
+    getUserRedirectPage(session!.user, nextUrl.pathname, (url) => {
+      if (url) {
+        redirect(url);
+      }
+    });
   }
 
   return (

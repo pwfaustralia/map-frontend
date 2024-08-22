@@ -9,7 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { EnvelopeClosedIcon, InfoCircledIcon, LockClosedIcon } from '@radix-ui/react-icons';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { LegacyRef, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -19,15 +19,13 @@ export default function LoginPage() {
     handleSubmit,
     register,
     setError,
+    setValue,
   } = useForm({
-    defaultValues: {
-      email: 'hello@pwf.com.au',
-      password: 'LK^3gxs8!!8&hu',
-    },
     resolver: zodResolver(EmailPasswordSchema),
   });
   const [otherError, setOtherError] = useState('');
   const router = useRouter();
+  const submitRef = useRef();
 
   const handleSignIn = async (credentials: z.infer<typeof EmailPasswordSchema>) => {
     setOtherError('');
@@ -83,9 +81,32 @@ export default function LoginPage() {
             iconLeft={<LockClosedIcon className="[&>path]:fill-primary w-8 h-8" />}
           />
         </div>
-        <Button type="submit" className="w-full text-2xl py-6" disabled={isSubmitting}>
-          Sign in
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button ref={submitRef as any} type="submit" className="hidden"></Button>
+          <Button
+            className="w-full text-2xl py-6"
+            disabled={isSubmitting}
+            onClick={() => {
+              setValue('email', 'hello@pwf.com.au');
+              setValue('password', 'LK^3gxs8!!8&hu');
+              (submitRef.current as any).click();
+            }}
+          >
+            Sign in as Admin
+          </Button>
+          <Button
+            variant="outline"
+            className="w-full text-2xl py-6"
+            disabled={isSubmitting}
+            onClick={() => {
+              setValue('email', 'mark@pwf.com.au');
+              setValue('password', 'Pwf@2024');
+              (submitRef.current as any).click();
+            }}
+          >
+            Sign in as Client
+          </Button>
+        </div>
       </div>
     </form>
   );

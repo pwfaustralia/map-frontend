@@ -1,5 +1,6 @@
 import { fetchLaravel } from '@/lib/fetcher';
 import { EmailPasswordSchema } from '@/lib/schema/auth';
+import { parse } from 'cookie';
 import { NextRequest, NextResponse } from 'next/server';
 
 export const POST = async (request: NextRequest) => {
@@ -14,15 +15,18 @@ export const POST = async (request: NextRequest) => {
     cache: 'no-cache',
   });
   const loginData = await login.json();
+  const response = NextResponse.json(loginData);
+  const parseCookie = parse(login.headers.get('Set-Cookie')!);
 
-  loginData.accessToken = login.headers.get('set-cookie');
+  response.headers.set('X-Yodlee-AccessToken', login.headers.get('X-Yodlee-AccessToken')!);
+  response.headers.set('X-Laravel-AccessToken', parseCookie.laravel_access_token);
 
-  return NextResponse.json(loginData);
+  return response;
 };
 
 export const GET = async () => {
   try {
-    const profile = await fetchLaravel('/users/me', {
+    const profile = await fetchLaravel('/users/checkup', {
       cache: 'no-cache',
     }).then((response) => response.json());
     return NextResponse.json(profile);
