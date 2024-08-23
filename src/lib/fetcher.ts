@@ -22,7 +22,7 @@ export const fetchLaravel = async (endpoint: string, { headers = {}, ...params }
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
-      ...(accessToken ? { Cookie: serialize('accessToken', accessToken.value) } : {}),
+      ...(accessToken ? { Cookie: serialize('laravel_access_token', accessToken.value) } : {}),
       ...headers,
     },
     ...params,

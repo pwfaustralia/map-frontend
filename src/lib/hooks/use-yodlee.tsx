@@ -8,7 +8,7 @@ export default function useYodlee(fastLinkConfig: FastLinkConfig) {
   const _config = useRef<FastLinkConfig>(fastLinkConfig);
 
   const yodleeTags = useMemo(() => <Script src="https://cdn.yodlee.com/fastlink/v4/initialize.js" />, []);
-  const fastLink = () => (window as any).fastlink;
+  const fastLink = (): FastLink => (window as any).fastlink;
   const config = () => _config.current;
 
   const open = (params: FastLinkOpenInterface, container: string) => {

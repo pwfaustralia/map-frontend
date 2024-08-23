@@ -2,15 +2,7 @@
 
 import { getYodleeAccessToken } from '@/app/(actions)/(utils)/actions';
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import useYodlee from '@/lib/hooks/use-yodlee';
 import { useEffect } from 'react';
 

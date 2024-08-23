@@ -70,7 +70,7 @@ export default function Internal_ClientsPage() {
       isLoading
         ? clientsTableColumnDef.map((column) => ({
             ...column,
-            cell: () => <Skeleton className="h-[30px] bg-skeleton" />,
+            cell: () => <Skeleton className="h-[30px]" />,
           }))
         : clientsTableColumnDef,
     [isLoading, clientsTableColumnDef]

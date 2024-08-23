@@ -2,7 +2,6 @@
 import { Button } from '@/components/ui/button';
 import { INTERNAL_ROUTES } from '@/lib/routes';
 import clsx from 'clsx';
-import { Users } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';

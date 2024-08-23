@@ -53,14 +53,14 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async session({ session, token }) {
-      const authCheck = await fetchLaravel('/users/checkup', {
-        cache: 'no-cache',
-      }).then((response) => response.json());
+      // const authCheck = await fetchLaravel('/users/checkup', {
+      //   cache: 'no-cache',
+      // }).then((response) => response.json());
+      // if (!authCheck.success) {
+      //   return { ...session, error: true };
+      // }
       if (token.user) {
         session.user = token.user;
-      }
-      if (!authCheck.success) {
-        return { ...session, error: true };
       }
       return session;
     },

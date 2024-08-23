@@ -1,7 +1,5 @@
 import { DashboardIcon } from '@radix-ui/react-icons';
-import { IconProps } from '@radix-ui/react-icons/dist/types';
-import { Banknote, Users } from 'lucide-react';
-import { ForwardRefExoticComponent, RefAttributes } from 'react';
+import { Banknote, PlusCircleIcon, Users } from 'lucide-react';
 
 export const NEXT_API_ROUTES = {
   laravelLogin: '/auth/credentials',
@@ -23,6 +21,10 @@ export const INTERNAL_ROUTES = {
   'My Clients': {
     path: '/internal/clients',
     Icon: Users,
+  },
+  'Add Client': {
+    path: '/internal/add-client',
+    Icon: PlusCircleIcon,
   },
 };
 
