@@ -73,7 +73,7 @@ export default function Internal_ClientsPage() {
             cell: () => <Skeleton className="h-[30px]" />,
           }))
         : clientsTableColumnDef,
-    [isLoading, clientsTableColumnDef]
+    [isLoading]
   );
 
   const { filters, staleFilters, getFilter, getTypesenseSearchParams, resetFilters, searchFilter } = useTableFilter({
@@ -112,7 +112,7 @@ export default function Internal_ClientsPage() {
         appendQueryBy: true,
         appendSearchText: true,
         appendFilterBy: false,
-        infix: true,
+        infix: 'fallback',
         valueTransformer: (id, value) => `${id}:\`${value}\``,
         modifierInputComponent: (filter, context: TableFilterContext) => (
           <Input
@@ -224,7 +224,7 @@ export default function Internal_ClientsPage() {
       ...getTypesenseSearchParams(),
     });
     table.resetRowSelection();
-  }, [pagination, staleFilters]);
+  }, [pagination]);
 
   return (
     <div className="w-full">

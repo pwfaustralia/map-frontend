@@ -17,7 +17,7 @@ export interface TableFilterModifierOption {
   appendSearchText?: string | boolean;
   appendQueryBy?: boolean;
   appendFilterBy?: boolean;
-  infix?: boolean;
+  infix?: 'always' | 'off' | 'fallback';
   valueTransformer?: (id: string, value: any) => string;
   modifierInputComponent: (filter: TableFilter, context: TableFilterContext) => ReactNode;
 }

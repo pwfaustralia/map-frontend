@@ -12,6 +12,7 @@ export async function deleteAccessTokenCookies() {
 
 export async function isClientUser() {
   const session = await getServerSession(authOptions);
+  if (!session?.user?.user_role) return true;
   return session?.user.user_role.role_name! === UserRoles.CLIENT;
 }
 

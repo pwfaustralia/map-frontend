@@ -1,5 +1,6 @@
 import { authOptions } from '@/lib-server/auth-options';
 import SessionWrapper from '@/lib-server/session-wrapper';
+import { AuthWrapper } from '@/lib/provider/auth-wrapper';
 import { NEXT_APP_ROUTES } from '@/lib/routes';
 import { getPrivateRoutes, getUserRedirectPage } from '@/lib/utils';
 import type { Metadata } from 'next';
@@ -24,7 +25,7 @@ export default async function RootLayout({
   const session = await getServerSession(authOptions);
   const headersList = headers();
   const nextUrl = new URL(headersList.get('x-url') || '');
-  const isLoggedIn = cookies().get(process.env.LARAVEL_ACCESSTOKEN_COOKIE_KEY!) !== undefined && !session?.error;
+  const isLoggedIn = cookies().get(process.env.LARAVEL_ACCESSTOKEN_COOKIE_KEY!) !== undefined;
 
   if (!isLoggedIn) {
     if (getPrivateRoutes().includes(nextUrl.pathname)) {
@@ -41,7 +42,9 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <SessionWrapper>{children}</SessionWrapper>
+        <SessionWrapper>
+          <AuthWrapper>{children}</AuthWrapper>
+        </SessionWrapper>
       </body>
     </html>
   );

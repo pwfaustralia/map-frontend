@@ -28,17 +28,20 @@ const inputVariant = cva(
 const Input = React.forwardRef<
   HTMLInputElement,
   InputProps & { variant?: 'ghost' | 'default'; full?: any; label?: string }
->(({ className, error, iconLeft, full, iconRight, type, label, variant = 'default', ...props }, ref) => {
+>(({ className, error, iconLeft, full, iconRight, type, label, variant = 'default', id, ...props }, ref) => {
+  const inputId = (id || props.name) + '_input';
+
   return (
     <div className={clsx('grid gap-2', { 'w-full': full })}>
       {label && (
-        <label htmlFor={props.id || props.name} className="text-md font-semibold">
+        <label htmlFor={inputId} className="text-md font-semibold">
           {label}
         </label>
       )}
       <div className="flex items-center relative ">
         {iconLeft && <div className="absolute left-5 top-1/2 transform -translate-y-1/2">{iconLeft}</div>}
         <input
+          id={inputId}
           type={type}
           className={cn(inputVariant({ variant }), className, {
             'pl-[65px]': iconLeft,

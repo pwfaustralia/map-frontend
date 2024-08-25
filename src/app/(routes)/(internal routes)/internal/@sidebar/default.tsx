@@ -1,4 +1,5 @@
 'use client';
+
 import { Button } from '@/components/ui/button';
 import { INTERNAL_ROUTES } from '@/lib/routes';
 import clsx from 'clsx';
@@ -29,7 +30,7 @@ export default function SidebarInternalDefault() {
               asChild
             >
               <Link href={path}>
-                <Icon className="w-4 h-4" /> {label}
+                {Icon && <Icon className="w-4 h-4" />} {label}
               </Link>
             </Button>
           );

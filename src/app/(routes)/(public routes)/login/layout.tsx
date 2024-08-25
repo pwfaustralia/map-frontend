@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -8,7 +9,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <img src="/images/cc-logo.png" alt="Credit Connection" className="lg:w-[365px] w-[80%] max-w-[365px]" />
         </div>
         <div className="hidden w-full justify-center lg:flex">
-          <img src="/images/girl-on-the-bike.png" width="278" height="267" />
+          <Image src="/images/girl-on-the-bike.png" alt="CC" width="278" height="267" />
         </div>
       </div>
       <div className="flex items-center justify-center py-12 rounded-t-[41px] bg-white lg:mt-0 mt-[-46px] lg:px-0 px-[46px]">

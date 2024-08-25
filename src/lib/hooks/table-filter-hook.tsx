@@ -117,7 +117,7 @@ export default function useTableFilter(config: TableFilterConfig) {
         stagedParams.queryBy.push(id);
         stagedParams.infix.push('off');
         if (mod?.infix) {
-          stagedParams.infix[stagedParams.infix.length - 1] = 'always';
+          stagedParams.infix[stagedParams.infix.length - 1] = mod?.infix;
         }
       }
     });

@@ -1,8 +1,8 @@
 'use client';
+
 import { Button } from '@/components/ui/button';
 import { CLIENT_ROUTES } from '@/lib/routes';
 import clsx from 'clsx';
-import { Users } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
@@ -30,7 +30,7 @@ export default function SidebarDefault() {
               asChild
             >
               <Link href={path}>
-                <Icon className="w-4 h-4" /> {label}
+                {Icon && <Icon className="w-4 h-4" />} {label}
               </Link>
             </Button>
           );

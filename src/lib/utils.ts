@@ -32,13 +32,14 @@ export function isClientUser(role: string) {
 export function getPrivateRoutes() {
   return Object.values(INTERNAL_ROUTES)
     .concat(Object.values(CLIENT_ROUTES))
-    .map(({ path }) => path);
+    .map(({ path }) => path)
+    .concat(['/']);
 }
 
 export function getUserRedirectPage(user: IUser, path: string, callback?: (url: string) => void) {
   let url = '';
   if (path === NEXT_APP_ROUTES.login) url = NEXT_APP_ROUTES.dashboard;
-  if (isClientUser(user.user_role.role_name)) {
+  if (isClientUser(user?.user_role?.role_name)) {
     let hasClientProfile = user.clients.length > 0;
     if (!hasClientProfile) url = '/no-profile';
   }

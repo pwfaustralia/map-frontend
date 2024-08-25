@@ -1,10 +1,9 @@
-import { authOptions } from '@/lib-server/auth-options';
 import { serialize } from 'cookie';
-import { getServerSession } from 'next-auth/next';
 import { cookies } from 'next/headers';
 import { Client as TypesenseClient } from 'typesense';
 
-export const fetchAbsolute = (endpoint: string, { headers = {}, ...params }: RequestInit) => {
+export const fetchAbsolute = (endpoint: string, requestInit: RequestInit = {}) => {
+  const { headers = {}, ...params } = requestInit;
   return fetch(process.env.NEXT_BASE_URL + '/api' + endpoint, {
     headers: {
       Accept: 'application/json',
