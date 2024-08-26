@@ -1,7 +1,7 @@
 'use server';
 
 import { authOptions } from '@/lib-server/auth-options';
-import { UserRoles } from '@/lib/types';
+import { UserRoles } from '@/lib/types/user';
 import { getServerSession } from 'next-auth/next';
 import { cookies } from 'next/headers';
 

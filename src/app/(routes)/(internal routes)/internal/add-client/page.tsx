@@ -1,6 +1,6 @@
 'use client';
 
-import { createUserAndClientProfile } from '@/app/(actions)/(laravel)/actions';
+import { createUserAndClientProfile } from '@/app/(actions)/laravel/actions';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';

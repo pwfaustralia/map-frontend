@@ -1,8 +1,9 @@
+'use server';
+
 import { serialize } from 'cookie';
 import { cookies } from 'next/headers';
-import { Client as TypesenseClient } from 'typesense';
 
-export const fetchAbsolute = (endpoint: string, requestInit: RequestInit = {}) => {
+export const fetchAbsolute = async (endpoint: string, requestInit: RequestInit = {}) => {
   const { headers = {}, ...params } = requestInit;
   return fetch(process.env.NEXT_BASE_URL + '/api' + endpoint, {
     headers: {
@@ -28,11 +29,19 @@ export const fetchLaravel = async (endpoint: string, { headers = {}, ...params }
   });
 };
 
-export const typesense = new TypesenseClient({
-  apiKey: process.env.TYPESENSE_API_KEY!,
-  nodes: [
-    {
-      url: process.env.TYPESENSE_BASE_URL!,
+export const fetchYodlee = async (endpoint: string, { headers = {}, ...params }: RequestInit = {}) => {
+  const accessToken = decodeURIComponent(cookies().get(process.env.YODLEE_ACCESSTOKEN_COOKIE_KEY!)?.value!)?.split(
+    '='
+  )[1];
+
+  return await fetch(process.env.YODLEE_BASE_URL + endpoint, {
+    headers: {
+      Accept: 'application/json',
+      'Api-Version': '1.1',
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+      ...headers,
     },
-  ],
-});
+    ...params,
+  }).then((resp) => resp.json());
+};

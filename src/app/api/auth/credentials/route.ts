@@ -1,4 +1,4 @@
-import { fetchLaravel } from '@/lib/fetcher';
+import { fetchLaravel } from '@/app/(actions)/fetcher/actions';
 import { EmailPasswordSchema } from '@/lib/schema/auth';
 import { parse } from 'cookie';
 import { NextRequest, NextResponse } from 'next/server';

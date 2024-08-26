@@ -9,7 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { EnvelopeClosedIcon, InfoCircledIcon, LockClosedIcon } from '@radix-ui/react-icons';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { LegacyRef, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 

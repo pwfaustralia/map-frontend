@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { TableFilter } from '@/lib/types';
+import { TableFilter } from '@/lib/types/table';
 import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown, MoreHorizontal, SlidersHorizontal } from 'lucide-react';
 

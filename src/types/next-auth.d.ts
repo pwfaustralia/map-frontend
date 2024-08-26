@@ -1,5 +1,5 @@
 // types/next-auth.d.ts
-import { IUser } from '@/lib/types';
+import { IUser } from '@/lib/types/user';
 import 'next-auth';
 import { DefaultSession } from 'next-auth';
 import 'next-auth/jwt';

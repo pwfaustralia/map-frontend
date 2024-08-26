@@ -1,4 +1,4 @@
-import { isClientUser } from '@/app/(actions)/(utils)/actions';
+import { isClientUser } from '@/app/(actions)/utils/actions';
 import { NEXT_APP_ROUTES } from '@/lib/routes';
 import { redirect } from 'next/navigation';
 import { ReactNode } from 'react';

@@ -33,8 +33,8 @@ export const CLIENT_ROUTES = {
     path: NEXT_APP_ROUTES.dashboard,
     Icon: DashboardIcon,
   },
-  'Connect Bank': {
-    path: '/connect-bank',
+  'My Account': {
+    path: '/my-account',
     Icon: Banknote,
   },
 };

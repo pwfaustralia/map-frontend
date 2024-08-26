@@ -1,9 +1,9 @@
 'use server';
 
-import { fetchLaravel } from '@/lib/fetcher';
 import { UserSchema } from '@/lib/schema/user';
 import { z } from 'zod';
 import { LARAVEL_API_ROUTES } from './laravel-api-routes';
+import { fetchLaravel } from '../fetcher/actions';
 
 export async function createUserAndClientProfile(data: z.infer<typeof UserSchema>) {
   const response = await fetchLaravel(LARAVEL_API_ROUTES.createUser, {

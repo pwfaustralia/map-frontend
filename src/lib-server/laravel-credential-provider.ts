@@ -1,4 +1,4 @@
-import { fetchAbsolute } from '@/lib/fetcher';
+import { fetchAbsolute } from '@/app/(actions)/fetcher/actions';
 import { NEXT_API_ROUTES } from '@/lib/routes';
 import { EmailPasswordSchema } from '@/lib/schema/auth';
 import Credentials from 'next-auth/providers/credentials';

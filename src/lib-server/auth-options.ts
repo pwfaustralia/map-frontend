@@ -1,8 +1,8 @@
-import { deleteAccessTokenCookies } from '@/app/(actions)/(utils)/actions';
-import { fetchLaravel } from '@/lib/fetcher';
 import { NextAuthOptions } from 'next-auth';
 import { cookies } from 'next/headers';
 import { LaravelEmailPasswordProvider } from './laravel-credential-provider';
+import { fetchLaravel } from '@/app/(actions)/fetcher/actions';
+import { deleteAccessTokenCookies } from '@/app/(actions)/utils/actions';
 
 export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
@@ -12,12 +12,12 @@ export const authOptions: NextAuthOptions = {
   providers: [LaravelEmailPasswordProvider()],
   callbacks: {
     async session({ session, token }) {
-      const authCheck = await fetchLaravel('/users/checkup', {
-        cache: 'no-cache',
-      }).then((response) => response.json());
-      if (!authCheck.success) {
-        return { ...session, error: true };
-      }
+      // const authCheck = await fetchLaravel('/users/checkup', {
+      //   cache: 'no-cache',
+      // }).then((response) => response.json());
+      // if (!authCheck.success) {
+      //   return { ...session, error: true };
+      // }
       if (token.user) {
         session.user = token.user;
       }

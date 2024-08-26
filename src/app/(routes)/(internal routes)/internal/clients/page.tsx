@@ -1,6 +1,6 @@
 'use client';
 
-import { typesenseMultiSearch } from '@/app/(actions)/(typesense)/actions';
+import { typesenseMultiSearch } from '@/app/(actions)/typesense/actions';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -17,7 +17,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import useTableFilter from '@/lib/hooks/table-filter-hook';
-import { TableFilterContext, TableFilterModifier } from '@/lib/types';
+import { TableFilterContext, TableFilterModifier } from '@/lib/types/table';
 import {
   ColumnFiltersState,
   flexRender,

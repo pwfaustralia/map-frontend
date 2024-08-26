@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 
-import { TableFilter, TableFilterConfig, TableFilterContext, TableFilterModifier } from '../types';
+import { TableFilter, TableFilterConfig, TableFilterContext, TableFilterModifier } from '@/lib/types/table';
 import { MultiSearchRequestSchema } from 'typesense/lib/Typesense/MultiSearch';
 
 export default function useTableFilter(config: TableFilterConfig) {

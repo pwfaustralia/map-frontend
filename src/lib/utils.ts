@@ -2,7 +2,7 @@ import { SortingState } from '@tanstack/react-table';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { CLIENT_ROUTES, INTERNAL_ROUTES, NEXT_APP_ROUTES } from './routes';
-import { IUser, UserRoles } from './types';
+import { IUser, UserRoles } from '@/lib/types/user';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
