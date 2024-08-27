@@ -75,4 +75,23 @@
   body {
     @apply bg-background text-foreground h-screen;
   }
+  .faded {
+    position: relative;
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      width: 130px;
+      z-index: 1;
+      pointer-events: none;
+    }
+    &::before {
+      background: linear-gradient(90deg, #f5f5f5, transparent);
+    }
+    &::after {
+      background: linear-gradient(-90deg, #f5f5f5, transparent);
+      left: unset;
+    }
+  }
 }

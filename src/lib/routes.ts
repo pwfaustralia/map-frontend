@@ -38,3 +38,12 @@ export const CLIENT_ROUTES = {
     Icon: Banknote,
   },
 };
+
+export const YODLEE_API_ROUTES = {
+  transactions: {
+    transactions: '/transactions',
+    count: '/transactions/count',
+    categories: '/transactions/categories',
+    accounts: '/accounts',
+  },
+};

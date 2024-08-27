@@ -5,32 +5,54 @@ import { getYodleeAccessToken } from '@/app/(actions)/utils/actions';
 import { FastLink, FastLinkConfig, FastLinkOpenInterface } from '@/lib/types/fastlink';
 import Script from 'next/script';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { YODLEE_API_ROUTES } from '../routes';
+import { AccountData, ErrorResponse, TransactionCount, TransactionData, YodleeInitConfig } from '../types/yodlee';
+import { serialize } from '../utils';
 
-export default function useYodlee(fastLinkConfig: FastLinkConfig) {
+export default function useYodlee(init: {
+  fastLinkConfig: FastLinkConfig;
+  initialize?: YodleeInitConfig;
+  manualErrorHandling?: boolean;
+  onError?: (error: ErrorResponse) => void;
+}) {
+  const { fastLinkConfig, initialize, manualErrorHandling, onError } = init;
+  const { accounts: initAccounts, transactions: initTransactions = {} } = initialize || {};
+  const _moduleOptions = useRef<typeof initialize>(initialize);
   const _config = useRef<FastLinkConfig>(fastLinkConfig);
-  const [isReady, setIsReady] = useState({ apiReady: false, accountsReady: false });
+  const [isReady, setIsReady] = useState({ apiReady: false, accountsReady: false, transactionsReady: false });
+  const _isReady = useRef<typeof isReady>(isReady);
   const { apiReady, accountsReady } = isReady;
+  const [error, setError] = useState<ErrorResponse>();
   const [accountData, setAccountData] = useState<AccountData>();
+  const [transactionData, setTransactionData] = useState<TransactionData>();
+  const [transactionCount, setTransactionCount] = useState<TransactionCount>();
 
   const yodleeTags = useMemo(() => <Script src="https://cdn.yodlee.com/fastlink/v4/initialize.js" />, []);
   const fastLink = (): FastLink => (window as any).fastlink;
   const config = () => _config.current;
 
-  const open = (params: FastLinkOpenInterface, container: string) => {
+  const openFastLink = (params: FastLinkOpenInterface, container: string) => {
     if (!fastLink() || !config()) return;
 
     fastLink()?.open({ ...config(), ...params }, container);
   };
 
-  const close = () => {
+  const closeFastLink = () => {
     fastLink()?.close();
+  };
+
+  const setReadyStatus = (key: keyof typeof isReady, status: boolean) => {
+    _isReady.current[key] = status;
+    const newReadyStatus = { ..._isReady.current, [key]: status };
+    setIsReady(newReadyStatus);
+    return newReadyStatus;
   };
 
   const setToken = (token: string) => {
     if (!token) {
-      return setIsReady({ ...isReady, apiReady: false });
+      return setReadyStatus('apiReady', false);
     }
-    setIsReady({ ...isReady, apiReady: true });
+    setReadyStatus('apiReady', true);
     config().accessToken = token;
   };
 
@@ -40,12 +62,40 @@ export default function useYodlee(fastLinkConfig: FastLinkConfig) {
 
   const getAccounts = async () => {
     if (!apiReady) return;
-    setIsReady({ ...isReady, accountsReady: false });
-    const data = await fetchYodlee('/accounts');
+    setReadyStatus('accountsReady', false);
+    const data = await fetchYodlee(YODLEE_API_ROUTES.transactions.accounts);
+    if (data?.errorCode) {
+      setError(data);
+      if (manualErrorHandling) {
+        return;
+      }
+    }
     setAccountData(data);
-    setIsReady({ ...isReady, accountsReady: true });
+    setReadyStatus('accountsReady', true);
     return data;
   };
+
+  const getTransactions = async (filter: typeof initTransactions) => {
+    if (!apiReady) return;
+    setReadyStatus('transactionsReady', false);
+    let params = filter && typeof filter !== 'boolean' ? serialize(filter) : '';
+    const data = await fetchYodlee(YODLEE_API_ROUTES.transactions.transactions + '?' + params);
+    const count = await fetchYodlee(YODLEE_API_ROUTES.transactions.count + '?' + params);
+    if (data?.errorCode) {
+      setError(data);
+      if (manualErrorHandling) {
+        return;
+      }
+    }
+    console.log('get', params);
+    setTransactionCount(count);
+    setTransactionData(data);
+    setReadyStatus('transactionsReady', true);
+    if (_moduleOptions.current) _moduleOptions.current.transactions = filter;
+    return data;
+  };
+
+  const getModuleOptions = () => _moduleOptions.current;
 
   useEffect(() => {
     (async () => {
@@ -58,9 +108,31 @@ export default function useYodlee(fastLinkConfig: FastLinkConfig) {
 
   useEffect(() => {
     if (apiReady) {
-      getAccounts();
+      if (initAccounts) getAccounts();
+      if (Object.keys(initTransactions).length) getTransactions(initTransactions);
     }
   }, [apiReady]);
 
-  return { fastLink, open, setToken, close, getToken, getAccounts, accountData, isReady, yodleeTags };
+  useEffect(() => {
+    if (error && onError) {
+      onError(error as ErrorResponse);
+    }
+  }, [error]);
+
+  return {
+    fastLink,
+    openFastLink,
+    setToken,
+    closeFastLink,
+    getToken,
+    getAccounts,
+    getTransactions,
+    getModuleOptions,
+    error,
+    transactionData,
+    transactionCount,
+    accountData,
+    isReady,
+    yodleeTags,
+  };
 }

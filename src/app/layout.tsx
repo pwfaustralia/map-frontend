@@ -9,6 +9,7 @@ import { Inter } from 'next/font/google';
 import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import './globals.css';
+import clsx from 'clsx';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -41,7 +42,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={clsx(inter.className, 'overflow-hidden')}>
         <SessionWrapper>
           <AuthWrapper>{children}</AuthWrapper>
         </SessionWrapper>

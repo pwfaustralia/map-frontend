@@ -64,7 +64,6 @@ export default function Internal_ClientsPage() {
   const totalPage = Math.round(totalRecords / pagination.pageSize);
   const canNextPage = pagination.pageIndex < totalPage;
   const canBackPage = pagination.pageIndex > 1;
-
   const tableColumns = useMemo(
     () =>
       isLoading
