@@ -1,8 +1,6 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { InfoCircledIcon } from '@radix-ui/react-icons';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -96,7 +94,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   </TableHeader>
                   <TableBody>
                     {yodleeLoginData.map(({ siteName, login, mfa, password }) => (
-                      <TableRow>
+                      <TableRow key={siteName}>
                         <TableCell>{siteName}</TableCell>
                         <TableCell>{login}</TableCell>
                         <TableCell>{password}</TableCell>
