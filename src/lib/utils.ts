@@ -36,7 +36,8 @@ export function getPrivateRoutes() {
     .concat(['/']);
 }
 
-export function getUserRedirectPage(user: IUser, path: string, callback?: (url: string) => void) {
+export function getUserRedirectPage(user: IUser | undefined, path: string, callback?: (url: string) => void) {
+  if (!user) return '';
   let url = '';
   if (path === NEXT_APP_ROUTES.login) url = NEXT_APP_ROUTES.dashboard;
   if (isClientUser(user?.user_role?.role_name)) {

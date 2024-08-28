@@ -33,7 +33,7 @@ export default async function RootLayout({
       redirect(process.env.NEXT_BASE_URL + NEXT_APP_ROUTES.login);
     }
   } else {
-    getUserRedirectPage(session!.user, nextUrl.pathname, (url) => {
+    getUserRedirectPage(session?.user, nextUrl.pathname, (url) => {
       if (url) {
         redirect(url);
       }
