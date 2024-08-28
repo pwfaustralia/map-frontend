@@ -40,11 +40,12 @@ export default function ConnectBankPage() {
     closeFastLink,
     getAccounts,
     getTransactions,
+    getModuleOptions,
     yodleeTags,
     accountData,
     transactionCount,
     transactionData,
-    getModuleOptions,
+    error,
     isReady: { apiReady, accountsReady, transactionsReady },
   } = yodlee;
   const [selectedAccount, setSelectedAccount] = useState<Account>();
@@ -94,6 +95,17 @@ export default function ConnectBankPage() {
       setSelectedAccount(accountData?.account[0]);
     }
   }, [accountData]);
+
+  if (error?.errorCode === '0') {
+    return (
+      <>
+        <h1 className="font-bold text-2xl my-4 mb-7">My Account</h1>
+        <div className="rounded-3xl w-full bg-white py-10 px-12 overflow-hidden">
+          <h3 className="text-xl opacity-[0.6] text-center">{error.errorMessage}</h3>
+        </div>
+      </>
+    );
+  }
 
   if (!accountsReady) {
     return (

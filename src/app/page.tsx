@@ -1,12 +1,6 @@
-'use client';
-
-import { Button } from '@/components/ui/button';
-import { signOut } from 'next-auth/react';
+import { NEXT_APP_ROUTES } from '@/lib/routes';
+import { redirect } from 'next/navigation';
 
 export default function Home() {
-  return (
-    <main className="testing">
-      <Button onClick={() => signOut()}>Sign out</Button>
-    </main>
-  );
+  redirect(process.env.NEXT_BASE_URL + NEXT_APP_ROUTES.dashboard);
 }

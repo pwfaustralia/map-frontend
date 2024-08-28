@@ -82,29 +82,8 @@ export default function LoginPage() {
           />
         </div>
         <div className="flex items-center gap-3">
-          <Button ref={submitRef as any} type="submit" className="hidden"></Button>
-          <Button
-            className="w-full text-2xl py-6"
-            disabled={isSubmitting}
-            onClick={() => {
-              setValue('email', 'hello@pwf.com.au');
-              setValue('password', 'LK^3gxs8!!8&hu');
-              (submitRef.current as any).click();
-            }}
-          >
-            Sign in as Admin
-          </Button>
-          <Button
-            variant="outline"
-            className="w-full text-2xl py-6"
-            disabled={isSubmitting}
-            onClick={() => {
-              setValue('email', 'mark@pwf.com.au');
-              setValue('password', 'Pwf@2024');
-              (submitRef.current as any).click();
-            }}
-          >
-            Sign in as Client
+          <Button className="w-full text-2xl py-6" disabled={isSubmitting} type="submit">
+            Sign in
           </Button>
         </div>
       </div>

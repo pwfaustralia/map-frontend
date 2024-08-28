@@ -100,8 +100,14 @@ export default function useYodlee(init: {
   useEffect(() => {
     (async () => {
       let yodleeTokens = await getYodleeAccessToken();
-      if (yodleeTokens.length) {
+      if (yodleeTokens.length && yodleeTokens[0]?.username) {
         setToken(yodleeTokens[0].accessToken);
+      } else {
+        setError({
+          errorCode: '0',
+          errorMessage: 'No Yodlee account linked.',
+          referenceCode: '',
+        });
       }
     })();
   }, []);
