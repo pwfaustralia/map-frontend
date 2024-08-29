@@ -13,9 +13,10 @@ export default function useYodlee(init: {
   fastLinkConfig: FastLinkConfig;
   initialize?: YodleeInitConfig;
   manualErrorHandling?: boolean;
+  userId?: string;
   onError?: (error: ErrorResponse) => void;
 }) {
-  const { fastLinkConfig, initialize, manualErrorHandling, onError } = init;
+  const { fastLinkConfig, initialize, manualErrorHandling, userId, onError } = init;
   const { accounts: initAccounts, transactions: initTransactions = {} } = initialize || {};
   const _moduleOptions = useRef<typeof initialize>(initialize);
   const _config = useRef<FastLinkConfig>(fastLinkConfig);
@@ -63,7 +64,11 @@ export default function useYodlee(init: {
   const getAccounts = async () => {
     if (!apiReady) return;
     setReadyStatus('accountsReady', false);
-    const data = await fetchYodlee(YODLEE_API_ROUTES.transactions.accounts);
+    const data = await fetchYodlee(YODLEE_API_ROUTES.transactions.accounts, {
+      headers: {
+        Authorization: `Bearer ${config().accessToken}`,
+      },
+    });
     if (data?.errorCode) {
       setError(data);
       if (manualErrorHandling) {
@@ -79,15 +84,22 @@ export default function useYodlee(init: {
     if (!apiReady) return;
     setReadyStatus('transactionsReady', false);
     let params = filter && typeof filter !== 'boolean' ? serialize(filter) : '';
-    const data = await fetchYodlee(YODLEE_API_ROUTES.transactions.transactions + '?' + params);
-    const count = await fetchYodlee(YODLEE_API_ROUTES.transactions.count + '?' + params);
+    const data = await fetchYodlee(YODLEE_API_ROUTES.transactions.transactions + '?' + params, {
+      headers: {
+        Authorization: `Bearer ${config().accessToken}`,
+      },
+    });
+    const count = await fetchYodlee(YODLEE_API_ROUTES.transactions.count + '?' + params, {
+      headers: {
+        Authorization: `Bearer ${config().accessToken}`,
+      },
+    });
     if (data?.errorCode) {
       setError(data);
       if (manualErrorHandling) {
         return;
       }
     }
-    console.log('get', params);
     setTransactionCount(count);
     setTransactionData(data);
     setReadyStatus('transactionsReady', true);
@@ -99,7 +111,7 @@ export default function useYodlee(init: {
 
   useEffect(() => {
     (async () => {
-      let yodleeTokens = await getYodleeAccessToken();
+      let yodleeTokens = await getYodleeAccessToken(userId);
       if (yodleeTokens.length && yodleeTokens[0]?.username) {
         setToken(yodleeTokens[0].accessToken);
       } else {

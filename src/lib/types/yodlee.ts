@@ -134,3 +134,19 @@ export interface ErrorResponse {
   errorMessage: string; // Example: 'Invalid token in authorization header'
   referenceCode: string; // Example: 'cbad3067-3b22-416a-81b9-9be5858d23e534743'
 }
+
+export interface UserYodleeToken {
+  accessToken: string;
+  issuedAt: string; // You can use Date if you prefer to parse it as a Date object.
+  expiresIn: number;
+}
+
+export interface UserYodleeTokenData {
+  token: UserYodleeToken;
+  username: string;
+}
+
+export interface UserYodleeTokenResponse {
+  tokens: UserYodleeTokenData[];
+  error: any;
+}

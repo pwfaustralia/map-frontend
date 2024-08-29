@@ -23,7 +23,7 @@ export async function createUserAndClientProfile(data: z.infer<typeof UserSchema
 
 export async function revalidateUserCookies() {
   try {
-    const response = await fetchLaravel(LARAVEL_API_ROUTES.userDetails);
+    const response = await fetchLaravel(LARAVEL_API_ROUTES.getUserDetails);
     const parseCookie = parse(response.headers.get('Set-Cookie')!);
     const yodleeAccessToken = response.headers.get('X-Yodlee-AccessToken')!;
 
@@ -34,4 +34,9 @@ export async function revalidateUserCookies() {
   }
 
   return true;
+}
+
+export async function getUserDetails(userId: string) {
+  const user = await fetchLaravel(LARAVEL_API_ROUTES.getUserDetailsFn(userId)).then((resp) => resp.json());
+  return user;
 }

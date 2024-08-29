@@ -7,9 +7,11 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import useSliderTransition from '@/lib/hooks/use-slider-transition';
+import { INTERNAL_ROUTES } from '@/lib/routes';
 import { UserSchema } from '@/lib/schema/user';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AnimatePresence, motion } from 'framer-motion';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -258,14 +260,8 @@ export default function AddClientPage() {
                   >
                     Add More Client
                   </Button>
-                  <Button
-                    className="w-full"
-                    type="button"
-                    onClick={() => {
-                      console.log(createdClient.id);
-                    }}
-                  >
-                    View Client
+                  <Button className="w-full" type="button" asChild>
+                    <Link href={INTERNAL_ROUTES['My Clients'].path + '/' + createdClient.user_id}>View Client</Link>
                   </Button>
                 </div>
               </div>

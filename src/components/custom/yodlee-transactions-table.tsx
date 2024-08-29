@@ -47,7 +47,7 @@ const columnDef: ColumnDef<Transaction>[] = [
     accessorKey: 'amount.amount',
     cell: ({ row }) => (
       <>
-        {row.original.amount.currency} {row.getValue('amount')}
+        {row.original?.amount?.currency} {row.getValue('amount')}
       </>
     ),
   },
@@ -57,7 +57,7 @@ const columnDef: ColumnDef<Transaction>[] = [
     accessorKey: 'runningBalance.amount',
     cell: ({ row }) => (
       <>
-        {row.original.runningBalance.currency} {row.getValue('runningBalance')}
+        {row.original?.runningBalance?.currency} {row.getValue('runningBalance')}
       </>
     ),
   },

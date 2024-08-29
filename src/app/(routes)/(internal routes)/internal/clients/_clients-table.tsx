@@ -135,6 +135,13 @@ export const clientsTableColumnDef: ColumnDef<any>[] = [
     cell: ({ row }) => <div className="lowercase">{row.getValue('email')}</div>,
   },
   {
+    id: 'yodlee_username',
+    accessorKey: 'document.yodlee_username',
+    enableHiding: false,
+    header: 'Yodlee',
+    cell: ({ row }) => row.getValue('yodlee_username'),
+  },
+  {
     id: 'actions',
     enableHiding: false,
     header: ({ table }) => (
@@ -182,7 +189,6 @@ export const clientsTableColumnDef: ColumnDef<any>[] = [
               Copy ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View</DropdownMenuItem>
             <DropdownMenuItem>Edit</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -194,6 +200,11 @@ export const clientsTableFilters: TableFilter[] = [
   {
     id: 'email',
     label: 'Email',
+    modifier: 'contains',
+  },
+  {
+    id: 'yodlee_username',
+    label: 'Yodlee',
     modifier: 'contains',
   },
   {

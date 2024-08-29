@@ -1,4 +1,6 @@
 export const LARAVEL_API_ROUTES = {
   createUser: '/users',
-  userDetails: '/users/me',
+  getUserDetails: '/users/me',
+  getUserDetailsFn: (id: string) => `/users/${id}`,
+  getUserYodleeAccessToken: (id: string) => `/users/${id}/yodlee`,
 };

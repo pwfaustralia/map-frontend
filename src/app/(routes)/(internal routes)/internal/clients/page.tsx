@@ -18,6 +18,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import useTableFilter from '@/lib/hooks/table-filter-hook';
 import { TableFilterContext, TableFilterModifier } from '@/lib/types/table';
+import { serialize } from '@/lib/utils';
 import {
   ColumnFiltersState,
   flexRender,
@@ -29,14 +30,15 @@ import {
   useReactTable,
   VisibilityState,
 } from '@tanstack/react-table';
+import clsx from 'clsx';
 import { Search } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { ChangeEvent, useEffect, useMemo, useState } from 'react';
 import { SearchResponse } from 'typesense/lib/Typesense/Documents';
 import { MultiSearchRequestSchema } from 'typesense/lib/Typesense/MultiSearch';
 import { clientsTableColumnDef, clientsTableFilters } from './_clients-table';
-import { serialize } from '@/lib/utils';
-import clsx from 'clsx';
+import Link from 'next/link';
+import { INTERNAL_ROUTES } from '@/lib/routes';
 
 export default function Internal_ClientsPage() {
   const router = useRouter();
@@ -54,7 +56,10 @@ export default function Internal_ClientsPage() {
   const [activeResultIndex, setActiveResultIndex] = useState(0);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
-    ['preferred_name', 'middle_name', 'town_name'].reduce((prev, column) => ({ ...prev, [column]: false }), {})
+    ['preferred_name', 'middle_name', 'town_name', 'street_name', 'home_phone', 'work_phone'].reduce(
+      (prev, column) => ({ ...prev, [column]: false }),
+      {}
+    )
   );
   const [searchResults, setSearchResults] = useState<SearchResponse<any>[]>([]);
   const data = useMemo(() => searchResults?.[activeResultIndex]?.hits || [], [searchResults, activeResultIndex]);
@@ -75,7 +80,7 @@ export default function Internal_ClientsPage() {
     [isLoading]
   );
 
-  const { filters, staleFilters, getFilter, getTypesenseSearchParams, resetFilters, searchFilter } = useTableFilter({
+  const { filters, getFilter, getTypesenseSearchParams, resetFilters, searchFilter } = useTableFilter({
     defaultValue: clientsTableFilters,
     modifierOptions: [
       {
@@ -319,7 +324,11 @@ export default function Internal_ClientsPage() {
                   table.getRowModel().rows.map((row) => (
                     <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
                       {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                        <TableCell key={cell.id}>
+                          <Link href={INTERNAL_ROUTES['My Clients'].path + '/' + row.original?.document?.user_id}>
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          </Link>
+                        </TableCell>
                       ))}
                     </TableRow>
                   ))

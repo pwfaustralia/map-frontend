@@ -1,6 +1,6 @@
 'use client';
 
-import { revalidateUserCookies } from '@/app/(actions)/laravel/actions';
+import { getUserDetails, revalidateUserCookies } from '@/app/(actions)/laravel/actions';
 import YodleeTransactionsTable from '@/components/custom/yodlee-transactions-table';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,14 +10,27 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import useYodlee from '@/lib/hooks/use-yodlee';
+import { IUser } from '@/lib/types/user';
 import { Account, TransactionFilter } from '@/lib/types/yodlee';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
 import useEmblaCarousel from 'embla-carousel-react';
 import { ArrowLeftCircleIcon, ArrowRightCircleIcon, SearchIcon } from 'lucide-react';
+import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-export default function ConnectBankPage() {
+function Header(user: IUser) {
+  return (
+    <div className="flex items-center space-x-3 my-4">
+      <h1 className="font-bold text-2xl">{user.name}</h1>
+      <h2>({user.clients?.[0]?.yodlee_username})</h2>
+    </div>
+  );
+}
+
+export default function ViewClientPage() {
+  const { 'user-id': userId } = useParams();
+  const [user, setUser] = useState<IUser>();
   const yodlee = useYodlee({
     initialize: {
       accounts: true,
@@ -28,6 +41,7 @@ export default function ConnectBankPage() {
         configName: 'Aggregation',
       },
     },
+    userId: userId + '',
     manualErrorHandling: true,
     onError: async (error) => {
       if (error.errorCode === 'Y008') {
@@ -91,6 +105,7 @@ export default function ConnectBankPage() {
   }, [emblaApi]);
 
   useEffect(() => {
+    getUserDetails(userId + '').then((userData) => setUser(userData));
     return () => {
       closeFastLink();
     };
@@ -102,10 +117,10 @@ export default function ConnectBankPage() {
     }
   }, [accountData]);
 
-  if (error?.errorCode === '0') {
+  if (error?.errorCode === '0' && user) {
     return (
       <>
-        <h1 className="font-bold text-2xl my-4 mb-7">My Account</h1>
+        <Header {...user} />
         <div className="rounded-3xl w-full bg-white py-10 px-12 overflow-hidden">
           <h3 className="text-xl opacity-[0.6] text-center">{error.errorMessage}</h3>
         </div>
@@ -113,10 +128,12 @@ export default function ConnectBankPage() {
     );
   }
 
-  if (!accountsReady) {
+  if (!accountsReady || !user) {
     return (
       <>
-        <h1 className="font-bold text-2xl my-4 mb-7">My Account</h1>
+        <h1 className="font-bold text-2xl my-4 mb-7">
+          <Skeleton className="w-[330px] h-[30px]" />
+        </h1>
         <div className="rounded-3xl w-full bg-white py-10 px-12 overflow-hidden">
           <Skeleton className="w-[430px] h-[50px]" />
         </div>
@@ -127,34 +144,7 @@ export default function ConnectBankPage() {
   return (
     <div className="flex flex-col space-y-5">
       {yodleeTags}
-      <div className="flex items-center space-x-7 my-4 mb-7">
-        <h1 className="font-bold text-2xl">My Account</h1>
-        <Dialog
-          onOpenChange={(isOpen) => {
-            if (isOpen) {
-              setTimeout(() => {
-                handleOpenFastLink();
-              }, 0);
-            } else {
-              setTimeout(() => {
-                close();
-              }, 500);
-            }
-          }}
-        >
-          <DialogTrigger asChild>
-            <Button disabled={!apiReady}>Connect Account</Button>
-          </DialogTrigger>
-          <DialogContent className={'lg:max-w-screen-md overflow-y-scroll max-h-screen bg-white'}>
-            <DialogHeader>
-              <DialogTitle>Connect Your Bank</DialogTitle>
-            </DialogHeader>
-            <div>
-              <div id="container-fastlink"></div>
-            </div>
-          </DialogContent>
-        </Dialog>
-      </div>
+      <Header {...user} />
       <div>
         <div className="faded rounded-3xl w-full px-[300px] py-10 overflow-hidden">
           {!accountData?.account?.length && (

@@ -1,4 +1,3 @@
-import { DashboardIcon } from '@radix-ui/react-icons';
 import { Banknote, PlusCircleIcon, Users } from 'lucide-react';
 
 export const NEXT_API_ROUTES = {
