@@ -173,6 +173,7 @@ export default function Internal_ClientsPage() {
   });
 
   const fetchData = async (params: MultiSearchRequestSchema) => {
+    setIsLoading(true);
     let query = await typesenseMultiSearch({
       searches: [params],
     });
