@@ -12,7 +12,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { TableFilterConfig, TableFilterContext, TableFilterModifier } from '@/lib/types/table';
+import {
+  TableFilterConfig,
+  TableFilterContext,
+  TableFilterModifier,
+  TableFilterModifierOption,
+} from '@/lib/types/table';
 import { cn, formatDate } from '@/lib/utils';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
@@ -236,7 +241,7 @@ export const renderTransactionTableFilter = ({ filters, getFilter }: any) =>
                 <SelectGroup>
                   <SelectLabel>Modifier</SelectLabel>
                   {modifierOptions
-                    ?.filter((m) => !excludeModifiers?.includes(m.modifier))
+                    ?.filter((m: TableFilterModifierOption) => !excludeModifiers?.includes(m.modifier))
                     .map(({ modifier }: any) => (
                       <SelectItem key={modifier} value={modifier} className="capitalize">
                         {modifier}
