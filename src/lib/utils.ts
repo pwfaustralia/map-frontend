@@ -3,6 +3,7 @@ import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { CLIENT_ROUTES, INTERNAL_ROUTES, NEXT_APP_ROUTES } from './routes';
 import { IUser, UserRoles } from '@/lib/types/user';
+import { Dayjs } from 'dayjs';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -47,4 +48,9 @@ export function getUserRedirectPage(user: IUser | undefined, path: string, callb
 
   if (callback) callback(url);
   return url;
+}
+
+export function formatDate(day: Dayjs, format: string) {
+  if (!day) return '';
+  return day.format(format);
 }

@@ -90,6 +90,10 @@ export default function useTableFilter(config: TableFilterConfig) {
     };
   };
 
+  const getActiveFilters = () => {
+    return filters.filter(({ value, active }) => !!value && active);
+  };
+
   const getTypesenseSearchParams = () => {
     const searchParams: MultiSearchRequestSchema = {};
     const stagedParams: any = {
@@ -151,5 +155,5 @@ export default function useTableFilter(config: TableFilterConfig) {
     return getThis(_id);
   };
 
-  return { filters, getFilter, getTypesenseSearchParams, resetFilters, staleFilters, searchFilter };
+  return { filters, getFilter, getTypesenseSearchParams, resetFilters, staleFilters, searchFilter, getActiveFilters };
 }

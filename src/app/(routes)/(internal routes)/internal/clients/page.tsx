@@ -80,71 +80,73 @@ export default function Internal_ClientsPage() {
     [isLoading]
   );
 
-  const { filters, getFilter, getTypesenseSearchParams, resetFilters, searchFilter } = useTableFilter({
-    defaultValue: clientsTableFilters,
-    modifierOptions: [
-      {
-        modifier: 'starts with',
-        valueTransformer: (id, value) => `${id}:\`${value}*\``,
-        modifierInputComponent: (filter, context: TableFilterContext) => (
-          <Input
-            defaultValue={filter.value}
-            type="text"
-            placeholder={filter.label}
-            onChange={(e) => {
-              if (context.filter?.id) context.setValue(e.target.value);
-            }}
-          />
-        ),
-      },
-      {
-        modifier: 'equals',
-        valueTransformer: (id, value) => `${id}:=\`${value}\``,
-        modifierInputComponent: (filter, context: TableFilterContext) => (
-          <Input
-            defaultValue={filter.value}
-            type="text"
-            placeholder={filter.label}
-            onChange={(e) => {
-              if (context.filter?.id) context.setValue(e.target.value);
-            }}
-          />
-        ),
-      },
-      {
-        modifier: 'contains',
-        appendQueryBy: true,
-        appendSearchText: true,
-        appendFilterBy: false,
-        infix: 'fallback',
-        valueTransformer: (id, value) => `${id}:\`${value}\``,
-        modifierInputComponent: (filter, context: TableFilterContext) => (
-          <Input
-            defaultValue={filter.value}
-            type="text"
-            placeholder={filter.label}
-            onChange={(e) => {
-              if (context.filter?.id) context.setValue(e.target.value);
-            }}
-          />
-        ),
-      },
-      {
-        modifier: 'not equals',
-        valueTransformer: (id, value) => `${id}:!\`${value}\``,
-        modifierInputComponent: (filter, context: TableFilterContext) => (
-          <Input
-            defaultValue={filter.value}
-            type="text"
-            placeholder={filter.label}
-            onChange={(e) => {
-              if (context.filter?.id) context.setValue(e.target.value);
-            }}
-          />
-        ),
-      },
-    ],
-  });
+  const { filters, getFilter, getTypesenseSearchParams, resetFilters, searchFilter, getActiveFilters } = useTableFilter(
+    {
+      defaultValue: clientsTableFilters,
+      modifierOptions: [
+        {
+          modifier: 'starts with',
+          valueTransformer: (id, value) => `${id}:\`${value}*\``,
+          modifierInputComponent: (filter, context: TableFilterContext) => (
+            <Input
+              defaultValue={filter.value}
+              type="text"
+              placeholder={filter.label}
+              onChange={(e) => {
+                if (context.filter?.id) context.setValue(e.target.value);
+              }}
+            />
+          ),
+        },
+        {
+          modifier: 'equals',
+          valueTransformer: (id, value) => `${id}:=\`${value}\``,
+          modifierInputComponent: (filter, context: TableFilterContext) => (
+            <Input
+              defaultValue={filter.value}
+              type="text"
+              placeholder={filter.label}
+              onChange={(e) => {
+                if (context.filter?.id) context.setValue(e.target.value);
+              }}
+            />
+          ),
+        },
+        {
+          modifier: 'contains',
+          appendQueryBy: true,
+          appendSearchText: true,
+          appendFilterBy: false,
+          infix: 'fallback',
+          valueTransformer: (id, value) => `${id}:\`${value}\``,
+          modifierInputComponent: (filter, context: TableFilterContext) => (
+            <Input
+              defaultValue={filter.value}
+              type="text"
+              placeholder={filter.label}
+              onChange={(e) => {
+                if (context.filter?.id) context.setValue(e.target.value);
+              }}
+            />
+          ),
+        },
+        {
+          modifier: 'not equals',
+          valueTransformer: (id, value) => `${id}:!\`${value}\``,
+          modifierInputComponent: (filter, context: TableFilterContext) => (
+            <Input
+              defaultValue={filter.value}
+              type="text"
+              placeholder={filter.label}
+              onChange={(e) => {
+                if (context.filter?.id) context.setValue(e.target.value);
+              }}
+            />
+          ),
+        },
+      ],
+    }
+  );
 
   const table = useReactTable({
     data: tableData,
@@ -246,7 +248,7 @@ export default function Internal_ClientsPage() {
                   onChange={(event) => handleSearchFilter(event)}
                 />
               </div>
-              <div className="p-[25px] flex gap-4 flex-col ">
+              <div className="p-[25px] flex gap-4 flex-col">
                 {filters.map(({ id, active, label, modifier, modifierOptions, hidden }) => (
                   <div key={id} className={clsx('flex flex-col gap-3 select-none', { hidden })}>
                     <div className="flex items-center gap-2">
@@ -292,10 +294,15 @@ export default function Internal_ClientsPage() {
                 ))}
               </div>
               <div className="flex items-center gap-3 sticky bottom-0 bg-white z-10 shadow-[0_-5px_4px_rgba(0,0,0,0.05)] p-5">
-                <Button className="w-full" onClick={() => handleFilterTable()}>
+                <Button className="w-full" onClick={() => handleFilterTable()} disabled={!getActiveFilters().length}>
                   Apply Filter
                 </Button>
-                <Button variant="outline" className="w-full" onClick={() => handleResetTableFilters()}>
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => handleResetTableFilters()}
+                  disabled={!getActiveFilters().length}
+                >
                   Clear
                 </Button>
               </div>

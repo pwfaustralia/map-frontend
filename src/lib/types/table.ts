@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-export type TableFilterModifier = 'equals' | 'contains' | 'not equals' | 'starts with';
+export type TableFilterModifier = 'equals' | 'contains' | 'not equals' | 'starts with' | 'date equals' | 'select';
 
 export interface TableFilterContext {
   filters: TableFilter[];
@@ -26,6 +26,8 @@ export interface TableFilter {
   id: string;
   label: string;
   modifier: TableFilterModifier;
+  excludeModifiers?: TableFilterModifier[];
+  options?: Array<{ label: string; value: string }>;
   modifierOptions?: TableFilterModifierOption[];
   active?: boolean;
   hidden?: boolean;

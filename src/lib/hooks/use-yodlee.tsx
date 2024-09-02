@@ -11,14 +11,14 @@ import { serialize } from '../utils';
 
 export default function useYodlee(init: {
   fastLinkConfig: FastLinkConfig;
-  initialize?: YodleeInitConfig;
+  initialModuleConfig?: YodleeInitConfig;
   manualErrorHandling?: boolean;
   userId?: string;
   onError?: (error: ErrorResponse) => void;
 }) {
-  const { fastLinkConfig, initialize, manualErrorHandling, userId, onError } = init;
-  const { accounts: initAccounts, transactions: initTransactions = {} } = initialize || {};
-  const _moduleOptions = useRef<typeof initialize>(initialize);
+  const { fastLinkConfig, initialModuleConfig, manualErrorHandling, userId, onError } = init;
+  const { accounts: initAccounts, transactions: initTransactions = {} } = initialModuleConfig || {};
+  const _moduleOptions = useRef<typeof initialModuleConfig>(initialModuleConfig);
   const _config = useRef<FastLinkConfig>(fastLinkConfig);
   const [isReady, setIsReady] = useState({ apiReady: false, accountsReady: false, transactionsReady: false });
   const _isReady = useRef<typeof isReady>(isReady);
@@ -107,7 +107,7 @@ export default function useYodlee(init: {
     return data;
   };
 
-  const getModuleOptions = () => _moduleOptions.current;
+  const getModuleConfig = () => _moduleOptions.current;
 
   useEffect(() => {
     (async () => {
@@ -145,7 +145,8 @@ export default function useYodlee(init: {
     getToken,
     getAccounts,
     getTransactions,
-    getModuleOptions,
+    getModuleConfig,
+    initialModuleConfig,
     error,
     transactionData,
     transactionCount,

@@ -79,6 +79,7 @@
     position: relative;
     &::before,
     &::after {
+      @apply lg:block hidden;
       content: '';
       position: absolute;
       inset: 0;

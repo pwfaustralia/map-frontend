@@ -14,17 +14,13 @@ import {
   VisibilityState,
 } from '@tanstack/react-table';
 import { useEffect, useMemo, useState } from 'react';
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from '../ui/pagination';
+import { Button } from '../ui/button';
 
 const columnDef: ColumnDef<Transaction>[] = [
+  {
+    header: 'Date',
+    accessorKey: 'transactionDate',
+  },
   {
     header: 'Description',
     accessorKey: 'description.original',
@@ -81,6 +77,9 @@ export default function YodleeTransactionsTable(config: {
     pageIndex: 1,
     pageSize: 15,
   });
+  const totalPage = Math.ceil(totalCount / pagination.pageSize);
+  const canNextPage = pagination.pageIndex < totalPage;
+  const canBackPage = pagination.pageIndex > 1;
   const tableColumns = useMemo(
     () =>
       isLoading
@@ -91,6 +90,7 @@ export default function YodleeTransactionsTable(config: {
         : columnDef,
     [isLoading]
   );
+
   const table = useReactTable({
     data: tableData,
     columns: tableColumns,
@@ -155,38 +155,17 @@ export default function YodleeTransactionsTable(config: {
           )}
         </TableBody>
       </Table>
-      <Pagination>
-        <PaginationContent className="flex-wrap overflow-auto">
-          <PaginationItem>
-            <PaginationPrevious
-              onClick={() => {
-                table.previousPage();
-              }}
-            />
-          </PaginationItem>
-          {new Array(table.getPageCount()).fill(0).map((a, index) => (
-            <PaginationItem key={index}>
-              <PaginationLink
-                onClick={() => {
-                  setPagination({ ...pagination, pageIndex: index + 1 });
-                }}
-              >
-                {index + 1}
-              </PaginationLink>
-            </PaginationItem>
-          ))}
-          <PaginationItem>
-            <PaginationEllipsis />
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationNext
-              onClick={() => {
-                table.nextPage();
-              }}
-            />
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
+      <div className="flex items-center justify-end space-x-2 py-4">
+        <div className="space-x-2">
+          Page {pagination.pageIndex} of {totalPage}
+          <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!canBackPage}>
+            Previous
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!canNextPage}>
+            Next
+          </Button>
+        </div>
+      </div>
     </>
   );
 }

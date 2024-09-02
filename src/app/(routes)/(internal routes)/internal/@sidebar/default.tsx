@@ -11,7 +11,7 @@ export default function SidebarInternalDefault() {
   const pathname = usePathname();
   const [currentPath, setCurrentPath] = useState(pathname);
   return (
-    <div className="flex flex-col items-center flex-[1_1_250px] min-w-[250px] bg-primary pt-6">
+    <div className="flex-col items-center flex-[1_1_250px] min-w-[250px] bg-primary pt-6">
       <div className="mb-7">
         <img src="/images/cc-logo.png" alt="Credit Connection" className="lg:w-[194px] max-w-[194px]" />
       </div>
