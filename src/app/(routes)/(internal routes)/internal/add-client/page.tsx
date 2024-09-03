@@ -19,7 +19,7 @@ import { z } from 'zod';
 export default function AddClientPage() {
   const { direction, getFrame, page, paginate, paginateToFieldErrored } = useSliderTransition({
     fieldsPerPage: [
-      ['first_name', 'last_name', 'middle_name', 'preferred_name'],
+      ['first_name', 'last_name', 'middle_name', 'preferred_name', 'home_phone', 'work_phone', 'mobile_phone'],
       ['email', 'password', 'yodlee_username'],
     ],
   });
@@ -104,6 +104,8 @@ export default function AddClientPage() {
                 full
               />
               <Input
+                {...register('mobile_phone')}
+                error={errors.mobile_phone?.message}
                 label="Mobile Phone"
                 className="text-lg py-6 h-14 bg-white px-5"
                 placeholder="Mobile phone number"
@@ -111,12 +113,16 @@ export default function AddClientPage() {
               />
               <div className="flex items-start gap-4">
                 <Input
+                  {...register('home_phone')}
+                  error={errors.home_phone?.message}
                   label="Home Phone"
                   className="text-lg py-6 h-14 bg-white px-5"
                   placeholder="Home phone number"
                   full
                 />
                 <Input
+                  {...register('work_phone')}
+                  error={errors.work_phone?.message}
                   label="Work Phone"
                   className="text-lg py-6 h-14 bg-white px-5"
                   placeholder="Work phone number"
@@ -183,7 +189,7 @@ export default function AddClientPage() {
                   htmlFor="create-user-checkbox"
                   className="text-md font-semibold leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
-                  Create User?
+                  Send email notification?
                 </label>
               </div>
               <Input
