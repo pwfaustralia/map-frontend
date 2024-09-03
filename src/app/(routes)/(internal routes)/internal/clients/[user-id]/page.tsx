@@ -22,7 +22,8 @@ import { Account, TransactionFilter } from '@/lib/types/yodlee';
 import { formatDate } from '@/lib/utils';
 import dayjs from 'dayjs';
 import useEmblaCarousel from 'embla-carousel-react';
-import { SearchIcon } from 'lucide-react';
+import { EditIcon, SearchIcon } from 'lucide-react';
+import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -31,6 +32,11 @@ function Header(user: IUser) {
     <div className="flex items-center space-x-3 my-4">
       <h1 className="font-bold text-2xl">{user.name}</h1>
       <h2>({user.clients?.[0]?.yodlee_username})</h2>
+      <Button variant="ghost-2" asChild>
+        <Link href="#">
+          <EditIcon />
+        </Link>
+      </Button>
     </div>
   );
 }

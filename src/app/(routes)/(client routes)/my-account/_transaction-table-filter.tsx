@@ -35,7 +35,7 @@ export const transactionTableFilter = (
       {
         id: 'keyword',
         label: 'Search Keyword',
-        excludeModifiers: ['date equals', 'select'],
+        excludeModifiers: ['date equals', 'select', 'multiselect'],
         modifier: 'contains',
       },
       {
@@ -53,7 +53,7 @@ export const transactionTableFilter = (
         id: 'baseType',
         label: 'Base Type',
         modifier: 'select',
-        excludeModifiers: ['date equals', 'contains'],
+        excludeModifiers: ['date equals', 'contains', 'multiselect'],
         options: [
           {
             value: 'DEBIT',
@@ -71,7 +71,7 @@ export const transactionTableFilter = (
         id: 'container',
         label: 'Container',
         modifier: 'select',
-        excludeModifiers: ['date equals', 'contains'],
+        excludeModifiers: ['date equals', 'contains', 'multiselect'],
         options: [
           {
             value: 'bank',
@@ -103,7 +103,7 @@ export const transactionTableFilter = (
         modifier: 'date equals',
         value: yodlee.initialModuleConfig?.transactions?.fromDate,
         formattedValue: formatDate(dayjs(yodlee.initialModuleConfig?.transactions?.fromDate), YODLEE_DATE_FORMAT),
-        excludeModifiers: ['equals', 'contains', 'select'],
+        excludeModifiers: ['equals', 'contains', 'select', 'multiselect'],
       },
       {
         id: 'toDate',
@@ -111,7 +111,7 @@ export const transactionTableFilter = (
         modifier: 'date equals',
         value: yodlee.initialModuleConfig?.transactions?.toDate,
         formattedValue: formatDate(dayjs(yodlee.initialModuleConfig?.transactions?.toDate), YODLEE_DATE_FORMAT),
-        excludeModifiers: ['equals', 'contains', 'select'],
+        excludeModifiers: ['equals', 'contains', 'select', 'multiselect'],
       },
     ],
     modifierOptions: [

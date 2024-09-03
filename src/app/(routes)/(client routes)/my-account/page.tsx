@@ -17,6 +17,7 @@ import { SearchIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { renderAccountsSlider, renderAccountsSliderPagination } from './_accounts-slider';
 import { renderTransactionTableFilter, transactionTableFilter, YODLEE_DATE_FORMAT } from './_transaction-table-filter';
+import { Link1Icon } from '@radix-ui/react-icons';
 
 export default function MyAccountPage() {
   const [isOpenDatePicker, setIsOpenDatePicker] = useState({
@@ -162,12 +163,11 @@ export default function MyAccountPage() {
       </>
     );
   }
-  console.clear();
-  console.table(filters);
+
   return (
     <div className="flex flex-col space-y-5">
       {yodleeTags}
-      <div className="flex items-center space-x-7 my-4 mb-7">
+      <div className="flex items-center space-x-3 my-4 mb-7">
         <h1 className="font-bold text-2xl">My Account</h1>
         <Dialog
           onOpenChange={(isOpen) => {
@@ -183,7 +183,10 @@ export default function MyAccountPage() {
           }}
         >
           <DialogTrigger asChild>
-            <Button disabled={!apiReady}>Connect Account</Button>
+            <Button disabled={!apiReady} variant="ghost" className="space-x-2">
+              <span>Connect Account</span>
+              <Link1Icon />
+            </Button>
           </DialogTrigger>
           <DialogContent className={'lg:max-w-screen-md overflow-y-scroll max-h-screen bg-white'}>
             <DialogHeader>
