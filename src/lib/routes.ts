@@ -36,7 +36,7 @@ export const CLIENT_ROUTES = {
     path:'/dashboard', 
     Icon:LayoutDashboardIcon,
   },
-  'My Account': {
+  'My Accounts': {
     path: '/my-account',
     Icon: Banknote,
   },
