@@ -147,19 +147,21 @@ export default function useYodlee(init: {
 
   const getModuleConfig = () => _moduleOptions.current;
 
+  const authenticate = async () => {
+    let yodleeTokens = await getYodleeAccessToken(userId);
+    if (yodleeTokens.length && yodleeTokens[0]?.username) {
+      setToken(yodleeTokens[0].accessToken);
+    } else {
+      setError({
+        errorCode: '0',
+        errorMessage: 'No Yodlee account linked.',
+        referenceCode: '',
+      });
+    }
+  };
+
   useEffect(() => {
-    (async () => {
-      let yodleeTokens = await getYodleeAccessToken(userId);
-      if (yodleeTokens.length && yodleeTokens[0]?.username) {
-        setToken(yodleeTokens[0].accessToken);
-      } else {
-        setError({
-          errorCode: '0',
-          errorMessage: 'No Yodlee account linked.',
-          referenceCode: '',
-        });
-      }
-    })();
+    authenticate();
   }, []);
 
   useEffect(() => {
@@ -185,6 +187,7 @@ export default function useYodlee(init: {
     getAccounts,
     getTransactions,
     getModuleConfig,
+    authenticate,
     initialModuleConfig,
     error,
     transactionData,

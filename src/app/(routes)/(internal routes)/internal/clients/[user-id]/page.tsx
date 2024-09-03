@@ -25,14 +25,31 @@ import useEmblaCarousel from 'embla-carousel-react';
 import { EditIcon, SearchIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import EditClientPage from './_edit/_page';
 
-function Header(user: IUser) {
+function Header({
+  user,
+  isEditing,
+  setIsEditing,
+}: {
+  user: IUser;
+  isEditing: boolean;
+  setIsEditing: Dispatch<SetStateAction<boolean>>;
+}) {
   return (
     <div className="flex items-center space-x-3 my-4">
-      <h1 className="font-bold text-2xl">{user.name}</h1>
+      <h1 className="font-bold text-2xl">
+        {user.clients?.[0]?.first_name} {user.clients?.[0]?.last_name}
+      </h1>
       <h2>({user.clients?.[0]?.yodlee_username})</h2>
-      <Button variant="ghost-2" asChild>
+      <Button
+        variant="ghost-2"
+        asChild
+        onClick={() => {
+          setIsEditing(true);
+        }}
+      >
         <Link href="#">
           <EditIcon />
         </Link>
@@ -44,6 +61,7 @@ function Header(user: IUser) {
 export default function ViewClientPage() {
   const [isOpenDatePicker, setIsOpenDatePicker] = useState({ fromDate: false, toDate: false });
   const { 'user-id': userId } = useParams();
+  const [isEditing, setIsEditing] = useState(false);
   const [user, setUser] = useState<IUser>();
 
   const yodlee = useYodlee({
@@ -77,6 +95,7 @@ export default function ViewClientPage() {
     closeFastLink,
     getTransactions,
     getModuleConfig,
+    authenticate,
     initialModuleConfig,
     yodleeTags,
     accountData,
@@ -153,10 +172,21 @@ export default function ViewClientPage() {
     }
   }, [categoriesReady]);
 
+  if (isEditing && user) {
+    return (
+      <EditClientPage
+        {...{ user, setUser, isEditing, setIsEditing }}
+        onEdit={() => {
+          authenticate();
+        }}
+      />
+    );
+  }
+
   if (error?.errorCode === '0' && user) {
     return (
       <>
-        <Header {...user} />
+        <Header {...{ isEditing, setIsEditing, user }} />
         <div className="rounded-3xl w-full bg-white py-10 px-12 overflow-hidden">
           <h3 className="text-xl opacity-[0.6] text-center">{error.errorMessage}</h3>
         </div>
@@ -180,7 +210,7 @@ export default function ViewClientPage() {
   return (
     <div className="flex flex-col space-y-5">
       {yodleeTags}
-      <Header {...user} />
+      <Header {...{ isEditing, setIsEditing, user }} />
 
       <div>
         <div className="faded rounded-3xl w-full lg:px-[300px] px-0 py-10 overflow-hidden">

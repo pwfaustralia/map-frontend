@@ -1,11 +1,12 @@
 'use server';
 
 import { UserSchema } from '@/lib/schema/user';
-import { z } from 'zod';
-import { LARAVEL_API_ROUTES } from './laravel-api-routes';
-import { fetchLaravel } from '../fetcher/actions';
+import Client from '@/lib/types/user';
 import { parse } from 'cookie';
 import { cookies } from 'next/headers';
+import { z } from 'zod';
+import { fetchLaravel } from '../fetcher/actions';
+import { LARAVEL_API_ROUTES } from './laravel-api-routes';
 
 export async function createUserAndClientProfile(data: z.infer<typeof UserSchema>) {
   const response = await fetchLaravel(LARAVEL_API_ROUTES.createUser, {
@@ -39,4 +40,16 @@ export async function revalidateUserCookies() {
 export async function getUserDetails(userId: string) {
   const user = await fetchLaravel(LARAVEL_API_ROUTES.getUserDetailsFn(userId)).then((resp) => resp.json());
   return user;
+}
+
+export async function updateClient(client: Client) {
+  const response = await fetchLaravel(LARAVEL_API_ROUTES.updateClient(client.id), {
+    method: 'PUT',
+    body: JSON.stringify({
+      ...client,
+      with_client: true,
+      client_id: client.id,
+    }),
+  }).then((resp) => resp.json());
+  return response;
 }
