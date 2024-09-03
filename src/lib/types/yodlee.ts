@@ -1,3 +1,9 @@
+export interface YodleeFetchData {
+  url: string;
+  before?(): Promise<void> | void;
+  after?(data: any): Promise<void> | void;
+}
+
 export interface AccountData {
   account?: Account[];
 }
@@ -123,7 +129,7 @@ export interface TransactionCount {
   };
 }
 
-export type YodleeModules = 'accounts' | 'transactions';
+export type YodleeModules = 'accounts' | 'transactions' | 'categories';
 
 export type YodleeInitConfig = {
   [key in YodleeModules]?: key extends 'transactions' ? TransactionFilter : boolean;
@@ -149,4 +155,26 @@ export interface UserYodleeTokenData {
 export interface UserYodleeTokenResponse {
   tokens: UserYodleeTokenData[];
   error: any;
+}
+
+export type DetailCategory = {
+  id: number;
+  name: string;
+};
+
+export interface TransactionCategory {
+  id: number;
+  source: string;
+  classification: string;
+  category: string;
+  type: string;
+  detailCategory?: DetailCategory[]; // Optional, as it may not always be present
+  highLevelCategoryId: number;
+  highLevelCategoryName: string;
+  defaultCategoryName: string;
+  defaultHighLevelCategoryName: string;
+}
+
+export interface TransactionCategoryData {
+  transactionCategory: TransactionCategory[];
 }

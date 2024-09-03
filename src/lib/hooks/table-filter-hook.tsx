@@ -1,6 +1,12 @@
 import { useCallback, useState } from 'react';
 
-import { TableFilter, TableFilterConfig, TableFilterContext, TableFilterModifier } from '@/lib/types/table';
+import {
+  TableFilter,
+  TableFilterConfig,
+  TableFilterContext,
+  TableFilterModifier,
+  TableFilterOptions,
+} from '@/lib/types/table';
 import { MultiSearchRequestSchema } from 'typesense/lib/Typesense/MultiSearch';
 
 export default function useTableFilter(config: TableFilterConfig) {
@@ -87,6 +93,15 @@ export default function useTableFilter(config: TableFilterConfig) {
             context.setValue(context.filter?.value);
           }
         ),
+      setOptions: (options: TableFilterOptions) =>
+        getAndUpdate(
+          _id,
+          (filter) => ({
+            ...filter,
+            options,
+          }),
+          _value
+        ),
     };
   };
 
@@ -140,7 +155,7 @@ export default function useTableFilter(config: TableFilterConfig) {
   const resetFilters = useCallback(() => {
     searchFilter('');
     setFilters(defaultConfig);
-  }, []);
+  }, [config]);
 
   const searchFilter = (_label: string) => {
     setFilters(

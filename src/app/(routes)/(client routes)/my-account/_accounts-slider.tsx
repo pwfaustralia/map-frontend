@@ -31,7 +31,7 @@ export const renderAccountsSlider = (
               <Card
                 key={id}
                 className={clsx(
-                  'cursor-pointer min-w-[340px] snap-start select-none hover:border hover:border-accent',
+                  'cursor-pointer min-w-[340px] snap-start select-none hover:border hover:border-accent active:scale-95 transition-all',
                   {
                     'shadow-xl border border-accent': selectedAccount?.id === id,
                   }

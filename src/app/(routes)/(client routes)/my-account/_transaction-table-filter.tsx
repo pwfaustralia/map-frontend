@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
+import { MultiSelect } from '@/components/ui/multi-select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import {
   Select,
@@ -34,13 +35,25 @@ export const transactionTableFilter = (
       {
         id: 'keyword',
         label: 'Search Keyword',
+        excludeModifiers: ['date equals', 'select'],
         modifier: 'contains',
+      },
+      {
+        id: 'categoryId',
+        label: 'Category',
+        modifier: 'multiselect',
+        excludeModifiers: ['date equals', 'contains'],
+        options:
+          yodlee?.categoryData?.transactionCategory?.map((category: any) => ({
+            value: category.id,
+            label: category.category,
+          })) || [],
       },
       {
         id: 'baseType',
         label: 'Base Type',
         modifier: 'select',
-        excludeModifiers: ['date equals'],
+        excludeModifiers: ['date equals', 'contains'],
         options: [
           {
             value: 'DEBIT',
@@ -52,12 +65,13 @@ export const transactionTableFilter = (
           },
         ],
         value: 'DEBIT',
+        formattedValue: 'DEBIT',
       },
       {
         id: 'container',
         label: 'Container',
         modifier: 'select',
-        excludeModifiers: ['date equals'],
+        excludeModifiers: ['date equals', 'contains'],
         options: [
           {
             value: 'bank',
@@ -81,6 +95,7 @@ export const transactionTableFilter = (
           },
         ],
         value: 'bank',
+        formattedValue: 'bank',
       },
       {
         id: 'fromDate',
@@ -88,7 +103,7 @@ export const transactionTableFilter = (
         modifier: 'date equals',
         value: yodlee.initialModuleConfig?.transactions?.fromDate,
         formattedValue: formatDate(dayjs(yodlee.initialModuleConfig?.transactions?.fromDate), YODLEE_DATE_FORMAT),
-        excludeModifiers: ['equals'],
+        excludeModifiers: ['equals', 'contains', 'select'],
       },
       {
         id: 'toDate',
@@ -96,7 +111,7 @@ export const transactionTableFilter = (
         modifier: 'date equals',
         value: yodlee.initialModuleConfig?.transactions?.toDate,
         formattedValue: formatDate(dayjs(yodlee.initialModuleConfig?.transactions?.toDate), YODLEE_DATE_FORMAT),
-        excludeModifiers: ['equals'],
+        excludeModifiers: ['equals', 'contains', 'select'],
       },
     ],
     modifierOptions: [
@@ -110,6 +125,19 @@ export const transactionTableFilter = (
             placeholder={filter.label}
             onChange={(e) => {
               if (context.filter?.id) context.setValue(e.target.value);
+            }}
+          />
+        ),
+      },
+      {
+        modifier: 'multiselect',
+        valueTransformer: (id, value) => value.map(({ value }: any) => value).join(','),
+        modifierInputComponent: (filter, context: TableFilterContext) => (
+          <MultiSelect
+            options={filter.options || []}
+            selected={context.filter?.value || []}
+            onChange={(selected) => {
+              context.setValue(selected);
             }}
           />
         ),

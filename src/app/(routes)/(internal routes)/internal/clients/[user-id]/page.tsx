@@ -43,10 +43,14 @@ export default function ViewClientPage() {
   const yodlee = useYodlee({
     initialModuleConfig: {
       accounts: true,
+      categories: true,
       transactions: {
         keyword: '',
+        baseType: '',
+        container: '',
+        categoryId: '',
         fromDate: dayjs(new Date()).subtract(1, 'year').toString(),
-        toDate: dayjs().toString(),
+        toDate: dayjs(new Date()).toString(),
       },
     },
     fastLinkConfig: {
@@ -72,13 +76,14 @@ export default function ViewClientPage() {
     accountData,
     transactionCount,
     transactionData,
+    categoryData,
     error,
-    isReady: { accountsReady, transactionsReady },
+    isReady: { accountsReady, transactionsReady, categoriesReady },
   } = yodlee;
   const [selectedAccount, setSelectedAccount] = useState<Account>();
 
   const tableFilter = useTableFilter(transactionTableFilter(yodlee, { isOpenDatePicker, setIsOpenDatePicker }));
-  const { resetFilters, searchFilter, getActiveFilters } = tableFilter;
+  const { resetFilters, searchFilter, getActiveFilters, getFilter } = tableFilter;
 
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [emblaRef, emblaApi] = useEmblaCarousel({
@@ -94,7 +99,13 @@ export default function ViewClientPage() {
   };
 
   const handleFilterTransactions = () => {
-    handleGetTransactions(getActiveFilters().reduce((ac, c) => ({ ...ac, [c.id]: c.formattedValue }), {}));
+    const filter = initialModuleConfig?.transactions || {};
+    filter.fromDate = formatDate(dayjs(filter?.fromDate), YODLEE_DATE_FORMAT);
+    filter.toDate = formatDate(dayjs(filter?.toDate), YODLEE_DATE_FORMAT);
+    handleGetTransactions({
+      ...filter,
+      ...getActiveFilters().reduce((ac, c) => ({ ...ac, [c.id]: c.formattedValue }), {}),
+    });
   };
 
   const handleResetFilters = () => {
@@ -124,6 +135,17 @@ export default function ViewClientPage() {
       setSelectedAccount(accountData?.account[0]);
     }
   }, [accountData]);
+
+  useEffect(() => {
+    if (categoriesReady) {
+      getFilter('categoryId').setOptions(
+        categoryData?.transactionCategory?.map((category: any) => ({
+          value: category.id,
+          label: category.category,
+        })) || []
+      );
+    }
+  }, [categoriesReady]);
 
   if (error?.errorCode === '0' && user) {
     return (
@@ -188,13 +210,8 @@ export default function ViewClientPage() {
                 <Button className="w-full" onClick={handleFilterTransactions} disabled={!getActiveFilters().length}>
                   Apply Filter
                 </Button>
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={handleResetFilters}
-                  disabled={!getActiveFilters().length}
-                >
-                  Clear
+                <Button variant="outline" className="w-full" onClick={handleResetFilters}>
+                  Reset
                 </Button>
               </div>
             </div>

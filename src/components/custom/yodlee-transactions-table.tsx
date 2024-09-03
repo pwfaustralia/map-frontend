@@ -22,6 +22,10 @@ const columnDef: ColumnDef<Transaction>[] = [
     accessorKey: 'transactionDate',
   },
   {
+    header: 'Category',
+    accessorKey: 'category',
+  },
+  {
     header: 'Description',
     accessorKey: 'description.original',
   },

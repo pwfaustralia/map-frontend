@@ -1,15 +1,25 @@
 import { ReactNode } from 'react';
 
-export type TableFilterModifier = 'equals' | 'contains' | 'not equals' | 'starts with' | 'date equals' | 'select';
+export type TableFilterModifier =
+  | 'equals'
+  | 'contains'
+  | 'not equals'
+  | 'starts with'
+  | 'date equals'
+  | 'select'
+  | 'multiselect';
+
+export type TableFilterOptions = Array<{ label: string; value: string }>;
 
 export interface TableFilterContext {
   filters: TableFilter[];
   filter: TableFilter | undefined;
   // TO DO: add type for selectedModifier
   selectedModifier: any;
-  setValue: (value: string) => TableFilterContext;
+  setValue: (value: any) => TableFilterContext;
   toggleActive: (isActive: boolean) => TableFilterContext;
   setModifier: (modifier: TableFilterModifier) => TableFilterContext;
+  setOptions: (options: TableFilterOptions) => TableFilterContext;
 }
 
 export interface TableFilterModifierOption {

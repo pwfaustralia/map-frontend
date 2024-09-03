@@ -26,8 +26,12 @@ export default function MyAccountPage() {
   const yodlee = useYodlee({
     initialModuleConfig: {
       accounts: true,
+      categories: true,
       transactions: {
         keyword: '',
+        baseType: '',
+        container: '',
+        categoryId: '',
         fromDate: dayjs(new Date()).subtract(1, 'year').toString(),
         toDate: dayjs(new Date()).toString(),
       },
@@ -56,11 +60,12 @@ export default function MyAccountPage() {
     accountData,
     transactionCount,
     transactionData,
+    categoryData,
     error,
-    isReady: { apiReady, accountsReady, transactionsReady },
+    isReady: { apiReady, accountsReady, transactionsReady, categoriesReady },
   } = yodlee;
   const tableFilter = useTableFilter(transactionTableFilter(yodlee, { isOpenDatePicker, setIsOpenDatePicker }));
-  const { filters, resetFilters, searchFilter, getActiveFilters } = tableFilter;
+  const { filters, resetFilters, searchFilter, getActiveFilters, getFilter } = tableFilter;
   const [selectedAccount, setSelectedAccount] = useState<Account>();
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -89,7 +94,13 @@ export default function MyAccountPage() {
   };
 
   const handleFilterTransactions = () => {
-    handleGetTransactions(getActiveFilters().reduce((ac, c) => ({ ...ac, [c.id]: c.formattedValue }), {}));
+    const filter = initialModuleConfig?.transactions || {};
+    filter.fromDate = formatDate(dayjs(filter?.fromDate), YODLEE_DATE_FORMAT);
+    filter.toDate = formatDate(dayjs(filter?.toDate), YODLEE_DATE_FORMAT);
+    handleGetTransactions({
+      ...filter,
+      ...getActiveFilters().reduce((ac, c) => ({ ...ac, [c.id]: c.formattedValue }), {}),
+    });
   };
 
   const handleResetFilters = () => {
@@ -119,6 +130,17 @@ export default function MyAccountPage() {
     }
   }, [accountData]);
 
+  useEffect(() => {
+    if (categoriesReady) {
+      getFilter('categoryId').setOptions(
+        categoryData?.transactionCategory?.map((category: any) => ({
+          value: category.id,
+          label: category.category,
+        })) || []
+      );
+    }
+  }, [categoriesReady]);
+
   if (error?.errorCode === '0') {
     return (
       <>
@@ -140,7 +162,8 @@ export default function MyAccountPage() {
       </>
     );
   }
-
+  console.clear();
+  console.table(filters);
   return (
     <div className="flex flex-col space-y-5">
       {yodleeTags}
@@ -189,7 +212,7 @@ export default function MyAccountPage() {
 
       <div className="flex items-start lg:space-x-4">
         <div className="sticky top-[20px] lg:block hidden">
-          <ScrollArea className="bg-white rounded-[20px] border border-grey-2 min-w-[400px] p-5">
+          <ScrollArea className="bg-white rounded-[20px] border border-grey-2 min-w-[400px] max-w-[400px] p-5">
             <div className="max-h-[calc(_100vh_-_190px_)]">
               <div className="flex flex-col items-start gap-3 sticky top-0 bg-white z-10 p-5 full">
                 <h1 className="text-[20px] font-bold">Filter Transactions By</h1>
@@ -207,13 +230,8 @@ export default function MyAccountPage() {
                 <Button className="w-full" onClick={handleFilterTransactions} disabled={!getActiveFilters().length}>
                   Apply Filter
                 </Button>
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={handleResetFilters}
-                  disabled={!getActiveFilters().length}
-                >
-                  Clear
+                <Button variant="outline" className="w-full" onClick={handleResetFilters}>
+                  Reset
                 </Button>
               </div>
             </div>

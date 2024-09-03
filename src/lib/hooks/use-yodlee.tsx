@@ -6,7 +6,15 @@ import { FastLink, FastLinkConfig, FastLinkOpenInterface } from '@/lib/types/fas
 import Script from 'next/script';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { YODLEE_API_ROUTES } from '../routes';
-import { AccountData, ErrorResponse, TransactionCount, TransactionData, YodleeInitConfig } from '../types/yodlee';
+import {
+  AccountData,
+  ErrorResponse,
+  TransactionCategoryData,
+  TransactionCount,
+  TransactionData,
+  YodleeFetchData,
+  YodleeInitConfig,
+} from '../types/yodlee';
 import { serialize } from '../utils';
 
 export default function useYodlee(init: {
@@ -17,14 +25,24 @@ export default function useYodlee(init: {
   onError?: (error: ErrorResponse) => void;
 }) {
   const { fastLinkConfig, initialModuleConfig, manualErrorHandling, userId, onError } = init;
-  const { accounts: initAccounts, transactions: initTransactions = {} } = initialModuleConfig || {};
+  const {
+    accounts: initAccounts,
+    transactions: initTransactions = {},
+    categories: initCategories,
+  } = initialModuleConfig || {};
   const _moduleOptions = useRef<typeof initialModuleConfig>(initialModuleConfig);
   const _config = useRef<FastLinkConfig>(fastLinkConfig);
-  const [isReady, setIsReady] = useState({ apiReady: false, accountsReady: false, transactionsReady: false });
+  const [isReady, setIsReady] = useState({
+    apiReady: false,
+    accountsReady: false,
+    transactionsReady: false,
+    categoriesReady: false,
+  });
   const _isReady = useRef<typeof isReady>(isReady);
   const { apiReady, accountsReady } = isReady;
   const [error, setError] = useState<ErrorResponse>();
   const [accountData, setAccountData] = useState<AccountData>();
+  const [categoryData, setCategoryData] = useState<TransactionCategoryData>();
   const [transactionData, setTransactionData] = useState<TransactionData>();
   const [transactionCount, setTransactionCount] = useState<TransactionCount>();
 
@@ -61,10 +79,10 @@ export default function useYodlee(init: {
     return config().accessToken;
   };
 
-  const getAccounts = async () => {
+  const fetchData = async ({ url, before = async () => {}, after = async () => {} }: YodleeFetchData) => {
     if (!apiReady) return;
-    setReadyStatus('accountsReady', false);
-    const data = await fetchYodlee(YODLEE_API_ROUTES.transactions.accounts, {
+    await before();
+    const data = await fetchYodlee(url, {
       headers: {
         Authorization: `Bearer ${config().accessToken}`,
       },
@@ -75,36 +93,56 @@ export default function useYodlee(init: {
         return;
       }
     }
-    setAccountData(data);
-    setReadyStatus('accountsReady', true);
+    await after(data);
     return data;
   };
 
+  const getAccounts = async () => {
+    return await fetchData({
+      url: YODLEE_API_ROUTES.transactions.accounts,
+      before: () => {
+        setReadyStatus('accountsReady', false);
+      },
+      after: (data) => {
+        setAccountData(data);
+        setReadyStatus('accountsReady', true);
+      },
+    });
+  };
+
   const getTransactions = async (filter: typeof initTransactions) => {
-    if (!apiReady) return;
-    setReadyStatus('transactionsReady', false);
     let params = filter && typeof filter !== 'boolean' ? serialize(filter) : '';
-    const data = await fetchYodlee(YODLEE_API_ROUTES.transactions.transactions + '?' + params, {
-      headers: {
-        Authorization: `Bearer ${config().accessToken}`,
+    return await fetchData({
+      url: YODLEE_API_ROUTES.transactions.transactions + '?' + params,
+      before: () => {
+        setReadyStatus('transactionsReady', false);
+      },
+      after: async (data) => {
+        await fetchData({
+          url: YODLEE_API_ROUTES.transactions.count + '?' + params,
+          before: () => {},
+          after: (count) => {
+            setTransactionCount(count);
+            setTransactionData(data);
+            setReadyStatus('transactionsReady', true);
+            if (_moduleOptions.current) _moduleOptions.current.transactions = filter;
+          },
+        });
       },
     });
-    const count = await fetchYodlee(YODLEE_API_ROUTES.transactions.count + '?' + params, {
-      headers: {
-        Authorization: `Bearer ${config().accessToken}`,
+  };
+
+  const getCategories = async () => {
+    return await fetchData({
+      url: YODLEE_API_ROUTES.transactions.categories,
+      before: () => {
+        setReadyStatus('categoriesReady', false);
+      },
+      after: (data) => {
+        setCategoryData(data);
+        setReadyStatus('categoriesReady', true);
       },
     });
-    if (data?.errorCode) {
-      setError(data);
-      if (manualErrorHandling) {
-        return;
-      }
-    }
-    setTransactionCount(count);
-    setTransactionData(data);
-    setReadyStatus('transactionsReady', true);
-    if (_moduleOptions.current) _moduleOptions.current.transactions = filter;
-    return data;
   };
 
   const getModuleConfig = () => _moduleOptions.current;
@@ -128,6 +166,7 @@ export default function useYodlee(init: {
     if (apiReady) {
       if (initAccounts) getAccounts();
       if (Object.keys(initTransactions).length) getTransactions(initTransactions);
+      if (initCategories) getCategories();
     }
   }, [apiReady]);
 
@@ -149,6 +188,7 @@ export default function useYodlee(init: {
     initialModuleConfig,
     error,
     transactionData,
+    categoryData,
     transactionCount,
     accountData,
     isReady,

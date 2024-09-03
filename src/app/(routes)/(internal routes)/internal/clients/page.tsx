@@ -297,13 +297,8 @@ export default function Internal_ClientsPage() {
                 <Button className="w-full" onClick={() => handleFilterTable()} disabled={!getActiveFilters().length}>
                   Apply Filter
                 </Button>
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={() => handleResetTableFilters()}
-                  disabled={!getActiveFilters().length}
-                >
-                  Clear
+                <Button variant="outline" className="w-full" onClick={() => handleResetTableFilters()}>
+                  Reset
                 </Button>
               </div>
             </div>
