@@ -172,6 +172,19 @@ export default function ViewClientPage() {
     }
   }, [categoriesReady]);
 
+  if (!user) {
+    return (
+      <>
+        <h1 className="font-bold text-2xl my-4 mb-7">
+          <Skeleton className="w-[330px] h-[30px]" />
+        </h1>
+        <div className="rounded-3xl w-full bg-white py-10 px-12 overflow-hidden">
+          <Skeleton className="w-[430px] h-[50px]" />
+        </div>
+      </>
+    );
+  }
+
   if (isEditing && user) {
     return (
       <EditClientPage
@@ -194,7 +207,7 @@ export default function ViewClientPage() {
     );
   }
 
-  if (!accountsReady || !user) {
+  if (!accountsReady) {
     return (
       <>
         <h1 className="font-bold text-2xl my-4 mb-7">
