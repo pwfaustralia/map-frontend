@@ -1,4 +1,4 @@
-import { Banknote, PlusCircleIcon, Users } from 'lucide-react';
+import { Banknote, PlusCircleIcon, Users,LayoutDashboardIcon } from 'lucide-react';
 
 export const NEXT_API_ROUTES = {
   laravelLogin: '/auth/credentials',
@@ -30,8 +30,12 @@ export const INTERNAL_ROUTES = {
 export const CLIENT_ROUTES = {
   // Dashboard: {
   //   path: NEXT_APP_ROUTES.dashboard,
-  //   Icon: DashboardIcon,
+  // Icon: DashboardIcon,
   // },
+  'Dashboard': {
+    path:'/dashboard', 
+    Icon:LayoutDashboardIcon,
+  },
   'My Account': {
     path: '/my-account',
     Icon: Banknote,
