@@ -6,7 +6,7 @@ import { AreaChart, CartesianGrid, XAxis, Area } from 'recharts';
 
 export default function DashboardPage() {
   return (
-    <main className="container mx-auto flex-1 px-4 py-8 sm:px-6 md:py-12">
+    <main className=" mx-auto flex-1 px-4 py-8 sm:px-6 md:py-12">
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader>
@@ -15,8 +15,14 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
-              <div className="text-sm text-muted-foreground">Balance</div>
-              <div className="text-2xl font-bold">$4,567.89</div>
+              <div className="text-sm text-muted-foreground">Starting Balance</div>
+              <div className="text-2xl font-bold text-red-500">$34,567.89</div>
+            </div>
+          </CardContent>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <div className="text-sm text-muted-foreground">Current Balance</div>
+              <div className="text-2xl font-bold text-green-500">$4,567.89</div>
             </div>
           </CardContent>
         </Card>
@@ -28,7 +34,13 @@ export default function DashboardPage() {
           <CardContent>
             <div className="flex items-center justify-between">
               <div className="text-sm text-muted-foreground">Balance</div>
-              <div className="text-2xl font-bold">$2,345.67</div>
+              <div className="text-2xl font-bold text-red-500">$22,345.67</div>
+            </div>
+          </CardContent>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <div className="text-sm text-muted-foreground">Balance</div>
+              <div className="text-2xl font-bold text-green-500">$2,345.67</div>
             </div>
           </CardContent>
         </Card>
@@ -40,20 +52,46 @@ export default function DashboardPage() {
           <CardContent>
             <div className="flex items-center justify-between">
               <div className="text-sm text-muted-foreground">Balance</div>
-              <div className="text-2xl font-bold">$5,432.10</div>
+              <div className="text-2xl font-bold text-red-500">$5,432.10</div>
+            </div>
+          </CardContent>{' '}
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <div className="text-sm text-muted-foreground">Balance</div>
+              <div className="text-2xl font-bold text-green-500">$5,432.10</div>
             </div>
           </CardContent>
         </Card>
       </div>
+      <div className="mt-8 md:mt-12 grid gap-8 md:grid-cols-2">
+        <div className="bg-card rounded-lg p-6">
+          <h2 className="text-xl font-bold mb-4">Time Saved</h2>
+          <div className="flex items-center justify-between">
+            <div className="text-4xl font-bold">18 Years</div>
+            <div>
+              <div className="text-muted-foreground">Original time: 30 years</div>
+              <div className="text-muted-foreground">Time Remaining: 12 years</div>
+            </div>
+          </div>
+        </div>
+        <div className="bg-card rounded-lg p-6">
+          <h2 className="text-xl font-bold mb-4">Interest Paid</h2>
+          <div className="flex items-center justify-between">
+            <div className="text-4xl font-bold">$180,234</div>
+            <div>
+              <div className="text-muted-foreground">Original Projected Interest: $102,836.87</div>
+              <div className="text-muted-foreground">Total Interest Saved: $582,973.97</div>
+            </div>
+          </div>
+        </div>
+      </div>
       <div className="mt-8 md:mt-12">
-        {' '}
-        <div className="flex justify-center text-3xl font-bold">Projection</div>
         <ChartContainer
           config={{
             desktop: { label: 'Desktop', color: 'hsl(var(--chart-1))' },
             mobile: { label: 'Mobile', color: 'hsl(var(--chart-2))' },
           }}
-          className="min-h-[300px]"
+          className="min-h-[300px] border rounded-lg"
         >
           <AreaChart
             accessibilityLayer
