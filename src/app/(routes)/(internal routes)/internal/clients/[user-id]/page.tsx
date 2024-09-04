@@ -9,6 +9,7 @@ import {
   renderTransactionTableFilter,
   transactionTableFilter,
   YODLEE_DATE_FORMAT,
+  YODLEE_TABLE_PAGESIZE,
 } from '@/app/(routes)/(client routes)/my-account/_transaction-table-filter';
 import YodleeTransactionsTable from '@/components/custom/yodlee-transactions-table';
 import { Button } from '@/components/ui/button';
@@ -23,9 +24,8 @@ import { formatDate } from '@/lib/utils';
 import dayjs from 'dayjs';
 import useEmblaCarousel from 'embla-carousel-react';
 import { EditIcon, SearchIcon } from 'lucide-react';
-import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import EditClientPage from './_edit/_page';
 
 function Header({
@@ -45,14 +45,11 @@ function Header({
       <h2>({user.clients?.[0]?.yodlee_username})</h2>
       <Button
         variant="ghost-2"
-        asChild
         onClick={() => {
           setIsEditing(true);
         }}
       >
-        <Link href="#">
-          <EditIcon />
-        </Link>
+        <EditIcon />
       </Button>
     </div>
   );
@@ -63,6 +60,7 @@ export default function ViewClientPage() {
   const { 'user-id': userId } = useParams();
   const [isEditing, setIsEditing] = useState(false);
   const [user, setUser] = useState<IUser>();
+  const tableRef = useRef<any>();
 
   const yodlee = useYodlee({
     initialModuleConfig: {
@@ -73,8 +71,10 @@ export default function ViewClientPage() {
         baseType: '',
         container: '',
         categoryId: '',
-        fromDate: dayjs(new Date()).subtract(1, 'year').toString(),
-        toDate: dayjs(new Date()).toString(),
+        top: YODLEE_TABLE_PAGESIZE,
+        skip: 0,
+        fromDate: formatDate(dayjs(new Date()).subtract(1, 'year'), YODLEE_DATE_FORMAT),
+        toDate: formatDate(dayjs(new Date()), YODLEE_DATE_FORMAT),
       },
     },
     fastLinkConfig: {
@@ -86,7 +86,7 @@ export default function ViewClientPage() {
     userId: userId + '',
     manualErrorHandling: true,
     onError: async (error) => {
-      if (error.errorCode === 'Y008') {
+      if (error?.errorCode === 'Y008') {
         await revalidateUserCookies();
       }
     },
@@ -120,13 +120,18 @@ export default function ViewClientPage() {
 
   const handleGetTransactions = (filter: TransactionFilter) => {
     let params = getModuleConfig()?.transactions || {};
-    getTransactions({ ...params, ...filter });
+    getTransactions({ ...params, ...filter }, selectedAccount?.id.toString());
   };
 
   const handleFilterTransactions = () => {
     const filter = initialModuleConfig?.transactions || {};
     filter.fromDate = formatDate(dayjs(filter?.fromDate), YODLEE_DATE_FORMAT);
     filter.toDate = formatDate(dayjs(filter?.toDate), YODLEE_DATE_FORMAT);
+    filter.skip = 0;
+    tableRef.current?.setPagination?.({
+      pageIndex: 1,
+      pageSize: YODLEE_TABLE_PAGESIZE
+    })
     handleGetTransactions({
       ...filter,
       ...getActiveFilters().reduce((ac, c) => ({ ...ac, [c.id]: c.formattedValue }), {}),
@@ -185,23 +190,23 @@ export default function ViewClientPage() {
     );
   }
 
-  if (isEditing && user) {
+  if (isEditing) {
     return (
       <EditClientPage
         {...{ user, setUser, isEditing, setIsEditing }}
         onEdit={() => {
-          authenticate();
+          authenticate(true);
         }}
       />
     );
   }
 
-  if (error?.errorCode === '0' && user) {
+  if (error?.errorCode === '0') {
     return (
       <>
         <Header {...{ isEditing, setIsEditing, user }} />
         <div className="rounded-3xl w-full bg-white py-10 px-12 overflow-hidden">
-          <h3 className="text-xl opacity-[0.6] text-center">{error.errorMessage}</h3>
+          <h3 className="text-xl opacity-[0.6] text-center">{error?.errorMessage}</h3>
         </div>
       </>
     );
@@ -271,15 +276,13 @@ export default function ViewClientPage() {
           <div className="rounded-[20px] overflow-hidden border border-grey-2">
             {selectedAccount && (
               <YodleeTransactionsTable
+                tableRef={tableRef}
                 initialData={transactionData?.transaction || []}
                 isLoading={!transactionsReady}
                 totalCount={transactionCount?.transaction?.TOTAL.count || 0}
                 onPaginate={({ pageIndex, pageSize }) => {
                   handleGetTransactions({
-                    accountId: selectedAccount.id.toString(),
                     top: pageSize,
-                    fromDate: formatDate(dayjs(initialModuleConfig?.transactions?.fromDate), YODLEE_DATE_FORMAT),
-                    toDate: formatDate(dayjs(initialModuleConfig?.transactions?.toDate), YODLEE_DATE_FORMAT),
                     skip: pageIndex > 1 ? pageIndex : 0,
                   });
                 }}

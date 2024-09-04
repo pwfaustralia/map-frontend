@@ -17,14 +17,14 @@ import {
 } from '../types/yodlee';
 import { serialize } from '../utils';
 
-export default function useYodlee(init: {
+export default function useYodlee(initConfig: {
   fastLinkConfig: FastLinkConfig;
   initialModuleConfig?: YodleeInitConfig;
   manualErrorHandling?: boolean;
   userId?: string;
   onError?: (error: ErrorResponse) => void;
 }) {
-  const { fastLinkConfig, initialModuleConfig, manualErrorHandling, userId, onError } = init;
+  const { fastLinkConfig, initialModuleConfig, manualErrorHandling, userId, onError } = initConfig;
   const {
     accounts: initAccounts,
     transactions: initTransactions = {},
@@ -40,7 +40,7 @@ export default function useYodlee(init: {
   });
   const _isReady = useRef<typeof isReady>(isReady);
   const { apiReady, accountsReady } = isReady;
-  const [error, setError] = useState<ErrorResponse>();
+  const [error, setError] = useState<ErrorResponse | null>();
   const [accountData, setAccountData] = useState<AccountData>();
   const [categoryData, setCategoryData] = useState<TransactionCategoryData>();
   const [transactionData, setTransactionData] = useState<TransactionData>();
@@ -79,7 +79,7 @@ export default function useYodlee(init: {
     return config().accessToken;
   };
 
-  const fetchData = async ({ url, before = async () => {}, after = async () => {} }: YodleeFetchData) => {
+  const fetchData = async ({ url, before = async () => { }, after = async () => { } }: YodleeFetchData) => {
     if (!apiReady) return;
     await before();
     const data = await fetchYodlee(url, {
@@ -97,7 +97,7 @@ export default function useYodlee(init: {
     return data;
   };
 
-  const getAccounts = async () => {
+  const getAccounts = async (): Promise<AccountData> => {
     return await fetchData({
       url: YODLEE_API_ROUTES.transactions.accounts,
       before: () => {
@@ -110,7 +110,10 @@ export default function useYodlee(init: {
     });
   };
 
-  const getTransactions = async (filter: typeof initTransactions) => {
+  const getTransactions = async (filter: typeof initTransactions, accountId: string | undefined) => {
+    if (!filter.accountId && accountId) {
+      filter.accountId = accountId;
+    }
     let params = filter && typeof filter !== 'boolean' ? serialize(filter) : '';
     return await fetchData({
       url: YODLEE_API_ROUTES.transactions.transactions + '?' + params,
@@ -120,7 +123,7 @@ export default function useYodlee(init: {
       after: async (data) => {
         await fetchData({
           url: YODLEE_API_ROUTES.transactions.count + '?' + params,
-          before: () => {},
+          before: () => { },
           after: (count) => {
             setTransactionCount(count);
             setTransactionData(data);
@@ -147,10 +150,14 @@ export default function useYodlee(init: {
 
   const getModuleConfig = () => _moduleOptions.current;
 
-  const authenticate = async () => {
+  const authenticate = async (reinitialize: boolean = false) => {
     let yodleeTokens = await getYodleeAccessToken(userId);
     if (yodleeTokens.length && yodleeTokens[0]?.username) {
+      setError(null);
       setToken(yodleeTokens[0].accessToken);
+      if (reinitialize) {
+        initModules();
+      }
     } else {
       setError({
         errorCode: '0',
@@ -160,15 +167,20 @@ export default function useYodlee(init: {
     }
   };
 
+  const initModules = async () => {
+    let accounts;
+    if (initAccounts) accounts = await getAccounts();
+    if (Object.keys(initTransactions).length) getTransactions(initTransactions, accounts?.account?.[0].id.toString());
+    if (initCategories) getCategories();
+  }
+
   useEffect(() => {
     authenticate();
   }, []);
 
   useEffect(() => {
     if (apiReady) {
-      if (initAccounts) getAccounts();
-      if (Object.keys(initTransactions).length) getTransactions(initTransactions);
-      if (initCategories) getCategories();
+      initModules();
     }
   }, [apiReady]);
 

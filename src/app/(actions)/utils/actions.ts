@@ -29,6 +29,8 @@ export async function getYodleeAccessToken(userId?: string): Promise<Array<{ use
   const yodleeTokens: UserYodleeTokenResponse = await fetchLaravel(
     LARAVEL_API_ROUTES.getUserYodleeAccessToken(userId)
   ).then((resp) => resp.json());
+  
+  const tokens = yodleeTokens?.tokens?.map(({ username, token: { accessToken } }) => ({ username, accessToken })) || [];
 
-  return yodleeTokens?.tokens?.map(({ username, token: { accessToken } }) => ({ username, accessToken })) || [];
+  return tokens;
 }

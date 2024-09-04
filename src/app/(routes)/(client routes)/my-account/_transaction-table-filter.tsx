@@ -25,6 +25,7 @@ import dayjs from 'dayjs';
 import { CalendarIcon } from 'lucide-react';
 
 export const YODLEE_DATE_FORMAT = 'YYYY-MM-DD';
+export const YODLEE_TABLE_PAGESIZE = 15;
 
 export const transactionTableFilter = (
   yodlee: any,

@@ -15,6 +15,7 @@ import {
 } from '@tanstack/react-table';
 import { useEffect, useMemo, useState } from 'react';
 import { Button } from '../ui/button';
+import { YODLEE_TABLE_PAGESIZE } from '@/app/(routes)/(client routes)/my-account/_transaction-table-filter';
 
 const columnDef: ColumnDef<Transaction>[] = [
   {
@@ -36,10 +37,6 @@ const columnDef: ColumnDef<Transaction>[] = [
   {
     header: 'Status',
     accessorKey: 'status',
-  },
-  {
-    header: 'Category',
-    accessorKey: 'category',
   },
   {
     id: 'amount',
@@ -67,6 +64,7 @@ export default function YodleeTransactionsTable(config: {
   initialData: Transaction[];
   isLoading: boolean;
   totalCount: number;
+  tableRef?: any;
   onPaginate: (pagination: { pageIndex: number; pageSize: number }) => void;
 }) {
   const { onPaginate, initialData, isLoading, totalCount } = config;
@@ -79,7 +77,7 @@ export default function YodleeTransactionsTable(config: {
   const tableData = useMemo(() => (isLoading ? Array(10).fill({}) : initialData), [isLoading, initialData]);
   const [pagination, setPagination] = useState({
     pageIndex: 1,
-    pageSize: 15,
+    pageSize: YODLEE_TABLE_PAGESIZE,
   });
   const totalPage = Math.ceil(totalCount / pagination.pageSize);
   const canNextPage = pagination.pageIndex < totalPage;
@@ -88,9 +86,9 @@ export default function YodleeTransactionsTable(config: {
     () =>
       isLoading
         ? columnDef.map((column) => ({
-            ...column,
-            cell: () => <Skeleton className="h-[30px]" />,
-          }))
+          ...column,
+          cell: () => <Skeleton className="h-[30px]" />,
+        }))
         : columnDef,
     [isLoading]
   );
@@ -122,8 +120,12 @@ export default function YodleeTransactionsTable(config: {
   });
 
   useEffect(() => {
-    onPaginate(pagination);
-  }, [pagination]);
+    if (config.tableRef)
+      config.tableRef.current = {
+        pagination,
+        setPagination
+      }
+  }, [config.tableRef])
 
   return (
     <>
@@ -162,10 +164,17 @@ export default function YodleeTransactionsTable(config: {
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="space-x-2">
           Page {pagination.pageIndex} of {totalPage}
-          <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!canBackPage}>
+          <Button variant="outline" size="sm" onClick={() => {
+            table.previousPage();
+            onPaginate({ ...pagination, pageIndex: pagination.pageIndex - 1 })
+
+          }} disabled={!canBackPage}>
             Previous
           </Button>
-          <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!canNextPage}>
+          <Button variant="outline" size="sm" onClick={() => {
+            table.nextPage();
+            onPaginate({ ...pagination, pageIndex: pagination.pageIndex + 1 })
+          }} disabled={!canNextPage}>
             Next
           </Button>
         </div>

@@ -14,9 +14,9 @@ import { formatDate } from '@/lib/utils';
 import dayjs from 'dayjs';
 import useEmblaCarousel from 'embla-carousel-react';
 import { SearchIcon } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { renderAccountsSlider, renderAccountsSliderPagination } from './_accounts-slider';
-import { renderTransactionTableFilter, transactionTableFilter, YODLEE_DATE_FORMAT } from './_transaction-table-filter';
+import { renderTransactionTableFilter, transactionTableFilter, YODLEE_DATE_FORMAT, YODLEE_TABLE_PAGESIZE } from './_transaction-table-filter';
 import { Link1Icon } from '@radix-ui/react-icons';
 
 export default function MyAccountPage() {
@@ -24,6 +24,7 @@ export default function MyAccountPage() {
     fromDate: false,
     toDate: false,
   });
+  const tableRef = useRef<any>();
   const yodlee = useYodlee({
     initialModuleConfig: {
       accounts: true,
@@ -33,8 +34,10 @@ export default function MyAccountPage() {
         baseType: '',
         container: '',
         categoryId: '',
-        fromDate: dayjs(new Date()).subtract(1, 'year').toString(),
-        toDate: dayjs(new Date()).toString(),
+        top: YODLEE_TABLE_PAGESIZE,
+        skip: 0,
+        fromDate: formatDate(dayjs(new Date()).subtract(1, 'year'), YODLEE_DATE_FORMAT),
+        toDate: formatDate(dayjs(new Date()), YODLEE_DATE_FORMAT),
       },
     },
     fastLinkConfig: {
@@ -45,7 +48,7 @@ export default function MyAccountPage() {
     },
     manualErrorHandling: true,
     onError: async (error) => {
-      if (error.errorCode === 'Y008') {
+      if (error?.errorCode === 'Y008') {
         await revalidateUserCookies();
       }
     },
@@ -91,13 +94,18 @@ export default function MyAccountPage() {
 
   const handleGetTransactions = (filter: TransactionFilter) => {
     let params = getModuleConfig()?.transactions || {};
-    getTransactions({ ...params, ...filter });
+    getTransactions({ ...params, ...filter }, selectedAccount?.id.toString());
   };
 
   const handleFilterTransactions = () => {
     const filter = initialModuleConfig?.transactions || {};
     filter.fromDate = formatDate(dayjs(filter?.fromDate), YODLEE_DATE_FORMAT);
     filter.toDate = formatDate(dayjs(filter?.toDate), YODLEE_DATE_FORMAT);
+    filter.skip = 0;
+    tableRef.current?.setPagination?.({
+      pageIndex: 1,
+      pageSize: YODLEE_TABLE_PAGESIZE
+    })
     handleGetTransactions({
       ...filter,
       ...getActiveFilters().reduce((ac, c) => ({ ...ac, [c.id]: c.formattedValue }), {}),
@@ -147,7 +155,7 @@ export default function MyAccountPage() {
       <>
         <h1 className="font-bold text-2xl my-4 mb-7">My Account</h1>
         <div className="rounded-3xl w-full bg-white py-10 px-12 overflow-hidden">
-          <h3 className="text-xl opacity-[0.6] text-center">{error.errorMessage}</h3>
+          <h3 className="text-xl opacity-[0.6] text-center">{error?.errorMessage}</h3>
         </div>
       </>
     );
@@ -245,15 +253,13 @@ export default function MyAccountPage() {
           <div className="rounded-[20px] overflow-hidden border border-grey-2">
             {selectedAccount && (
               <YodleeTransactionsTable
+                tableRef={tableRef}
                 initialData={transactionData?.transaction || []}
                 isLoading={!transactionsReady}
                 totalCount={transactionCount?.transaction?.TOTAL.count || 0}
                 onPaginate={({ pageIndex, pageSize }) => {
                   handleGetTransactions({
-                    accountId: selectedAccount.id.toString(),
                     top: pageSize,
-                    fromDate: formatDate(dayjs(initialModuleConfig?.transactions?.fromDate), YODLEE_DATE_FORMAT),
-                    toDate: formatDate(dayjs(initialModuleConfig?.transactions?.toDate), YODLEE_DATE_FORMAT),
                     skip: pageIndex > 1 ? pageIndex : 0,
                   });
                 }}

@@ -13,7 +13,7 @@ type Option = Record<'value' | 'label', string>;
 export function MultiSelect({
   options,
   placeholder = '',
-  onChange = () => {},
+  onChange = () => { },
   selected: _selected = [],
 }: {
   options: Array<{ label: string; value: any }>;
@@ -93,7 +93,7 @@ export function MultiSelect({
           />
         </div>
       </div>
-      <div className="relative mt-2">
+      <div className="relative mt-2 z-20">
         <CommandList className="max-h-full">
           {open && selectables.length > 0 ? (
             <div className="absolute top-0 z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in">
