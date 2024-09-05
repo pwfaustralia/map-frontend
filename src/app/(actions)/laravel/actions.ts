@@ -1,7 +1,7 @@
 'use server';
 
 import { UserSchema } from '@/lib/schema/user';
-import Client from '@/lib/types/user';
+import Client, { IUser } from '@/lib/types/user';
 import { parse } from 'cookie';
 import { cookies } from 'next/headers';
 import { z } from 'zod';
@@ -37,7 +37,7 @@ export async function revalidateUserCookies() {
   return true;
 }
 
-export async function getUserDetails(userId: string) {
+export async function getUserDetails(userId: string): Promise<IUser> {
   const user = await fetchLaravel(LARAVEL_API_ROUTES.getUserDetailsFn(userId)).then((resp) => resp.json());
   return user;
 }

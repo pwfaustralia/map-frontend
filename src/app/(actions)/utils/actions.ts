@@ -7,6 +7,7 @@ import { cookies } from 'next/headers';
 import { fetchLaravel } from '../fetcher/actions';
 import { LARAVEL_API_ROUTES } from '../laravel/laravel-api-routes';
 import { UserYodleeTokenResponse } from '@/lib/types/yodlee';
+import { getUniqueArray } from '@/lib/utils';
 
 export async function deleteAccessTokenCookies() {
   cookies().delete(process.env.LARAVEL_ACCESSTOKEN_COOKIE_KEY!);
@@ -19,18 +20,35 @@ export async function isClientUser() {
   return session?.user.user_role.role_name! === UserRoles.CLIENT;
 }
 
-export async function getYodleeAccessToken(userId?: string): Promise<Array<{ username: string; accessToken: string }>> {
-  if (!userId) {
-    const yodleeCookie = cookies().get(process.env.YODLEE_ACCESSTOKEN_COOKIE_KEY!);
-    let tokens: any = yodleeCookie?.value.split(';');
-    tokens = tokens?.map((tok: any) => ({ username: tok.split('=')[0], accessToken: tok.split('=')[1] }));
-    return tokens || [];
-  }
-  const yodleeTokens: UserYodleeTokenResponse = await fetchLaravel(
-    LARAVEL_API_ROUTES.getUserYodleeAccessToken(userId)
-  ).then((resp) => resp.json());
-  
-  const tokens = yodleeTokens?.tokens?.map(({ username, token: { accessToken } }) => ({ username, accessToken })) || [];
+export async function getYodleeAccessToken(
+  userId?: string,
+  username?: string,
+  revalidate?: boolean
+): Promise<Array<{ username: string; accessToken: string }>> {
+  let yodleeTokens: UserYodleeTokenResponse = { tokens: [] };
+  const yodleeCookie = cookies().get(process.env.YODLEE_ACCESSTOKEN_COOKIE_KEY!);
+  let existingTokens: any = yodleeCookie?.value.split(';');
+  existingTokens = existingTokens?.map((tok: any) => ({ username: tok.split('=')[0], accessToken: tok.split('=')[1] }));
 
-  return tokens;
+  if ((!existingTokens.find((q: any) => q.username === username) && userId) || (revalidate && userId)) {
+    yodleeTokens = await fetchLaravel(LARAVEL_API_ROUTES.getUserYodleeAccessToken(userId)).then((resp) => resp.json());
+  }
+
+  const newTokens = (
+    yodleeTokens?.tokens?.map(({ username, token: { accessToken } }) => ({ username, accessToken })) || []
+  )
+    .concat(existingTokens)
+    .slice(0, 50);
+  const newTokensString = getUniqueArray(newTokens, (a, b) => a.username === b.username)
+    .filter((q) => q.accessToken && q.username)
+    .map((q) => `${q.username}=${q.accessToken}`)
+    .join(';');
+
+  cookies().set({
+    name: process.env.YODLEE_ACCESSTOKEN_COOKIE_KEY!,
+    value: newTokensString,
+    httpOnly: true,
+  });
+
+  return newTokens;
 }

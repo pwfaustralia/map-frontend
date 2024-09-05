@@ -154,7 +154,7 @@ export interface UserYodleeTokenData {
 
 export interface UserYodleeTokenResponse {
   tokens: UserYodleeTokenData[];
-  error: any;
+  error?: any;
 }
 
 export type DetailCategory = {

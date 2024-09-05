@@ -41,6 +41,7 @@ export default function useYodlee(initConfig: {
   const _isReady = useRef<typeof isReady>(isReady);
   const { apiReady, accountsReady } = isReady;
   const [error, setError] = useState<ErrorResponse | null>();
+  const [username, setUsername] = useState<string>('');
   const [accountData, setAccountData] = useState<AccountData>();
   const [categoryData, setCategoryData] = useState<TransactionCategoryData>();
   const [transactionData, setTransactionData] = useState<TransactionData>();
@@ -58,6 +59,15 @@ export default function useYodlee(initConfig: {
 
   const closeFastLink = () => {
     fastLink()?.close();
+  };
+
+  const handleError = (error: ErrorResponse | null) => {
+    if (!error) {
+      setError(null);
+      return;
+    }
+    setError(error);
+    if (onError) onError(error);
   };
 
   const setReadyStatus = (key: keyof typeof isReady, status: boolean) => {
@@ -79,7 +89,7 @@ export default function useYodlee(initConfig: {
     return config().accessToken;
   };
 
-  const fetchData = async ({ url, before = async () => { }, after = async () => { } }: YodleeFetchData) => {
+  const fetchData = async ({ url, before = async () => {}, after = async () => {} }: YodleeFetchData) => {
     if (!apiReady) return;
     await before();
     const data = await fetchYodlee(url, {
@@ -88,7 +98,7 @@ export default function useYodlee(initConfig: {
       },
     });
     if (data?.errorCode) {
-      setError(data);
+      handleError(data);
       if (manualErrorHandling) {
         return;
       }
@@ -106,6 +116,13 @@ export default function useYodlee(initConfig: {
       after: (data) => {
         setAccountData(data);
         setReadyStatus('accountsReady', true);
+        if (!data) {
+          handleError({
+            errorCode: 'Y008',
+            errorMessage: 'Invalid token',
+            referenceCode: '',
+          });
+        }
       },
     });
   };
@@ -123,7 +140,7 @@ export default function useYodlee(initConfig: {
       after: async (data) => {
         await fetchData({
           url: YODLEE_API_ROUTES.transactions.count + '?' + params,
-          before: () => { },
+          before: () => {},
           after: (count) => {
             setTransactionCount(count);
             setTransactionData(data);
@@ -150,16 +167,16 @@ export default function useYodlee(initConfig: {
 
   const getModuleConfig = () => _moduleOptions.current;
 
-  const authenticate = async (reinitialize: boolean = false) => {
-    let yodleeTokens = await getYodleeAccessToken(userId);
-    if (yodleeTokens.length && yodleeTokens[0]?.username) {
-      setError(null);
-      setToken(yodleeTokens[0].accessToken);
-      if (reinitialize) {
-        initModules();
+  const authenticate = async (revalidate: boolean = false) => {
+    let yodleeTokens = await getYodleeAccessToken(userId, username, revalidate);
+    if (yodleeTokens.length) {
+      let theToken = yodleeTokens.find((q) => q.username === username);
+      if (theToken) {
+        handleError(null);
+        setToken(theToken.accessToken);
       }
     } else {
-      setError({
+      handleError({
         errorCode: '0',
         errorMessage: 'No Yodlee account linked.',
         referenceCode: '',
@@ -168,15 +185,16 @@ export default function useYodlee(initConfig: {
   };
 
   const initModules = async () => {
-    let accounts;
+    let accounts, transactions;
     if (initAccounts) accounts = await getAccounts();
-    if (Object.keys(initTransactions).length) getTransactions(initTransactions, accounts?.account?.[0].id.toString());
-    if (initCategories) getCategories();
-  }
+    if (Object.keys(initTransactions).length && accounts)
+      transactions = await getTransactions(initTransactions, accounts?.account?.[0].id.toString());
+    if (initCategories && transactions) getCategories();
+  };
 
   useEffect(() => {
-    authenticate();
-  }, []);
+    if (username) authenticate();
+  }, [username]);
 
   useEffect(() => {
     if (apiReady) {
@@ -200,6 +218,8 @@ export default function useYodlee(initConfig: {
     getTransactions,
     getModuleConfig,
     authenticate,
+    setUsername,
+    initModules,
     initialModuleConfig,
     error,
     transactionData,

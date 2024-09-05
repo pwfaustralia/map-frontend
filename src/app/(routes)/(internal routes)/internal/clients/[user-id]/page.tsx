@@ -87,7 +87,7 @@ export default function ViewClientPage() {
     manualErrorHandling: true,
     onError: async (error) => {
       if (error?.errorCode === 'Y008') {
-        await revalidateUserCookies();
+        await authenticate(true);
       }
     },
   });
@@ -95,7 +95,9 @@ export default function ViewClientPage() {
     closeFastLink,
     getTransactions,
     getModuleConfig,
+    initModules,
     authenticate,
+    setUsername: setYodleeUsername,
     initialModuleConfig,
     yodleeTags,
     accountData,
@@ -130,8 +132,8 @@ export default function ViewClientPage() {
     filter.skip = 0;
     tableRef.current?.setPagination?.({
       pageIndex: 1,
-      pageSize: YODLEE_TABLE_PAGESIZE
-    })
+      pageSize: YODLEE_TABLE_PAGESIZE,
+    });
     handleGetTransactions({
       ...filter,
       ...getActiveFilters().reduce((ac, c) => ({ ...ac, [c.id]: c.formattedValue }), {}),
@@ -154,7 +156,10 @@ export default function ViewClientPage() {
   }, [emblaApi]);
 
   useEffect(() => {
-    getUserDetails(userId + '').then((userData) => setUser(userData));
+    getUserDetails(userId + '').then((userData) => {
+      setUser(userData);
+      setYodleeUsername(userData.clients[0].yodlee_username);
+    });
     return () => {
       closeFastLink();
     };
@@ -195,7 +200,7 @@ export default function ViewClientPage() {
       <EditClientPage
         {...{ user, setUser, isEditing, setIsEditing }}
         onEdit={() => {
-          authenticate(true);
+          initModules();
         }}
       />
     );

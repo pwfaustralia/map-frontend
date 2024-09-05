@@ -54,3 +54,7 @@ export function formatDate(day: Dayjs, format: string) {
   if (!day) return '';
   return day.format(format);
 }
+
+export function getUniqueArray<T>(array: T[], comparator: (valueA: any, valueB: any) => boolean) {
+  return array.filter((value, index, self) => index === self.findIndex((t) => comparator(t, value)));
+}

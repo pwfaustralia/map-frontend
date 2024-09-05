@@ -16,10 +16,17 @@ import useEmblaCarousel from 'embla-carousel-react';
 import { SearchIcon } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { renderAccountsSlider, renderAccountsSliderPagination } from './_accounts-slider';
-import { renderTransactionTableFilter, transactionTableFilter, YODLEE_DATE_FORMAT, YODLEE_TABLE_PAGESIZE } from './_transaction-table-filter';
+import {
+  renderTransactionTableFilter,
+  transactionTableFilter,
+  YODLEE_DATE_FORMAT,
+  YODLEE_TABLE_PAGESIZE,
+} from './_transaction-table-filter';
 import { Link1Icon } from '@radix-ui/react-icons';
+import { useSession } from 'next-auth/react';
 
 export default function MyAccountPage() {
+  const { data: sessionData } = useSession();
   const [isOpenDatePicker, setIsOpenDatePicker] = useState({
     fromDate: false,
     toDate: false,
@@ -59,6 +66,7 @@ export default function MyAccountPage() {
     getAccounts,
     getTransactions,
     getModuleConfig,
+    setUsername: setYodleeUsername,
     initialModuleConfig,
     yodleeTags,
     accountData,
@@ -104,8 +112,8 @@ export default function MyAccountPage() {
     filter.skip = 0;
     tableRef.current?.setPagination?.({
       pageIndex: 1,
-      pageSize: YODLEE_TABLE_PAGESIZE
-    })
+      pageSize: YODLEE_TABLE_PAGESIZE,
+    });
     handleGetTransactions({
       ...filter,
       ...getActiveFilters().reduce((ac, c) => ({ ...ac, [c.id]: c.formattedValue }), {}),
@@ -149,6 +157,12 @@ export default function MyAccountPage() {
       );
     }
   }, [categoriesReady]);
+
+  useEffect(() => {
+    if (sessionData?.user?.clients?.[0]?.yodlee_username) {
+      setYodleeUsername(sessionData?.user?.clients?.[0]?.yodlee_username);
+    }
+  }, [sessionData]);
 
   if (error?.errorCode === '0') {
     return (
