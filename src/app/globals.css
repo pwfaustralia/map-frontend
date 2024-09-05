@@ -75,6 +75,9 @@
   body {
     @apply bg-background text-foreground h-screen;
   }
+  body:has(#search-client) #layout-main-content {
+    overflow: hidden !important;
+  }
   .faded {
     position: relative;
     &::before,

@@ -5,15 +5,20 @@ import { INTERNAL_ROUTES } from '@/lib/routes';
 import clsx from 'clsx';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function SidebarInternalDefault() {
   const pathname = usePathname();
   const [currentPath, setCurrentPath] = useState(pathname);
+
+  useEffect(() => {
+    setCurrentPath(pathname);
+  }, [pathname]);
+
   return (
     <div className="flex-col items-center flex-[1_1_250px] min-w-[250px] bg-primary pt-6">
       <div className="mb-7">
-        <img src="/images/cc-logo.png" alt="Credit Connection" className="lg:w-[194px] max-w-[194px]" />
+        <img src="/images/cc-logo.png" alt="Credit Connection" className="lg:w-[194px] max-w-[194px] m-[0_auto]" />
       </div>
       <div className="w-full px-[14px] flex gap-1 flex-col">
         {Object.keys(INTERNAL_ROUTES).map((label) => {
