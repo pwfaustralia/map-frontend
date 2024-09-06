@@ -78,6 +78,10 @@
   body:has(#search-client) #layout-main-content {
     overflow: hidden !important;
   }
+  .same-width-as-trigger {
+    width: var(--radix-popover-trigger-width) !important;
+    max-height: var(--radix-popover-content-available-height);
+  }
   .faded {
     position: relative;
     &::before,

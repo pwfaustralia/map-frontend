@@ -56,7 +56,7 @@ export default function Internal_ClientsPage() {
   const [activeResultIndex, setActiveResultIndex] = useState(0);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
-    ['preferred_name', 'middle_name', 'town_name', 'street_name', 'home_phone', 'work_phone'].reduce(
+    ['preferred_name', 'middle_name', 'city', 'street_name', 'home_phone', 'work_phone'].reduce(
       (prev, column) => ({ ...prev, [column]: false }),
       {}
     )

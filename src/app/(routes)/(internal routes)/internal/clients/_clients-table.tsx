@@ -64,20 +64,16 @@ export const clientsTableColumnDef: ColumnDef<any>[] = [
   },
   {
     id: 'street_name',
-    accessorFn: (originalRow) => {
-      return originalRow.document['physical_address.street_name'];
-    },
+    accessorKey: 'address_1',
     header: 'Street Address',
-    cell: ({ row }) => <div className="capitalize">{row.getValue('street_name')}</div>,
+    cell: ({ row }) => <div className="capitalize">{row.getValue('address_1')}</div>,
   },
   {
-    id: 'town_name',
-    accessorFn: (originalRow) => {
-      return originalRow.document['physical_address.town'];
-    },
-    header: 'Town',
+    id: 'city',
+    accessorKey: 'city',
+    header: 'City',
     enableHiding: true,
-    cell: ({ row }) => <div className="capitalize">{row.getValue('town_name')}</div>,
+    cell: ({ row }) => <div className="capitalize">{row.getValue('city')}</div>,
   },
   {
     id: 'home_phone',
@@ -228,13 +224,13 @@ export const clientsTableFilters: TableFilter[] = [
     modifier: 'contains',
   },
   {
-    id: 'physical_address.street_name',
+    id: 'address_1',
     label: 'Street Address',
     modifier: 'contains',
   },
   {
-    id: 'physical_address.town',
-    label: 'Town',
+    id: 'city',
+    label: 'City',
     modifier: 'contains',
   },
   {

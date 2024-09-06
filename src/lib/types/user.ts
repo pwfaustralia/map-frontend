@@ -24,8 +24,12 @@ export default interface Client {
   mobile_phone?: string;
   fax?: string;
   user_id: string;
-  physical_address_id?: string;
-  postal_address_id?: string;
+  address_1?: string;
+  address_2?: string;
+  postcode?: string;
+  city?: string;
+  state?: string;
+  country?: string;
   yodlee_username: string;
   yodlee_status: string;
 }

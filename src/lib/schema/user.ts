@@ -18,6 +18,12 @@ export const UserSchema = z
     }),
     preferred_name: z.string().min(1),
     yodlee_username: z.string().min(1),
+    address_1: z.string(),
+    address_2: z.string(),
+    city: z.string(),
+    state: z.string(),
+    country: z.string(),
+    postcode: z.string(),
     password: z
       .string()
       .min(8, { message: 'Password must contain at least 8 characters' })
@@ -45,5 +51,11 @@ export const EditUserSchema = z
     }),
     preferred_name: z.string().min(1),
     yodlee_username: z.string().min(1),
+    address_1: z.string(),
+    address_2: z.string().nullable(),
+    city: z.string(),
+    state: z.string(),
+    country: z.string(),
+    postcode: z.string(),
   })
   .required();

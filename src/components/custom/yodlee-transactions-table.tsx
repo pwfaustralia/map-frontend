@@ -70,9 +70,7 @@ export default function YodleeTransactionsTable(config: {
   const { onPaginate, initialData, isLoading, totalCount } = config;
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
-    ['preferred_name', 'middle_name', 'town_name'].reduce((prev, column) => ({ ...prev, [column]: false }), {})
-  );
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
   const tableData = useMemo(() => (isLoading ? Array(10).fill({}) : initialData), [isLoading, initialData]);
   const [pagination, setPagination] = useState({
@@ -86,9 +84,9 @@ export default function YodleeTransactionsTable(config: {
     () =>
       isLoading
         ? columnDef.map((column) => ({
-          ...column,
-          cell: () => <Skeleton className="h-[30px]" />,
-        }))
+            ...column,
+            cell: () => <Skeleton className="h-[30px]" />,
+          }))
         : columnDef,
     [isLoading]
   );
@@ -123,9 +121,9 @@ export default function YodleeTransactionsTable(config: {
     if (config.tableRef)
       config.tableRef.current = {
         pagination,
-        setPagination
-      }
-  }, [config.tableRef])
+        setPagination,
+      };
+  }, [config.tableRef]);
 
   return (
     <>
@@ -164,17 +162,26 @@ export default function YodleeTransactionsTable(config: {
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="space-x-2">
           Page {pagination.pageIndex} of {totalPage}
-          <Button variant="outline" size="sm" onClick={() => {
-            table.previousPage();
-            onPaginate({ ...pagination, pageIndex: pagination.pageIndex - 1 })
-
-          }} disabled={!canBackPage}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              table.previousPage();
+              onPaginate({ ...pagination, pageIndex: pagination.pageIndex - 1 });
+            }}
+            disabled={!canBackPage}
+          >
             Previous
           </Button>
-          <Button variant="outline" size="sm" onClick={() => {
-            table.nextPage();
-            onPaginate({ ...pagination, pageIndex: pagination.pageIndex + 1 })
-          }} disabled={!canNextPage}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              table.nextPage();
+              onPaginate({ ...pagination, pageIndex: pagination.pageIndex + 1 });
+            }}
+            disabled={!canNextPage}
+          >
             Next
           </Button>
         </div>

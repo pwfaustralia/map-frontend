@@ -16,16 +16,28 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+const fields = {
+  address: ['address_1', 'address_2', 'city', 'country', 'state', 'postcode'],
+  personalDetails: [
+    'first_name',
+    'last_name',
+    'middle_name',
+    'preferred_name',
+    'home_phone',
+    'work_phone',
+    'mobile_phone',
+  ],
+  userDetails: ['email', 'password', 'yodlee_username'],
+};
+
 export default function AddClientPage() {
   const { direction, getFrame, page, paginate, paginateToFieldErrored } = useSliderTransition({
-    fieldsPerPage: [
-      ['first_name', 'last_name', 'middle_name', 'preferred_name', 'home_phone', 'work_phone', 'mobile_phone'],
-      ['email', 'password', 'yodlee_username'],
-    ],
+    fieldsPerPage: [fields.personalDetails, fields.address, fields.userDetails],
   });
   const [createdClient, setCreatedClient] = useState<any>();
   const {
     formState: { errors },
+    getValues,
     setError,
     reset,
     handleSubmit,
@@ -35,12 +47,12 @@ export default function AddClientPage() {
   });
 
   const handleSave = async (data: z.infer<typeof UserSchema>) => {
-    paginate(3, 1);
+    paginate(4, 1);
     const res = await createUserAndClientProfile(data);
     if (res.id) {
       setCreatedClient(res);
       reset();
-      paginate(4, 1);
+      paginate(5, 1);
     } else {
       Object.keys(res).forEach((key) => {
         setError(key, {
@@ -59,11 +71,18 @@ export default function AddClientPage() {
 
   return (
     <AnimatePresence initial={false} custom={direction}>
-      <form onSubmit={handleSubmit((values) => handleSave(values as z.infer<typeof UserSchema>))}>
+      <form
+        onSubmit={handleSubmit(
+          (values) => handleSave(values as z.infer<typeof UserSchema>),
+          (e) => {
+            paginateToFieldErrored(Object.keys(e));
+          }
+        )}
+      >
         <h1 className="font-bold text-2xl my-4 mb-7">Add New Client</h1>
         <div className="rounded-3xl w-full bg-white py-10 px-12 overflow-hidden">
           {page === 1 && (
-            <motion.div key="personal-details" className="max-w-[700px] mx-auto my-0 grid gap-4" {...getFrame()}>
+            <motion.div key="personal-details" className="max-w-[700px] grid gap-4" {...getFrame()}>
               <div className="mb-6">
                 <h1 className="text-2xl font-bold">Personal Details</h1>
                 <h2 className="text-lg">Please enter the details below</h2>
@@ -129,20 +148,7 @@ export default function AddClientPage() {
                   full
                 />
               </div>
-              <label className="text-xl mt-2">Physical Address</label>
-              <Input label="Address" className="text-lg py-6 h-14 bg-white px-5" placeholder="Street name" full />
-              <div className="flex items-start gap-4">
-                <Input label="Country" className="text-lg py-6 h-14 bg-white px-5" placeholder="Country" full />
-                <Input label="City" className="text-lg py-6 h-14 bg-white px-5" placeholder="City" full />
-              </div>
-              <Input label="Postcode" className="text-lg py-6 h-14 bg-white px-5" placeholder="Postcode" full />
-              <label className="text-xl mt-2">Postal Address</label>
-              <Input label="Address" className="text-lg py-6 h-14 bg-white px-5" placeholder="Street name" full />
-              <div className="flex items-start gap-4">
-                <Input label="Country" className="text-lg py-6 h-14 bg-white px-5" placeholder="Country" full />
-                <Input label="City" className="text-lg py-6 h-14 bg-white px-5" placeholder="City" full />
-              </div>
-              <Input label="Postcode" className="text-lg py-6 h-14 bg-white px-5" placeholder="Postcode" full />
+
               <div className="flex items-center gap-4 mt-7">
                 <Button
                   className="w-full"
@@ -156,7 +162,89 @@ export default function AddClientPage() {
             </motion.div>
           )}
           {page === 2 && (
-            <motion.div key="user-details" className="max-w-[700px] mx-auto my-0 grid gap-4" {...getFrame()}>
+            <motion.div key="client-address" className="max-w-[700px] grid gap-4" {...getFrame()}>
+              <div className="mb-6">
+                <h1 className="text-2xl font-bold">Address</h1>
+                <h2 className="text-lg">Please enter the address info</h2>
+              </div>
+              <label className="text-xl mt-2">Physical Address</label>
+              <Input
+                {...register('address_1')}
+                error={errors.address_1?.message}
+                label="Address 1"
+                className="text-lg py-6 h-14 bg-white px-5"
+                placeholder="Address"
+                full
+              />
+              <Input
+                {...register('address_2')}
+                error={errors.address_2?.message}
+                label="Address 2"
+                className="text-lg py-6 h-14 bg-white px-5"
+                placeholder="Address"
+                full
+              />
+              <div className="flex items-start gap-4">
+                <Input
+                  {...register('postcode')}
+                  error={errors.postcode?.message}
+                  label="Postcode"
+                  className="text-lg py-6 h-14 bg-white px-5"
+                  placeholder="Postcode"
+                  full
+                />
+
+                <Input
+                  {...register('city')}
+                  error={errors.city?.message}
+                  label="City"
+                  className="text-lg py-6 h-14 bg-white px-5"
+                  placeholder="City"
+                  full
+                />
+              </div>
+
+              <Input
+                {...register('country')}
+                error={errors.country?.message}
+                label="Country"
+                className="text-lg py-6 h-14 bg-white px-5"
+                placeholder="Country"
+                full
+              />
+
+              <Input
+                {...register('state')}
+                error={errors.state?.message}
+                label="State"
+                className="text-lg py-6 h-14 bg-white px-5"
+                placeholder="State"
+                full
+              />
+
+              <div className="flex items-center gap-4 mt-7">
+                <Button
+                  variant="ghost"
+                  className="w-full"
+                  onClick={() => {
+                    paginate(page - 1, -1);
+                  }}
+                >
+                  Back
+                </Button>
+                <Button
+                  className="w-full"
+                  onClick={() => {
+                    paginate(3, 1);
+                  }}
+                >
+                  Next
+                </Button>
+              </div>
+            </motion.div>
+          )}
+          {page === 3 && (
+            <motion.div key="user-details" className="max-w-[700px] grid gap-4" {...getFrame()}>
               <div className="mb-6">
                 <h1 className="text-2xl font-bold">User Details</h1>
                 <h2 className="text-lg">Please enter the details below</h2>
@@ -216,7 +304,7 @@ export default function AddClientPage() {
               </div>
             </motion.div>
           )}
-          {page === 3 && (
+          {page === 4 && (
             <motion.div key="saving-client" {...getFrame()}>
               <div className="w-full min-h-[300px] py-12 flex items-center justify-center flex-col gap-9">
                 <div className="text-center space-y-3">
@@ -230,7 +318,7 @@ export default function AddClientPage() {
               </div>
             </motion.div>
           )}
-          {page === 4 && createdClient && (
+          {page === 5 && createdClient && (
             <motion.div key="client-created" {...getFrame()}>
               <div className="w-full min-h-[300px] py-12 flex items-center justify-center flex-col gap-9">
                 <div className="text-center space-y-3 mb-4">

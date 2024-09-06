@@ -1,7 +1,6 @@
 'use client';
 
-import { fetchYodlee } from '@/app/(actions)/fetcher/actions';
-import { getYodleeAccessToken } from '@/app/(actions)/utils/actions';
+import { fetchAbsolute, fetchYodlee } from '@/app/(actions)/fetcher/actions';
 import { FastLink, FastLinkConfig, FastLinkOpenInterface } from '@/lib/types/fastlink';
 import Script from 'next/script';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -81,8 +80,8 @@ export default function useYodlee(initConfig: {
     if (!token) {
       return setReadyStatus('apiReady', false);
     }
-    setReadyStatus('apiReady', true);
     config().accessToken = token;
+    setReadyStatus('apiReady', true);
   };
 
   const getToken = () => {
@@ -97,6 +96,7 @@ export default function useYodlee(initConfig: {
         Authorization: `Bearer ${config().accessToken}`,
       },
     });
+    console.log('fetch', { url, data, username });
     if (data?.errorCode) {
       handleError(data);
       if (manualErrorHandling) {
@@ -167,21 +167,32 @@ export default function useYodlee(initConfig: {
 
   const getModuleConfig = () => _moduleOptions.current;
 
-  const authenticate = async (revalidate: boolean = false) => {
-    let yodleeTokens = await getYodleeAccessToken(userId, username, revalidate);
+  const authenticate = async (revalidate: boolean = false, _username: string = username) => {
+    if (revalidate) {
+      reset();
+    }
+    setUsername(_username);
+    // Replaced `getYodleeAccessToken` server action with API route call because it's causing the whole component to re-render https://github.com/vercel/next.js/issues/50163.
+    let yodleeTokens = await fetch(
+      `/api/auth/yodlee?userId=${userId}&username=${_username}&revalidate=${revalidate}`
+    ).then((resp) => resp.json());
+
     if (yodleeTokens.length) {
-      let theToken = yodleeTokens.find((q) => q.username === username);
+      let theToken = yodleeTokens.find((q: any) => q.username === _username);
       if (theToken) {
         handleError(null);
         setToken(theToken.accessToken);
+        if (revalidate) {
+          initModules();
+        }
+        return;
       }
-    } else {
-      handleError({
-        errorCode: '0',
-        errorMessage: 'No Yodlee account linked.',
-        referenceCode: '',
-      });
     }
+    handleError({
+      errorCode: '0',
+      errorMessage: 'No Yodlee account linked.',
+      referenceCode: '',
+    });
   };
 
   const initModules = async () => {
@@ -190,6 +201,14 @@ export default function useYodlee(initConfig: {
     if (Object.keys(initTransactions).length && accounts)
       transactions = await getTransactions(initTransactions, accounts?.account?.[0].id.toString());
     if (initCategories && transactions) getCategories();
+  };
+
+  const reset = () => {
+    setReadyStatus('categoriesReady', false);
+    setReadyStatus('apiReady', false);
+    setReadyStatus('transactionsReady', false);
+    setReadyStatus('accountsReady', false);
+    setError(null);
   };
 
   useEffect(() => {
@@ -201,12 +220,6 @@ export default function useYodlee(initConfig: {
       initModules();
     }
   }, [apiReady]);
-
-  useEffect(() => {
-    if (error && onError) {
-      onError(error as ErrorResponse);
-    }
-  }, [error]);
 
   return {
     fastLink,

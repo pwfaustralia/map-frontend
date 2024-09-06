@@ -1,6 +1,6 @@
 'use client';
 
-import { getUserDetails, revalidateUserCookies } from '@/app/(actions)/laravel/actions';
+import { getUserDetails } from '@/app/(actions)/laravel/actions';
 import {
   renderAccountsSlider,
   renderAccountsSliderPagination,
@@ -158,7 +158,7 @@ export default function ViewClientPage() {
   useEffect(() => {
     getUserDetails(userId + '').then((userData) => {
       setUser(userData);
-      setYodleeUsername(userData.clients[0].yodlee_username);
+      setYodleeUsername(userData.clients?.[0].yodlee_username || 'na');
     });
     return () => {
       closeFastLink();
@@ -187,9 +187,12 @@ export default function ViewClientPage() {
       <>
         <h1 className="font-bold text-2xl my-4 mb-7">
           <Skeleton className="w-[330px] h-[30px]" />
+          Loading user
         </h1>
-        <div className="rounded-3xl w-full bg-white py-10 px-12 overflow-hidden">
-          <Skeleton className="w-[430px] h-[50px]" />
+        <div className="rounded-3xl w-full bg-white py-10 px-12 overflow-hidden flex space-x-5">
+          <Skeleton className="w-[230px] h-[230px]" />
+          <Skeleton className="w-[230px] h-[230px]" />
+          <Skeleton className="w-[230px] h-[230px]" />
         </div>
       </>
     );
@@ -199,8 +202,8 @@ export default function ViewClientPage() {
     return (
       <EditClientPage
         {...{ user, setUser, isEditing, setIsEditing }}
-        onEdit={() => {
-          initModules();
+        onEdit={async (data) => {
+          await authenticate(true, data.yodlee_username);
         }}
       />
     );
@@ -220,11 +223,12 @@ export default function ViewClientPage() {
   if (!accountsReady) {
     return (
       <>
-        <h1 className="font-bold text-2xl my-4 mb-7">
-          <Skeleton className="w-[330px] h-[30px]" />
-        </h1>
-        <div className="rounded-3xl w-full bg-white py-10 px-12 overflow-hidden">
-          <Skeleton className="w-[430px] h-[50px]" />
+        <Header {...{ isEditing, setIsEditing, user }} />
+
+        <div className="rounded-3xl w-full bg-white py-10 px-12 overflow-hidden flex space-x-5">
+          <Skeleton className="w-[230px] h-[230px]" />
+          <Skeleton className="w-[230px] h-[230px]" />
+          <Skeleton className="w-[230px] h-[230px]" />
         </div>
       </>
     );

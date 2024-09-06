@@ -11,7 +11,12 @@ export default function TopbarInternalDefault() {
 
   return (
     <div className="bg-white min-h-[80px] flex align-center px-[37px] py-[26px] justify-between">
-      <Button onClick={() => setIsOpen(true)} variant="ghost-2">
+      <Button
+        onClick={() => {
+          setIsOpen(true);
+        }}
+        variant="ghost-2"
+      >
         <Input className="cursor-pointer pointer-events-none" placeholder="Search a client here" />
       </Button>
       <SearchClient open={isOpen} onClose={() => setIsOpen(false)} />
