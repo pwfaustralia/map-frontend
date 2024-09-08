@@ -54,6 +54,9 @@ export default function EditClientPage(props: {
 
   const handleSave = async (data: Client) => {
     paginate(4, 1);
+    if (!data.address_2) {
+      data.address_2 = '';
+    }
     const res = await updateClient(data);
     if (res.id) {
       setUpdatedClient(res);

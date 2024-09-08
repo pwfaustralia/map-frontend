@@ -42,7 +42,7 @@ function Header({
       <h1 className="font-bold text-2xl">
         {user.clients?.[0]?.first_name} {user.clients?.[0]?.last_name}
       </h1>
-      <h2>({user.clients?.[0]?.yodlee_username})</h2>
+      {user.clients?.[0]?.yodlee_username && <h2>({user.clients[0].yodlee_username})</h2>}
       <Button
         variant="ghost-2"
         onClick={() => {
@@ -187,7 +187,6 @@ export default function ViewClientPage() {
       <>
         <h1 className="font-bold text-2xl my-4 mb-7">
           <Skeleton className="w-[330px] h-[30px]" />
-          Loading user
         </h1>
         <div className="rounded-3xl w-full bg-white py-10 px-12 overflow-hidden flex space-x-5">
           <Skeleton className="w-[230px] h-[230px]" />
