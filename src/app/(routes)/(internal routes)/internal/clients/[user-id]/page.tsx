@@ -254,7 +254,7 @@ export default function ViewClientPage() {
 
       <div className="flex items-start lg:space-x-4">
         <div className="sticky top-[20px] lg:block hidden">
-          <ScrollArea className="bg-white rounded-[20px] border border-grey-2 min-w-[400px] p-5">
+          <ScrollArea className="bg-white rounded-[20px] border border-grey-2 min-w-[400px] max-w-[400px] p-5">
             <div className="max-h-[calc(_100vh_-_190px_)]">
               <div className="flex flex-col items-start gap-3 sticky top-0 bg-white z-10 p-5 full">
                 <h1 className="text-[20px] font-bold">Filter Transactions By</h1>
