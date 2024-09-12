@@ -1,6 +1,6 @@
 'use client';
 
-import { getUserDetails } from '@/app/(actions)/laravel/actions';
+import { getClientDetails } from '@/app/(actions)/laravel/actions';
 import {
   renderAccountsSlider,
   renderAccountsSliderPagination,
@@ -18,7 +18,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import useTableFilter from '@/lib/hooks/table-filter-hook';
 import useYodlee from '@/lib/hooks/use-yodlee';
-import { IUser } from '@/lib/types/user';
+import Client, { IUser } from '@/lib/types/user';
 import { Account, TransactionFilter } from '@/lib/types/yodlee';
 import { formatDate } from '@/lib/utils';
 import dayjs from 'dayjs';
@@ -27,39 +27,45 @@ import { EditIcon, SearchIcon } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import EditClientPage from './_edit/_page';
+import TransactionStatus from './_transactions-status';
 
 function Header({
-  user,
-  isEditing,
+  client,
   setIsEditing,
 }: {
-  user: IUser;
+  client: Client;
   isEditing: boolean;
   setIsEditing: Dispatch<SetStateAction<boolean>>;
 }) {
   return (
-    <div className="flex items-center space-x-3 my-4">
-      <h1 className="font-bold text-2xl">
-        {user.clients?.[0]?.first_name} {user.clients?.[0]?.last_name}
-      </h1>
-      {user.clients?.[0]?.yodlee_username && <h2>({user.clients[0].yodlee_username})</h2>}
-      <Button
-        variant="ghost-2"
-        onClick={() => {
-          setIsEditing(true);
-        }}
-      >
-        <EditIcon />
-      </Button>
+    <div className="flex items-center justify-between">
+      <div className="flex items-center space-x-3 my-4">
+        <h1 className="font-bold text-2xl">
+          {client.first_name} {client.last_name}
+        </h1>
+        {client.yodlee_username && <h2>({client.yodlee_username})</h2>}
+        <Button
+          variant="ghost-2"
+          onClick={() => {
+            setIsEditing(true);
+          }}
+        >
+          <EditIcon />
+        </Button>
+      </div>
+
+      <div>
+        <TransactionStatus client={client} />
+      </div>
     </div>
   );
 }
 
 export default function ViewClientPage() {
   const [isOpenDatePicker, setIsOpenDatePicker] = useState({ fromDate: false, toDate: false });
-  const { 'user-id': userId } = useParams();
+  const { 'client-id': clientId } = useParams();
   const [isEditing, setIsEditing] = useState(false);
-  const [user, setUser] = useState<IUser>();
+  const [client, setClient] = useState<Client>();
   const tableRef = useRef<any>();
 
   const yodlee = useYodlee({
@@ -83,7 +89,7 @@ export default function ViewClientPage() {
         configName: process.env.NEXT_PUBLIC_FASTLINK_CONFIG_NAME,
       },
     },
-    userId: userId + '',
+    clientId: clientId + '',
     manualErrorHandling: true,
     onError: async (error) => {
       if (error?.errorCode === 'Y008') {
@@ -156,9 +162,9 @@ export default function ViewClientPage() {
   }, [emblaApi]);
 
   useEffect(() => {
-    getUserDetails(userId + '').then((userData) => {
-      setUser(userData);
-      setYodleeUsername(userData.clients?.[0].yodlee_username || 'na');
+    getClientDetails(clientId + '').then((clientData) => {
+      setClient(clientData);
+      setYodleeUsername(clientData.yodlee_username || 'na');
     });
     return () => {
       closeFastLink();
@@ -182,7 +188,7 @@ export default function ViewClientPage() {
     }
   }, [categoriesReady]);
 
-  if (!user) {
+  if (!client) {
     return (
       <>
         <h1 className="font-bold text-2xl my-4 mb-7">
@@ -200,7 +206,7 @@ export default function ViewClientPage() {
   if (isEditing) {
     return (
       <EditClientPage
-        {...{ user, setUser, isEditing, setIsEditing }}
+        {...{ client, setClient, isEditing, setIsEditing }}
         onEdit={async (data) => {
           await authenticate(true, data.yodlee_username);
         }}
@@ -211,7 +217,7 @@ export default function ViewClientPage() {
   if (error?.errorCode === '0') {
     return (
       <>
-        <Header {...{ isEditing, setIsEditing, user }} />
+        <Header {...{ isEditing, setIsEditing, client }} />
         <div className="rounded-3xl w-full bg-white py-10 px-12 overflow-hidden">
           <h3 className="text-xl opacity-[0.6] text-center">{error?.errorMessage}</h3>
         </div>
@@ -222,7 +228,7 @@ export default function ViewClientPage() {
   if (!accountsReady) {
     return (
       <>
-        <Header {...{ isEditing, setIsEditing, user }} />
+        <Header {...{ isEditing, setIsEditing, client }} />
 
         <div className="rounded-3xl w-full bg-white py-10 px-12 overflow-hidden flex space-x-5">
           <Skeleton className="w-[230px] h-[230px]" />
@@ -236,8 +242,7 @@ export default function ViewClientPage() {
   return (
     <div className="flex flex-col space-y-5">
       {yodleeTags}
-      <Header {...{ isEditing, setIsEditing, user }} />
-
+      <Header {...{ isEditing, setIsEditing, client }} />
       <div>
         <div className="faded rounded-3xl w-full lg:px-[300px] px-0 py-10 overflow-hidden">
           {!accountData?.account?.length && (
@@ -251,7 +256,6 @@ export default function ViewClientPage() {
           {renderAccountsSliderPagination(emblaApi, selectedIndex)}
         </div>
       </div>
-
       <div className="flex items-start lg:space-x-4">
         <div className="sticky top-[20px] lg:block hidden">
           <ScrollArea className="bg-white rounded-[20px] border border-grey-2 min-w-[400px] max-w-[400px] p-5">

@@ -20,10 +20,10 @@ export default function useYodlee(initConfig: {
   fastLinkConfig: FastLinkConfig;
   initialModuleConfig?: YodleeInitConfig;
   manualErrorHandling?: boolean;
-  userId?: string;
+  clientId?: string;
   onError?: (error: ErrorResponse) => void;
 }) {
-  const { fastLinkConfig, initialModuleConfig, manualErrorHandling, userId, onError } = initConfig;
+  const { fastLinkConfig, initialModuleConfig, manualErrorHandling, clientId, onError } = initConfig;
   const {
     accounts: initAccounts,
     transactions: initTransactions = {},
@@ -172,9 +172,8 @@ export default function useYodlee(initConfig: {
       reset();
     }
     setUsername(_username);
-    // Replaced `getYodleeAccessToken` server action with API route call because it's causing the whole component to re-render https://github.com/vercel/next.js/issues/50163.
     let yodleeTokens = await fetch(
-      `/api/auth/yodlee?userId=${userId}&username=${_username}&revalidate=${revalidate}`
+      `/api/auth/yodlee?clientId=${clientId}&username=${_username}&revalidate=${revalidate}`
     ).then((resp) => resp.json());
 
     if (yodleeTokens.length) {

@@ -328,7 +328,7 @@ export default function Internal_ClientsPage() {
                     <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id}>
-                          <Link href={INTERNAL_ROUTES['My Clients'].path + '/' + row.original?.document?.user_id}>
+                          <Link href={INTERNAL_ROUTES['My Clients'].path + '/' + row.original?.document?.id}>
                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                           </Link>
                         </TableCell>

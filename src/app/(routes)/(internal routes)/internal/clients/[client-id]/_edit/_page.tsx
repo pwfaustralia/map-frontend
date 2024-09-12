@@ -30,13 +30,13 @@ const fields = {
 };
 
 export default function EditClientPage(props: {
-  user: IUser;
+  client: Client;
   isEditing: boolean;
-  setUser: Dispatch<SetStateAction<IUser | undefined>>;
+  setClient: Dispatch<SetStateAction<Client | undefined>>;
   setIsEditing: Dispatch<SetStateAction<boolean>>;
   onEdit?: (data: Client) => void;
 }) {
-  const { user, setIsEditing, setUser, onEdit = () => {} } = props;
+  const { client, setIsEditing, setClient, onEdit = () => {} } = props;
   const { direction, getFrame, page, paginate, paginateToFieldErrored } = useSliderTransition({
     fieldsPerPage: [fields.personalDetails, fields.address, fields.userDetails],
   });
@@ -48,7 +48,7 @@ export default function EditClientPage(props: {
     handleSubmit,
     register,
   } = useForm({
-    defaultValues: user.clients?.[0],
+    defaultValues: client,
     resolver: zodResolver(EditUserSchema),
   });
 
@@ -60,9 +60,9 @@ export default function EditClientPage(props: {
     const res = await updateClient(data);
     if (res.id) {
       setUpdatedClient(res);
-      setUser({
-        ...user,
-        clients: [res],
+      setClient({
+        ...client,
+        ...res,
       });
       reset();
       paginate(5, 1);
@@ -98,7 +98,7 @@ export default function EditClientPage(props: {
             <ArrowLeftIcon />
           </Button>
           <h1 className="font-bold text-2xl">
-            {user.clients?.[0]?.first_name} {user.clients?.[0]?.last_name}
+            {client.first_name} {client.last_name}
           </h1>
         </div>
         <div className="rounded-3xl w-full bg-white py-10 px-12 overflow-hidden">

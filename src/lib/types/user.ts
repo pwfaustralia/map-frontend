@@ -19,6 +19,7 @@ export default interface Client {
   middle_name?: string;
   preferred_name?: string;
   email: string;
+  accounts_count: number;
   home_phone?: string;
   work_phone?: string;
   mobile_phone?: string;

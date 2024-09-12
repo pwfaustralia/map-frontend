@@ -42,6 +42,11 @@ export async function getUserDetails(userId: string): Promise<IUser> {
   return user;
 }
 
+export async function getClientDetails(clientId: string): Promise<Client> {
+  const user = await fetchLaravel(LARAVEL_API_ROUTES.getClientDetailsFn(clientId)).then((resp) => resp.json());
+  return user;
+}
+
 export async function updateClient(client: Client) {
   const response = await fetchLaravel(LARAVEL_API_ROUTES.updateClient(client.id), {
     method: 'PUT',

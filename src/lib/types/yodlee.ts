@@ -147,13 +147,9 @@ export interface UserYodleeToken {
   expiresIn: number;
 }
 
-export interface UserYodleeTokenData {
+export interface UserYodleeTokenResponse {
   token: UserYodleeToken;
   username: string;
-}
-
-export interface UserYodleeTokenResponse {
-  tokens: UserYodleeTokenData[];
   error?: any;
 }
 
