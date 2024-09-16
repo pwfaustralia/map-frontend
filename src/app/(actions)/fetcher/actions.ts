@@ -18,7 +18,7 @@ export const fetchAbsolute = async (endpoint: string, requestInit: RequestInit =
 export const fetchLaravel = async (endpoint: string, { headers = {}, ...params }: RequestInit = {}) => {
   const accessToken = cookies().get(process.env.LARAVEL_ACCESSTOKEN_COOKIE_KEY!);
 
-  return fetch(process.env.LARAVEL_BASE_URL + '/api' + endpoint, {
+  return await fetch(process.env.LARAVEL_BASE_URL + '/api' + endpoint, {
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',

@@ -10,6 +10,7 @@ import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import './globals.css';
 import clsx from 'clsx';
+import { Toaster } from '@/components/ui/toaster';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -46,6 +47,7 @@ export default async function RootLayout({
         <SessionWrapper>
           <AuthWrapper>{children}</AuthWrapper>
         </SessionWrapper>
+        <Toaster />
       </body>
     </html>
   );

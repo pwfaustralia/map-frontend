@@ -20,6 +20,7 @@ export default interface Client {
   preferred_name?: string;
   email: string;
   accounts_count: number;
+  transactions_count: number;
   home_phone?: string;
   work_phone?: string;
   mobile_phone?: string;

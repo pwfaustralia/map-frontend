@@ -27,7 +27,7 @@ import { EditIcon, SearchIcon } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import EditClientPage from './_edit/_page';
-import TransactionStatus from './_transactions-status';
+import TransactionImportStatus from './_transactions-import-status';
 
 function Header({
   client,
@@ -55,7 +55,7 @@ function Header({
       </div>
 
       <div>
-        <TransactionStatus client={client} />
+        <TransactionImportStatus client={client} />
       </div>
     </div>
   );

@@ -58,3 +58,21 @@ export async function updateClient(client: Client) {
   }).then((resp) => resp.json());
   return response;
 }
+
+export async function importAccountTransactions(yodleeUsername: string, clientId: string) {
+  const response = await fetchLaravel(LARAVEL_API_ROUTES.importAccountTransactions, {
+    method: 'POST',
+    body: JSON.stringify({
+      yodlee_username: yodleeUsername,
+      client_id: clientId,
+    }),
+  }).then((resp) => resp.json());
+  return response;
+}
+
+export async function getYodleeStatus(clientId: string) {
+  const response = await fetchLaravel(LARAVEL_API_ROUTES.getClientYodleeStatus(clientId), {
+    method: 'GET',
+  }).then((resp) => resp.json());
+  return response;
+}

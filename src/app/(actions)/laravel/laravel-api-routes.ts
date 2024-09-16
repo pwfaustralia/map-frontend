@@ -3,7 +3,8 @@ export const LARAVEL_API_ROUTES = {
   getUserDetails: '/users/me',
   getUserDetailsFn: (id: string) => `/users/${id}`,
   getClientDetailsFn: (id: string) => `/clients/${id}`,
-  getUserYodleeAccessToken: (id: string) => `/users/${id}/yodlee`,
   getClientYodleeAccessToken: (id: string) => `/clients/${id}/yodlee`,
+  getClientYodleeStatus: (id: string) => `/clients/${id}/yodlee/status`,
   updateClient: (id: string) => `/clients/${id}`,
+  importAccountTransactions: '/transactions/import',
 };
