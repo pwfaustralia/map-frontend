@@ -35,6 +35,12 @@ const ImportTransactionsSection = ({
         title: 'Import In Progress',
         description: `We're importing ${data?.details?.totalTransactions} transactions, ${data?.details?.totalAccounts} accounts in the background.`,
       });
+    } else if (data?.success === false) {
+      toast({
+        title: 'Import Failed',
+        description: data.message,
+        variant: 'destructive'
+      });
     }
   }, [data]);
 
