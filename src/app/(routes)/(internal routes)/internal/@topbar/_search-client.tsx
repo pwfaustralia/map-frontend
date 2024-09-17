@@ -2,11 +2,10 @@ import { typesenseMultiSearch } from '@/app/(actions)/typesense/actions';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import useDebounce from '@/lib/hooks/use-debounce';
 import { INTERNAL_ROUTES } from '@/lib/routes';
-import { getUniqueArray } from '@/lib/utils';
 import { AnimatePresence, motion } from 'framer-motion';
 import { UsersIcon } from 'lucide-react';
 import Link from 'next/link';
-import { LegacyRef, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { SearchResponse } from 'typesense/lib/Typesense/Documents';
 import { MultiSearchRequestSchema } from 'typesense/lib/Typesense/MultiSearch';
 
@@ -100,7 +99,7 @@ export default function SearchClient({ open = false, onClose = () => { } }: { op
             <Command className="height-auto rounded-lg border shadow-md md:min-w-[550px]" shouldFilter={false}>
               <CommandInput
                 ref={inputRef}
-                placeholder="Type a command or search..."
+                placeholder="Search client name, phone, email, etc..."
                 onInput={(e) => {
                   destroy();
                   setSearchResults([]);
