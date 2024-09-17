@@ -10,7 +10,7 @@ import { LegacyRef, useEffect, useRef, useState } from 'react';
 import { SearchResponse } from 'typesense/lib/Typesense/Documents';
 import { MultiSearchRequestSchema } from 'typesense/lib/Typesense/MultiSearch';
 
-export default function SearchClient({ open = false, onClose = () => {} }: { open?: boolean; onClose?: () => void }) {
+export default function SearchClient({ open = false, onClose = () => { } }: { open?: boolean; onClose?: () => void }) {
   const inputRef = useRef<any>();
   const [isOpen, setIsOpen] = useState(open);
   const [isLoading, setIsLoading] = useState(false);
@@ -123,7 +123,7 @@ export default function SearchClient({ open = false, onClose = () => {} }: { ope
                       return (
                         <CommandItem className="cursor-pointer my-3" asChild key={hit.document.id}>
                           <Link
-                            href={INTERNAL_ROUTES['My Clients'].path + '/' + hit.document.user_id}
+                            href={INTERNAL_ROUTES['My Clients'].path + '/' + hit.document.id}
                             onClick={() => onClose()}
                           >
                             <div className="flex flex-col">
