@@ -101,7 +101,7 @@ export default function ViewClientPage() {
     closeFastLink,
     getTransactions,
     getModuleConfig,
-    initModules,
+    initEntities,
     authenticate,
     setUsername: setYodleeUsername,
     initialModuleConfig,

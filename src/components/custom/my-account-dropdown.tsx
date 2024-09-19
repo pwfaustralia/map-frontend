@@ -13,6 +13,7 @@ import {
 import { CreditCardIcon, Loader2, SettingsIcon, UserIcon, UsersIcon } from 'lucide-react';
 import { signOut, useSession } from 'next-auth/react';
 import { useState } from 'react';
+import { Button } from '../ui/button';
 
 export default function MyAccountDropDown() {
   const { data } = useSession();
@@ -21,15 +22,17 @@ export default function MyAccountDropDown() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div className="flex space-x-3 items-center cursor-pointer hover:opacity-100 opacity-70 rounded-lg">
-          <Avatar className="h-12 w-12">
-            <AvatarFallback className="uppercase font-bold">
-              {data?.user?.name?.[0]}
-              {data?.user?.name?.[1]}
-            </AvatarFallback>
-          </Avatar>
-          <h2 className="text-lg">{data?.user?.name}</h2>
-        </div>
+        <Button variant="ghost-2" asChild>
+          <div className="flex space-x-3 items-center cursor-pointer hover:opacity-100 opacity-70 rounded-lg">
+            <Avatar className="h-12 w-12">
+              <AvatarFallback className="uppercase font-bold">
+                {data?.user?.name?.[0]}
+                {data?.user?.name?.[1]}
+              </AvatarFallback>
+            </Avatar>
+            <h2 className="text-lg">{data?.user?.name}</h2>
+          </div>
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="min-w-[230px]" align="end">
         <DropdownMenuLabel className="text-md">My Account</DropdownMenuLabel>

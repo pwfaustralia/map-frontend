@@ -129,10 +129,10 @@ export interface TransactionCount {
   };
 }
 
-export type YodleeModules = 'accounts' | 'transactions' | 'categories';
+export type YodleEntities = 'accounts' | 'transactions' | 'categories';
 
 export type YodleeInitConfig = {
-  [key in YodleeModules]?: key extends 'transactions' ? TransactionFilter : boolean;
+  [key in YodleEntities]?: key extends 'transactions' ? TransactionFilter : boolean;
 };
 
 export interface ErrorResponse {

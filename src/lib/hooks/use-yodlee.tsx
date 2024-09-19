@@ -182,7 +182,7 @@ export default function useYodlee(initConfig: {
         handleError(null);
         setToken(theToken.accessToken);
         if (revalidate) {
-          initModules();
+          initEntities();
         }
         return;
       }
@@ -194,7 +194,7 @@ export default function useYodlee(initConfig: {
     });
   };
 
-  const initModules = async () => {
+  const initEntities = async () => {
     let accounts, transactions;
     if (initAccounts) accounts = await getAccounts();
     if (Object.keys(initTransactions).length && accounts)
@@ -216,7 +216,7 @@ export default function useYodlee(initConfig: {
 
   useEffect(() => {
     if (apiReady) {
-      initModules();
+      initEntities();
     }
   }, [apiReady]);
 
@@ -231,7 +231,7 @@ export default function useYodlee(initConfig: {
     getModuleConfig,
     authenticate,
     setUsername,
-    initModules,
+    initEntities,
     initialModuleConfig,
     error,
     transactionData,
