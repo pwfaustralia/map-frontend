@@ -12,7 +12,7 @@ import { UserSchema } from '@/lib/schema/user';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -31,6 +31,7 @@ const fields = {
 };
 
 export default function AddClientPage() {
+  const notifyEmailRef = useRef<boolean>(false);
   const { direction, getFrame, page, paginate, paginateToFieldErrored } = useSliderTransition({
     fieldsPerPage: [fields.personalDetails, fields.address, fields.userDetails],
   });
@@ -41,6 +42,7 @@ export default function AddClientPage() {
     setError,
     reset,
     handleSubmit,
+    setValue,
     register,
   } = useForm({
     resolver: zodResolver(UserSchema),
@@ -48,8 +50,8 @@ export default function AddClientPage() {
 
   const handleSave = async (data: z.infer<typeof UserSchema>) => {
     paginate(4, 1);
-    const res = await createUserAndClientProfile(data);
-    if (res.id) {
+    const res = await createUserAndClientProfile(data, notifyEmailRef.current);
+    if (res?.id) {
       setCreatedClient(res);
       reset();
       paginate(5, 1);
@@ -75,6 +77,7 @@ export default function AddClientPage() {
         onSubmit={handleSubmit(
           (values) => handleSave(values as z.infer<typeof UserSchema>),
           (e) => {
+            console.log(e);
             paginateToFieldErrored(Object.keys(e));
           }
         )}
@@ -272,7 +275,11 @@ export default function AddClientPage() {
                 />
               </div>
               <div className="flex items-center space-x-2 mb-2">
-                <Checkbox id="create-user-checkbox" />
+                <Checkbox
+                  onCheckedChange={(checked) => {
+                    notifyEmailRef.current = checked;
+                  }}
+                />
                 <label
                   htmlFor="create-user-checkbox"
                   className="text-md font-semibold leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
