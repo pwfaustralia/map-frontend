@@ -1,10 +1,10 @@
 'use client';
 
-import WelcomeContainer from '@/components/client-dashboard/welcome-container';
-import LoanContainer from '@/components/client-dashboard/loan-container';
-import TimeSavedContainer from '@/components/client-dashboard/time-saved-container';
-import InterestPaidContainer from '@/components/client-dashboard/interest-paid-container';
-import Graph from '@/components/client-dashboard/graph';
+import WelcomeContainer from '@/components/dashboard/welcome-container';
+import LoanContainer from '@/components/dashboard/loan-container';
+import TimeSavedContainer from '@/components/dashboard/time-saved-container';
+import InterestPaidContainer from '@/components/dashboard/interest-paid-container';
+import Graph from '@/components/dashboard/graph';
 
 export default function DashboardPage() {
   return (

@@ -1,12 +1,12 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
-import WelcomeContainer from '@/components/admin-dashboard/welcome-container';
-import LoanContainer from '@/components/admin-dashboard/loan-container';
-import Graph from '@/components/admin-dashboard/graph';
-import TimeSavedContainer from '@/components/admin-dashboard/time-saved-container';
-import InterestPaidContainer from '@/components/admin-dashboard/interest-paid-container';
-import Expendature from '@/components/admin-dashboard/expendature-graph';
+import WelcomeContainer from '@/components/dashboard/welcome-container';
+import LoanContainer from '@/components/dashboard/loan-container';
+import Graph from '@/components/dashboard/graph';
+import TimeSavedContainer from '@/components/dashboard/time-saved-container';
+import InterestPaidContainer from '@/components/dashboard/interest-paid-container';
+import Expendature from '@/components/dashboard/expendature-graph';
 
 export default function Internal_DashboardPage() {
   const session = useSession();
