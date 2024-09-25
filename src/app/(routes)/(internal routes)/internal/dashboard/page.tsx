@@ -7,6 +7,8 @@ import Graph from '@/components/dashboard/graph';
 import TimeSavedContainer from '@/components/dashboard/time-saved-container';
 import InterestPaidContainer from '@/components/dashboard/interest-paid-container';
 import Expendature from '@/components/dashboard/expendature-graph';
+import Summary_Graph from '@/components/budgeting/Graph';
+import Expenses_Summary from '@/components/budgeting/Summary';
 
 export default function Internal_DashboardPage() {
   const session = useSession();
@@ -32,8 +34,10 @@ export default function Internal_DashboardPage() {
             <InterestPaidContainer />
           </div>
         </div>
-        <div className="col-span-1 text-3xl font-semibold my-6">Income and Expenses</div>
-        <Expendature />
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 gap-4">
+          <Summary_Graph />
+          <Expenses_Summary />
+        </div>
       </main>
     </>
   );

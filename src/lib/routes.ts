@@ -21,6 +21,10 @@ export const INTERNAL_ROUTES = {
     path: '/internal/clients',
     Icon: Users,
   },
+  'Dashboard': {
+    path: '/internal/dashboard',
+    Icon: Users,
+  },
   'Add Client': {
     path: '/internal/add-client',
     Icon: PlusCircleIcon,
