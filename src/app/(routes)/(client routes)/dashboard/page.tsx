@@ -8,7 +8,7 @@ import Graph from '@/components/dashboard/graph';
 
 export default function DashboardPage() {
   return (
-    <main className=" mx-auto flex-1 px-4 py-8 sm:px-6 md:py-6">
+    <main className="mx-auto flex-1  py-8">
       <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3">
         <div className="col-span-2">
           <WelcomeContainer />

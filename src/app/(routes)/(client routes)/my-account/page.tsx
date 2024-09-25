@@ -167,7 +167,7 @@ export default function MyAccountPage() {
   if (error?.errorCode === '0') {
     return (
       <>
-        <h1 className="font-bold text-2xl my-4 mb-7">My Account</h1>
+        <h1 className="font-bold text-2xl mb-7">My Account</h1>
         <div className="rounded-3xl w-full bg-white py-10 px-12 overflow-hidden">
           <h3 className="text-xl opacity-[0.6] text-center">{error?.errorMessage}</h3>
         </div>
@@ -178,7 +178,7 @@ export default function MyAccountPage() {
   if (!accountsReady) {
     return (
       <>
-        <h1 className="font-bold text-2xl my-4 mb-7">My Account</h1>
+        <h1 className="font-bold text-2xl mb-7">My Account</h1>
         <div className="rounded-3xl w-full bg-white py-10 px-12 overflow-hidden">
           <Skeleton className="w-[430px] h-[50px]" />
         </div>
@@ -187,9 +187,9 @@ export default function MyAccountPage() {
   }
 
   return (
-    <div className="flex flex-col space-y-5">
+    <div className="flex flex-col">
       {yodleeTags}
-      <div className="flex items-center space-x-3 my-4 mb-7">
+      <div className="flex items-center space-x-3 mb-7">
         <h1 className="font-bold text-2xl">My Account</h1>
         <Dialog
           onOpenChange={(isOpen) => {

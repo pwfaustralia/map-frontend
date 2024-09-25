@@ -40,6 +40,10 @@ export const CLIENT_ROUTES = {
     path: '/my-account',
     Icon: Banknote,
   },
+  'Budgeting': {
+    path: '/budgeting',
+    Icon: Banknote,
+  },
 };
 
 export const YODLEE_API_ROUTES = {
