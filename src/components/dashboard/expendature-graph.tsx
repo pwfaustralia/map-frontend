@@ -52,7 +52,7 @@ export default function Expendature() {
           <Legend />
           <Bar dataKey="income" fill="#8884d8" name="Income">
             {data.map((entry, index) => (
-              <Bar dataKey={`cell-${index}`} fill={colors[index % colors.length]} />
+              <Bar dataKey={`cell-${index}`} fill={colors[index % colors.length]} key={index} />
             ))}
           </Bar>
           <Bar dataKey="expenses" fill="#82ca9d" name="Expenses" />

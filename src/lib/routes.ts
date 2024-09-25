@@ -8,21 +8,17 @@ export const NEXT_API_ROUTES = {
 export const NEXT_APP_ROUTES = {
   home: '/',
   login: '/login',
-  dashboard: '/my-account',
+  dashboard: '/dashboard',
   internal_dashboard: '/internal/clients',
 };
 
 export const INTERNAL_ROUTES = {
-  // Dashboard: {
-  //   path: NEXT_APP_ROUTES.internal_dashboard,
-  //   Icon: DashboardIcon,
-  // },
   'My Clients': {
     path: '/internal/clients',
     Icon: Users,
   },
   'Dashboard': {
-    path: '/internal/dashboard',
+    path: '/internal/dashboard/9d084340-1dff-4079-98a6-79d0e0ba5532',
     Icon: Users,
   },
   'Add Client': {
@@ -32,10 +28,6 @@ export const INTERNAL_ROUTES = {
 };
 
 export const CLIENT_ROUTES = {
-  // Dashboard: {
-  //   path: NEXT_APP_ROUTES.dashboard,
-  // Icon: DashboardIcon,
-  // },
   Dashboard: {
     path: '/dashboard',
     Icon: LayoutDashboardIcon,

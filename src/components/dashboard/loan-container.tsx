@@ -1,26 +1,62 @@
 'use client';
 
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../ui/card';
+import { Account } from '@/lib/types/yodlee';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { formatCurrency } from '@/lib/utils';
+import { Skeleton } from '../ui/skeleton';
 
-export default function LoanContainer() {
+export default function LoanContainer({ account }: { account?: Account }) {
+  if (!account) return <LoanContainerLoading />;
+
   return (
-    <Card className="mb-3 bg-gray-300">
+    <Card className="mb-3">
       <CardHeader>
-        <CardTitle>Loan 1</CardTitle>
-        <CardDescription className="text-black">**** **** **** 8642</CardDescription>
+        <CardTitle>{account.accountName}</CardTitle>
+        <CardDescription className="text-black">{account.accountNumber}</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="flex items-center justify-between">
-          <div className="text-sm text-black">Starting Balance</div>
-          <div className="text-2xl font-bold text-red-500">$5,432.10</div>
-        </div>
-      </CardContent>{' '}
+        {account.originalLoanAmount &&
+          <div className="flex items-center justify-between">
+            <div className="text-sm text-black">Starting Balance</div>
+            <div className="text-2xl font-bold text-red-500">{
+              formatCurrency(account.originalLoanAmount.amount, account.originalLoanAmount.currency)}</div>
+          </div>
+        }
+      </CardContent>
       <CardContent>
-        <div className="flex items-center justify-between">
-          <div className="text-sm text-black">Current Balance</div>
-          <div className="text-2xl font-bold text-green-500">$5,432.10</div>
-        </div>
+        {account.balance &&
+          <div className="flex items-center justify-between">
+            <div className="text-sm text-black">Current Balance</div>
+            <div className="text-2xl font-bold text-green-500">
+              {formatCurrency(account.balance.amount, account.balance.currency)}</div>
+          </div>
+        }
       </CardContent>
     </Card>
   );
+}
+
+export function LoanContainerLoading() {
+  return <Card className="mb-3">
+    <CardHeader>
+      <Skeleton className="w-96 h-[40px]" />
+      <Skeleton className="w-72 h-[25px]" />
+    </CardHeader>
+    <CardContent>
+      <div className="flex items-center justify-between">
+        <div className="text-sm text-black">Starting Balance</div>
+        <div className="text-2xl font-bold text-red-500">
+          <Skeleton className="w-60 h-[40px]" />
+        </div>
+      </div>
+    </CardContent>
+    <CardContent>
+      <div className="flex items-center justify-between">
+        <div className="text-sm text-black">Current Balance</div>
+        <div className="text-2xl font-bold text-green-500">
+          <Skeleton className="w-60 h-[40px]" />
+        </div>
+      </div>
+    </CardContent>
+  </Card>
 }

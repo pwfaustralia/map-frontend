@@ -58,3 +58,25 @@ export function formatDate(day: Dayjs, format: string) {
 export function getUniqueArray<T>(array: T[], comparator: (valueA: any, valueB: any) => boolean) {
   return array.filter((value, index, self) => index === self.findIndex((t) => comparator(t, value)));
 }
+
+const currencyToLocaleMap = {
+  USD: 'en-US', // US Dollar
+  EUR: 'de-DE', // Euro (Germany as default)
+  GBP: 'en-GB', // British Pound
+  JPY: 'ja-JP', // Japanese Yen
+  PHP: 'fil-PH', // Philippine Peso
+  AUD: 'en-AU', // Australian Dollar
+  CAD: 'en-CA', // Canadian Dollar
+  INR: 'hi-IN', // Indian Rupee
+  CNY: 'zh-CN', // Chinese Yuan
+};
+
+export function formatCurrency(amount:number, currency:keyof typeof currencyToLocaleMap | string = 'USD' ) {
+  const locale = currencyToLocaleMap[currency as keyof typeof currencyToLocaleMap] || 'en-US';
+  
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency: currency,
+    minimumFractionDigits: 2, // To ensure 2 decimal places for most currencies
+  }).format(amount);
+}

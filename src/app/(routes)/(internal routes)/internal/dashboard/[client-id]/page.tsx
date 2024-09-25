@@ -2,16 +2,49 @@
 
 import { useSession } from 'next-auth/react';
 import WelcomeContainer from '@/components/dashboard/welcome-container';
-import LoanContainer from '@/components/dashboard/loan-container';
+import LoanContainer, { LoanContainerLoading } from '@/components/dashboard/loan-container';
 import Graph from '@/components/dashboard/graph';
 import TimeSavedContainer from '@/components/dashboard/time-saved-container';
 import InterestPaidContainer from '@/components/dashboard/interest-paid-container';
 import Expendature from '@/components/dashboard/expendature-graph';
 import Summary_Graph from '@/components/budgeting/Graph';
 import Expenses_Summary from '@/components/budgeting/Summary';
+import { useEffect } from 'react';
+import useYodlee from '@/lib/hooks/use-yodlee';
+import { getClientDetails } from '@/app/(actions)/laravel/actions';
+import { useParams } from 'next/navigation';
 
 export default function Internal_DashboardPage() {
+  const { 'client-id': clientId } = useParams();
   const session = useSession();
+
+  const yodlee = useYodlee({
+    initialModuleConfig: {
+      accounts: {
+        container: "loan"
+      }
+    },
+    clientId: '9d084340-1dff-4079-98a6-79d0e0ba5532',
+    manualErrorHandling: true,
+    onError: async (error) => {
+      if (error?.errorCode === 'Y008') {
+        await authenticate(true);
+      }
+    },
+  });
+  const {
+    authenticate,
+    setUsername: setYodleeUsername,
+    accountData,
+    isReady: { accountsReady },
+  } = yodlee;
+
+  useEffect(() => {
+    getClientDetails(clientId + '').then((clientData) => {
+      setYodleeUsername(clientData.yodlee_username);
+    })
+  }, [])
+
   return (
     <>
       <main className=" mx-auto flex-1 px-4 py-8 sm:px-6 md:py-6">
@@ -23,11 +56,11 @@ export default function Internal_DashboardPage() {
           </div>
           <div className="mb-3">
             <div className="col-span-1 text-3xl font-semibold mb-3">Client Loans</div>
-            <LoanContainer />
 
-            <LoanContainer />
-
-            <LoanContainer />
+            {!accountsReady && <LoanContainerLoading />}
+            {accountsReady && accountData?.account?.map((account) => (
+              <LoanContainer account={account} key={account.id} />
+            ))}
 
             <TimeSavedContainer />
 

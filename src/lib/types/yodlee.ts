@@ -56,6 +56,14 @@ export interface Account {
   interestRate?: number;
 }
 
+export interface AccountFilter {
+  accountId?: number | number[];
+  container?: "bank" | "creditCard" | "investment" | "insurance" | "loan" | "reward" | "bill" | "realEstate" | "otherAssets" | "otherLiabilities";
+  include?: "profile" | "holder" | "fullAccountNumber" | "fullAccountNumberList" | "paymentProfile" | "autoRefresh";
+  providerAccountId?: number | number[];
+  status?: "ACTIVE" | "INACTIVE" | "TO_BE_CLOSED" | "CLOSED"
+}
+
 export interface CurrencyAmount {
   currency: string;
   amount: number;
@@ -131,8 +139,15 @@ export interface TransactionCount {
 
 export type YodleEntities = 'accounts' | 'transactions' | 'categories';
 
+
+export type YodleeEntityTypeMap = {
+  transactions: TransactionFilter;
+  accounts: AccountFilter | boolean;
+  categories: boolean;
+};
+
 export type YodleeInitConfig = {
-  [key in YodleEntities]?: key extends 'transactions' ? TransactionFilter : boolean;
+  [K in YodleEntities]?: YodleeEntityTypeMap[K];
 };
 
 export interface ErrorResponse {

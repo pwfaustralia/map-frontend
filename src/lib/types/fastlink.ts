@@ -4,7 +4,7 @@ export interface FastLink {
 }
 
 export interface FastLinkConfig {
-  fastLinkURL: string;
+  fastLinkURL?: string;
   accessToken?: string;
   params?: {
     configName?: string;
