@@ -49,7 +49,7 @@ export default function DashboardPage() {
           <div className="col-span-1 text-3xl font-semibold mb-3">Your Loans</div>
 
           {error && (
-            <div className="rounded-3xl w-full bg-white py-10 px-12 overflow-hidden">
+            <div className="rounded-3xl w-full bg-white py-10 px-12 overflow-hidden mb-3">
               <h3 className="text-xl opacity-[0.6] text-center">{error?.errorMessage}</h3>
             </div>
           )}
