@@ -18,8 +18,9 @@ export const INTERNAL_ROUTES = {
     Icon: Users,
   },
   'Dashboard': {
-    path: '/internal/dashboard/9d084340-1dff-4079-98a6-79d0e0ba5532',
+    path: '/internal/dashboard',
     Icon: Users,
+    hidden: true,
   },
   'Add Client': {
     path: '/internal/add-client',

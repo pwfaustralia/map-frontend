@@ -9,7 +9,7 @@ export default function LoanContainer({ account }: { account?: Account }) {
   if (!account) return <LoanContainerLoading />;
 
   return (
-    <Card className="mb-3">
+    <Card className="mb-3 cursor-pointer min-w-[340px] snap-start select-none hover:border hover:border-accent active:scale-95 transition-transform">
       <CardHeader>
         <CardTitle>{account.accountName}</CardTitle>
         <CardDescription className="text-black">{account.accountNumber}</CardDescription>
@@ -39,14 +39,14 @@ export default function LoanContainer({ account }: { account?: Account }) {
 export function LoanContainerLoading() {
   return <Card className="mb-3">
     <CardHeader>
-      <Skeleton className="w-96 h-[40px]" />
+      <Skeleton className="w-full h-[40px]" />
       <Skeleton className="w-72 h-[25px]" />
     </CardHeader>
     <CardContent>
       <div className="flex items-center justify-between">
         <div className="text-sm text-black">Starting Balance</div>
         <div className="text-2xl font-bold text-red-500">
-          <Skeleton className="w-60 h-[40px]" />
+          <Skeleton className="w-52 h-[40px]" />
         </div>
       </div>
     </CardContent>
@@ -54,7 +54,7 @@ export function LoanContainerLoading() {
       <div className="flex items-center justify-between">
         <div className="text-sm text-black">Current Balance</div>
         <div className="text-2xl font-bold text-green-500">
-          <Skeleton className="w-60 h-[40px]" />
+          <Skeleton className="w-52 h-[40px]" />
         </div>
       </div>
     </CardContent>

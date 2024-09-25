@@ -22,7 +22,9 @@ export default function SidebarInternalDefault() {
       </div>
       <div className="w-full px-[14px] flex gap-1 flex-col">
         {Object.keys(INTERNAL_ROUTES).map((label) => {
-          const { Icon, path } = (INTERNAL_ROUTES as any)[label];
+          const { Icon, path, hidden } = (INTERNAL_ROUTES as any)[label];
+          if (hidden) return <></>;
+
           return (
             <Button
               key={path}

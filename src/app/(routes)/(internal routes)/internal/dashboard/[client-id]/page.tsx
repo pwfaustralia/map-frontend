@@ -13,6 +13,8 @@ import { useEffect } from 'react';
 import useYodlee from '@/lib/hooks/use-yodlee';
 import { getClientDetails } from '@/app/(actions)/laravel/actions';
 import { useParams } from 'next/navigation';
+import Link from 'next/link';
+import { INTERNAL_ROUTES } from '@/lib/routes';
 
 export default function Internal_DashboardPage() {
   const { 'client-id': clientId } = useParams();
@@ -24,7 +26,7 @@ export default function Internal_DashboardPage() {
         container: "loan"
       }
     },
-    clientId: '9d084340-1dff-4079-98a6-79d0e0ba5532',
+    clientId: clientId + '',
     manualErrorHandling: true,
     onError: async (error) => {
       if (error?.errorCode === 'Y008') {
@@ -59,7 +61,9 @@ export default function Internal_DashboardPage() {
 
             {!accountsReady && <LoanContainerLoading />}
             {accountsReady && accountData?.account?.map((account) => (
-              <LoanContainer account={account} key={account.id} />
+              <Link href={INTERNAL_ROUTES['My Clients'].path + '/' + clientId + "?accountId=" + account.id} key={account.id}>
+                <LoanContainer account={account} key={account.id} />
+              </Link>
             ))}
 
             <TimeSavedContainer />
