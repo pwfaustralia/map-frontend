@@ -115,7 +115,7 @@ export default function ViewClientPage({ searchParams }: { searchParams: any }) 
     isReady: { accountsReady, transactionsReady, categoriesReady },
   } = yodlee;
   const [selectedAccount, setSelectedAccount] = useState<Account | { accountName?: any; id?: any }>({
-    id: searchParams.accountId
+    id: searchParams.accountId,
   });
 
   const tableFilter = useTableFilter(transactionTableFilter(yodlee, { isOpenDatePicker, setIsOpenDatePicker }));
@@ -176,7 +176,7 @@ export default function ViewClientPage({ searchParams }: { searchParams: any }) 
 
   useEffect(() => {
     if (!selectedAccount?.accountName && accountData?.account) {
-      let selected = accountData?.account.find(q => q.id == selectedAccount?.id) || accountData.account[0];
+      let selected = accountData?.account.find((q) => q.id == selectedAccount?.id) || accountData.account[0];
       setSelectedAccount(selected);
     }
   }, [accountData]);
@@ -193,11 +193,9 @@ export default function ViewClientPage({ searchParams }: { searchParams: any }) 
   }, [categoriesReady]);
 
   useEffect(() => {
-    let index = accountData?.account?.findIndex(q => q.id === selectedAccount?.id);
-    if (index)
-      emblaApi?.scrollTo(index);
-
-  }, [selectedAccount, emblaApi])
+    let index = accountData?.account?.findIndex((q) => q.id === selectedAccount?.id);
+    if (index) emblaApi?.scrollTo(index);
+  }, [selectedAccount, emblaApi]);
 
   if (!client) {
     return (
@@ -213,7 +211,6 @@ export default function ViewClientPage({ searchParams }: { searchParams: any }) 
       </>
     );
   }
-
 
   if (isEditing) {
     return (
@@ -270,7 +267,7 @@ export default function ViewClientPage({ searchParams }: { searchParams: any }) 
       </div>
       <div className="flex items-start lg:space-x-4">
         <div className="sticky top-[20px] lg:block hidden">
-          <ScrollArea className="bg-white rounded-[20px] border border-grey-2 min-w-[400px] max-w-[400px] p-5">
+          <ScrollArea className="bg-white rounded-[20px] border border-grey-2 min-w-[320px] max-w-[320px] p-5">
             <div className="max-h-[calc(_100vh_-_190px_)]">
               <div className="flex flex-col items-start gap-3 sticky top-0 bg-white z-10 p-5 full">
                 <h1 className="text-[20px] font-bold">Filter Transactions By</h1>

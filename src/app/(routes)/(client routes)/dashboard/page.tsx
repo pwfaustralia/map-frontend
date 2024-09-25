@@ -15,8 +15,8 @@ export default function DashboardPage() {
   const yodlee = useYodlee({
     initialModuleConfig: {
       accounts: {
-        container: "loan"
-      }
+        container: 'loan',
+      },
     },
     manualErrorHandling: true,
     onError: async (error) => {
@@ -29,13 +29,13 @@ export default function DashboardPage() {
     authenticate,
     setUsername: setYodleeUsername,
     accountData,
+    error,
     isReady: { accountsReady },
   } = yodlee;
 
   useEffect(() => {
-    if (session.data?.user.clients.length)
-      setYodleeUsername(session.data?.user.clients[0].yodlee_username);
-  }, [session.data?.user])
+    if (session.data?.user.clients.length) setYodleeUsername(session.data?.user.clients[0].yodlee_username);
+  }, [session.data?.user]);
 
   return (
     <main className="mx-auto flex-1 py-8">
@@ -48,10 +48,14 @@ export default function DashboardPage() {
         <div>
           <div className="col-span-1 text-3xl font-semibold mb-3">Your Loans</div>
 
-          {!accountsReady && <LoanContainerLoading />}
-          {accountsReady && accountData?.account?.map((account) => (
-            <LoanContainer account={account} key={account.id} />
-          ))}
+          {error && (
+            <div className="rounded-3xl w-full bg-white py-10 px-12 overflow-hidden">
+              <h3 className="text-xl opacity-[0.6] text-center">{error?.errorMessage}</h3>
+            </div>
+          )}
+          {!accountsReady && !error && <LoanContainerLoading />}
+          {accountsReady &&
+            accountData?.account?.map((account) => <LoanContainer account={account} key={account.id} />)}
 
           <TimeSavedContainer />
 

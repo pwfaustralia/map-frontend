@@ -23,8 +23,8 @@ export default function Internal_DashboardPage() {
   const yodlee = useYodlee({
     initialModuleConfig: {
       accounts: {
-        container: "loan"
-      }
+        container: 'loan',
+      },
     },
     clientId: clientId + '',
     manualErrorHandling: true,
@@ -38,14 +38,15 @@ export default function Internal_DashboardPage() {
     authenticate,
     setUsername: setYodleeUsername,
     accountData,
+    error,
     isReady: { accountsReady },
   } = yodlee;
 
   useEffect(() => {
     getClientDetails(clientId + '').then((clientData) => {
       setYodleeUsername(clientData.yodlee_username);
-    })
-  }, [])
+    });
+  }, []);
 
   return (
     <>
@@ -59,12 +60,21 @@ export default function Internal_DashboardPage() {
           <div className="mb-3">
             <div className="col-span-1 text-3xl font-semibold mb-3">Client Loans</div>
 
-            {!accountsReady && <LoanContainerLoading />}
-            {accountsReady && accountData?.account?.map((account) => (
-              <Link href={INTERNAL_ROUTES['My Clients'].path + '/' + clientId + "?accountId=" + account.id} key={account.id}>
-                <LoanContainer account={account} key={account.id} />
-              </Link>
-            ))}
+            {error && (
+              <div className="rounded-3xl w-full bg-white py-10 px-12 overflow-hidden">
+                <h3 className="text-xl opacity-[0.6] text-center">{error?.errorMessage}</h3>
+              </div>
+            )}
+            {!accountsReady && !error && <LoanContainerLoading />}
+            {accountsReady &&
+              accountData?.account?.map((account) => (
+                <Link
+                  href={INTERNAL_ROUTES['My Clients'].path + '/' + clientId + '?accountId=' + account.id}
+                  key={account.id}
+                >
+                  <LoanContainer account={account} key={account.id} />
+                </Link>
+              ))}
 
             <TimeSavedContainer />
 
