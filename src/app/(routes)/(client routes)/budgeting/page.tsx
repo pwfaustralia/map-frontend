@@ -4,6 +4,7 @@ import { FilterIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Expenses_Summary from '@/components/budgeting/Summary';
 import Summary_Graph from '@/components/budgeting/Graph';
+import Current_Budget from '@/components/budgeting/Current_Budget';
 
 export default function Budgeting() {
   return (
@@ -18,6 +19,7 @@ export default function Budgeting() {
           </div>
         </h1>
       </div>
+      <Current_Budget />
       <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 gap-4">
         <Summary_Graph />
         <Expenses_Summary />
