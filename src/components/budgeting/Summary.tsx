@@ -53,7 +53,7 @@ export default function Expenses_Summary() {
             </div>
           </div>
         </div>
-        <ScrollArea className="h-[300px] border border-transparent">
+        <ScrollArea className="h-[450px] border border-transparent">
           {expensesData.map((item, index) => (
             <div key={index} className="flex items-center justify-between py-2">
               <div className="flex items-center">

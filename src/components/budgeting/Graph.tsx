@@ -54,7 +54,7 @@ export default function Summary_Graph() {
       <CardHeader>
         <CardTitle>Income vs Expenses</CardTitle>
       </CardHeader>
-      <CardContent className="h-[500px] md:h-[600px]">
+      <CardContent className="h-[700px] md:h-[700px]">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={monthlyData}>
             <CartesianGrid strokeDasharray="3 3" vertical={false} />
