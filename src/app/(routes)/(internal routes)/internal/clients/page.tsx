@@ -237,7 +237,7 @@ export default function Internal_ClientsPage() {
     <div className="w-full">
       <div className="flex items-start gap-4">
         <div className="sticky top-[20px]">
-          <ScrollArea className="bg-white rounded-[20px] border border-grey-2 min-w-[400px]">
+          <ScrollArea className="bg-white rounded-[20px] border border-grey-2 min-w-[320px] max-w-[320px]">
             <div className="max-h-[calc(_100vh_-_190px_)]">
               <div className="flex flex-col items-start gap-3 sticky top-0 bg-white z-10 p-5 full">
                 <h1 className="text-[20px] font-bold">Filter Clients by</h1>
@@ -328,9 +328,13 @@ export default function Internal_ClientsPage() {
                     <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id}>
-                          <Link href={INTERNAL_ROUTES['My Clients'].path + '/' + row.original?.document?.id}>
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                          </Link>
+                          {!cell.id.endsWith('select') ? (
+                            <Link href={INTERNAL_ROUTES.Dashboard.path + '/' + row.original?.document?.id}>
+                              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                            </Link>
+                          ) : (
+                            flexRender(cell.column.columnDef.cell, cell.getContext())
+                          )}
                         </TableCell>
                       ))}
                     </TableRow>

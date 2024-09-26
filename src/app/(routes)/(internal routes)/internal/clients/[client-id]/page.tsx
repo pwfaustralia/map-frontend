@@ -18,7 +18,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import useTableFilter from '@/lib/hooks/table-filter-hook';
 import useYodlee from '@/lib/hooks/use-yodlee';
-import Client, { IUser } from '@/lib/types/user';
+import Client from '@/lib/types/user';
 import { Account, TransactionFilter } from '@/lib/types/yodlee';
 import { formatDate } from '@/lib/utils';
 import dayjs from 'dayjs';
@@ -61,7 +61,7 @@ function Header({
   );
 }
 
-export default function ViewClientPage() {
+export default function ViewClientPage({ searchParams }: { searchParams: any }) {
   const [isOpenDatePicker, setIsOpenDatePicker] = useState({ fromDate: false, toDate: false });
   const { 'client-id': clientId } = useParams();
   const [isEditing, setIsEditing] = useState(false);
@@ -77,6 +77,7 @@ export default function ViewClientPage() {
         baseType: '',
         container: '',
         categoryId: '',
+        accountId: searchParams.accountId || '',
         top: YODLEE_TABLE_PAGESIZE,
         skip: 0,
         fromDate: formatDate(dayjs(new Date()).subtract(1, 'year'), YODLEE_DATE_FORMAT),
@@ -113,7 +114,9 @@ export default function ViewClientPage() {
     error,
     isReady: { accountsReady, transactionsReady, categoriesReady },
   } = yodlee;
-  const [selectedAccount, setSelectedAccount] = useState<Account>();
+  const [selectedAccount, setSelectedAccount] = useState<Account | { accountName?: any; id?: any }>({
+    id: searchParams.accountId,
+  });
 
   const tableFilter = useTableFilter(transactionTableFilter(yodlee, { isOpenDatePicker, setIsOpenDatePicker }));
   const { resetFilters, searchFilter, getActiveFilters, getFilter } = tableFilter;
@@ -172,8 +175,9 @@ export default function ViewClientPage() {
   }, []);
 
   useEffect(() => {
-    if (!selectedAccount && accountData?.account) {
-      setSelectedAccount(accountData?.account[0]);
+    if (!selectedAccount?.accountName && accountData?.account) {
+      let selected = accountData?.account.find((q) => q.id == selectedAccount?.id) || accountData.account[0];
+      setSelectedAccount(selected);
     }
   }, [accountData]);
 
@@ -187,6 +191,11 @@ export default function ViewClientPage() {
       );
     }
   }, [categoriesReady]);
+
+  useEffect(() => {
+    let index = accountData?.account?.findIndex((q) => q.id === selectedAccount?.id);
+    if (index) emblaApi?.scrollTo(index);
+  }, [selectedAccount, emblaApi]);
 
   if (!client) {
     return (
@@ -258,7 +267,7 @@ export default function ViewClientPage() {
       </div>
       <div className="flex items-start lg:space-x-4">
         <div className="sticky top-[20px] lg:block hidden">
-          <ScrollArea className="bg-white rounded-[20px] border border-grey-2 min-w-[400px] max-w-[400px] p-5">
+          <ScrollArea className="bg-white rounded-[20px] border border-grey-2 min-w-[320px] max-w-[320px] p-5">
             <div className="max-h-[calc(_100vh_-_190px_)]">
               <div className="flex flex-col items-start gap-3 sticky top-0 bg-white z-10 p-5 full">
                 <h1 className="text-[20px] font-bold">Filter Transactions By</h1>
