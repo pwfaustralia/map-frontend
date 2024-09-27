@@ -1,4 +1,4 @@
-import { Banknote, PlusCircleIcon, Users, LayoutDashboardIcon } from 'lucide-react';
+import { Banknote, PlusCircleIcon, Users, LayoutDashboardIcon, GitGraphIcon } from 'lucide-react';
 
 export const NEXT_API_ROUTES = {
   laravelLogin: '/auth/credentials',
@@ -40,6 +40,10 @@ export const CLIENT_ROUTES = {
   'Budgeting': {
     path: '/budgeting',
     Icon: Banknote,
+  },
+  'Leaderboard': {
+    path: '/leaderboard',
+    Icon: GitGraphIcon,
   },
 };
 
