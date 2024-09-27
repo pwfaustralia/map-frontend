@@ -24,6 +24,8 @@ const config = {
         'grey-3': 'hsla(var(--grey-3))',
         'input-bg': 'hsl(var(--input-bg))',
         skeleton: 'hsl(var(--skeleton))',
+        'cc-orange':'#F4911E',
+        'cc-green':'#39B54A',
         primary: {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',
