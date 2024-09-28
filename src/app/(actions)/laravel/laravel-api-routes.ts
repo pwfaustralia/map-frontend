@@ -7,4 +7,6 @@ export const LARAVEL_API_ROUTES = {
   getClientYodleeStatus: (id: string) => `/clients/${id}/yodlee/status`,
   updateClient: (id: string) => `/clients/${id}`,
   importAccountTransactions: '/transactions/import',
+  listLoanBalances: (scenario: 'normal' | 'offset', accountId: number, by: 'year' | 'month') =>
+    `/loanbalances/list?scenario=${scenario}&loan_account_id=${accountId}&by=${by}`,
 };

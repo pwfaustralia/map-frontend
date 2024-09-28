@@ -8,7 +8,7 @@ import { z } from 'zod';
 import { fetchLaravel } from '../fetcher/actions';
 import { LARAVEL_API_ROUTES } from './laravel-api-routes';
 
-export async function createUserAndClientProfile(data: z.infer<typeof UserSchema>, notifyEmail:boolean) {
+export async function createUserAndClientProfile(data: z.infer<typeof UserSchema>, notifyEmail: boolean) {
   const response = await fetchLaravel(LARAVEL_API_ROUTES.createUser, {
     method: 'POST',
     body: JSON.stringify({
@@ -16,7 +16,7 @@ export async function createUserAndClientProfile(data: z.infer<typeof UserSchema
       name: data.first_name + ' ' + data.last_name,
       password_confirmation: data.password,
       with_client: true,
-      notify_email: notifyEmail
+      notify_email: notifyEmail,
     }),
   }).then((resp) => resp.json());
 
@@ -73,6 +73,20 @@ export async function importAccountTransactions(yodleeUsername: string, clientId
 
 export async function getYodleeStatus(clientId: string) {
   const response = await fetchLaravel(LARAVEL_API_ROUTES.getClientYodleeStatus(clientId), {
+    method: 'GET',
+  }).then((resp) => resp.json());
+  return response;
+}
+
+export async function getNormalScenarioLoanBalances(accountId: number) {
+  const response = await fetchLaravel(LARAVEL_API_ROUTES.listLoanBalances('normal', accountId, 'year'), {
+    method: 'GET',
+  }).then((resp) => resp.json());
+  return response;
+}
+
+export async function getOffsetScenarioLoanBalances(accountId: number) {
+  const response = await fetchLaravel(LARAVEL_API_ROUTES.listLoanBalances('offset', accountId, 'year'), {
     method: 'GET',
   }).then((resp) => resp.json());
   return response;

@@ -48,3 +48,13 @@ export interface IUser {
   updated_at: string;
   clients: Client[];
 }
+
+export interface LoanData {
+  scenario: string;
+  year: number;
+  balance: number;
+  deposit: number;
+  offset_amount: number | null;
+  credit_card_amount: number | null;
+  offset_balance: number | null;
+}
