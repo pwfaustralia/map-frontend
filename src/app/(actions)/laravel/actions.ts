@@ -91,3 +91,10 @@ export async function getOffsetScenarioLoanBalances(accountId: number) {
   }).then((resp) => resp.json());
   return response;
 }
+
+export async function getPrimaryLoanAccount(clientId: string){
+  const response = await fetchLaravel(LARAVEL_API_ROUTES.getPrimaryLoanAccount(clientId), {
+    method: 'GET',
+  }).then((resp) => resp.json());
+  return response;
+}

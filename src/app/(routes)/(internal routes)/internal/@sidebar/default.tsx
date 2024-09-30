@@ -21,13 +21,13 @@ export default function SidebarInternalDefault() {
         <img src="/images/cc-logo.png" alt="Credit Connection" className="lg:w-[194px] max-w-[194px] m-[0_auto]" />
       </div>
       <div className="w-full px-[14px] flex gap-1 flex-col">
-        {Object.keys(INTERNAL_ROUTES).map((label) => {
+        {Object.keys(INTERNAL_ROUTES).map((label, index) => {
           const { Icon, path, hidden } = (INTERNAL_ROUTES as any)[label];
-          if (hidden) return <></>;
+          if (hidden) return <div className="hidden" key={index}></div>;
 
           return (
             <Button
-              key={path}
+              key={index}
               variant="ghost"
               className={clsx('text-white w-full justify-start gap-1', {
                 'bg-white text-primary hover:bg-white hover:text-primary': currentPath === path,

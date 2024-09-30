@@ -56,6 +56,7 @@ export default function Summary_Graph() {
 
   useEffect(() => {
     getNormalScenarioLoanBalances(11265979).then((normal: LoanData[]) => {
+      if (!normal?.length) return;
       getOffsetScenarioLoanBalances(11265979).then((offset: LoanData[]) => {
         let chartData = new Array(normal.length).fill(0);
         chartData = chartData
