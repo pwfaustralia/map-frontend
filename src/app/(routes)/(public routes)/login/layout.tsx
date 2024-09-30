@@ -54,7 +54,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   <li>
                     Login as admin. <br />
                     <b>Email</b>: hello@pwf.com.au
-                    <br /> <b>Password</b>: LK^3gxs8!!8&hu{' '}
                   </li>
                   <li>
                     Create a client
