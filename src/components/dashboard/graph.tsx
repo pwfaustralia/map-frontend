@@ -1,64 +1,83 @@
 'use client';
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-import { AreaChart, CartesianGrid, XAxis, Area } from 'recharts';
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+export const description = 'Mortgage Projection';
+
+const chartData = [
+  {
+    month: 'January',
+    Normal: 588536.0,
+    Offset: 588536.0,
+  },
+  {
+    month: 'February',
+    Normal: 520922.68,
+    Offset: 480143.32,
+  },
+  {
+    month: 'March',
+    Normal: 455992.4,
+    Offset: 367869.38,
+  },
+  {
+    month: 'April',
+    Normal: 374921.79,
+    Offset: 244491.24,
+  },
+  {
+    month: 'May',
+    Normal: 273698.71,
+    Offset: 113431.03,
+  },
+  {
+    month: 'June',
+    Normal: 147313.65,
+    Offset: 6896.61,
+  },
+  {
+    month: 'July',
+    Normal: 40582.08,
+    Offset: 0,
+  },
+];
+
+const chartConfig = {
+  Normal: {
+    label: 'Normal',
+    color: 'rgb(244,145,31)',
+  },
+  Offset: {
+    label: 'Offset',
+    color: 'rgb(57, 181, 74)',
+  },
+} satisfies ChartConfig;
 
 export default function Graph() {
   return (
-    <ChartContainer
-      config={{
-        desktop: { label: 'Desktop', color: 'hsl(var(--chart-1))' },
-        mobile: { label: 'Mobile', color: 'hsl(var(--chart-2))' },
-      }}
-      className="min-h-[300px] border rounded-lg col-span-1"
-    >
-      <AreaChart
-        accessibilityLayer
-        data={[
-          { month: 'January', desktop: 186, mobile: 80 },
-          { month: 'February', desktop: 305, mobile: 200 },
-          { month: 'March', desktop: 237, mobile: 120 },
-          { month: 'April', desktop: 73, mobile: 190 },
-          { month: 'May', desktop: 209, mobile: 130 },
-          { month: 'June', desktop: 214, mobile: 140 },
-        ]}
-        margin={{ left: 12, right: 12 }}
-      >
-        <CartesianGrid vertical={false} />
-        <XAxis
-          dataKey="month"
-          tickLine={false}
-          axisLine={false}
-          tickMargin={8}
-          tickFormatter={(value) => value.slice(0, 3)}
-        />
-        <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-        <defs>
-          <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="var(--color-desktop)" stopOpacity={0.8} />
-            <stop offset="95%" stopColor="var(--color-desktop)" stopOpacity={0.1} />
-          </linearGradient>
-          <linearGradient id="fillMobile" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="var(--color-mobile)" stopOpacity={0.8} />
-            <stop offset="95%" stopColor="var(--color-mobile)" stopOpacity={0.1} />
-          </linearGradient>
-        </defs>
-        <Area
-          dataKey="mobile"
-          type="natural"
-          fill="url(#fillMobile)"
-          fillOpacity={0.4}
-          stroke="var(--color-mobile)"
-          stackId="a"
-        />
-        <Area
-          dataKey="desktop"
-          type="natural"
-          fill="url(#fillDesktop)"
-          fillOpacity={0.4}
-          stroke="var(--color-desktop)"
-          stackId="a"
-        />
-      </AreaChart>
-    </ChartContainer>
+    <Card>
+      <CardHeader className="pb-10">
+        <CardTitle>Projected Savings</CardTitle>
+        <CardDescription>January - June 2024</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <ChartContainer config={chartConfig}>
+          <BarChart accessibilityLayer data={chartData}>
+            <CartesianGrid vertical={false} />
+            <XAxis
+              dataKey="month"
+              tickLine={false}
+              tickMargin={10}
+              axisLine={false}
+              tickFormatter={(value) => value.slice(0, 3)}
+            />
+            <YAxis dataKey="Normal" tickLine={false} tickMargin={10} axisLine={false} />
+            <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dashed" />} />
+            <Bar dataKey="Normal" fill="var(--color-Normal)" radius={8} />
+            <Bar dataKey="Offset" fill="var(--color-Offset)" radius={8} />
+          </BarChart>
+        </ChartContainer>
+      </CardContent>
+    </Card>
   );
 }
