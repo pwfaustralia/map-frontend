@@ -28,16 +28,17 @@ export default function Expenses_Summary() {
       <CardContent>
         <div className="flex items-center justify-center mb-4">
           <div className="relative">
-            <ResponsiveContainer width={200} height={200}>
+            <ResponsiveContainer width={210} height={210}>
               <PieChart>
                 <Pie
                   data={expensesData}
                   cx="50%"
                   cy="50%"
-                  innerRadius={80}
+                  innerRadius={60}
                   outerRadius={100}
-                  paddingAngle={5}
+                  paddingAngle={0}
                   dataKey="value"
+                  strokeWidth={0}
                 >
                   {expensesData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -58,10 +59,10 @@ export default function Expenses_Summary() {
             <div key={index} className="flex items-center justify-between py-2">
               <div className="flex items-center">
                 <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center mr-2`}
+                  className={`w-10 h-10 rounded-sm flex items-center justify-center mr-2`}
                   style={{ backgroundColor: item.color }}
                 >
-                  <ShoppingCartIcon className="w-4 h-4 text-white" />
+                  <ShoppingCartIcon className="w-6 h-6 text-white" />
                 </div>
                 <span>{item.name}</span>
               </div>

@@ -76,7 +76,7 @@ export default function Summary_Graph() {
       <CardHeader>
         <CardTitle>Years/Interest Saved</CardTitle>
       </CardHeader>
-      <CardContent className="h-[700px] md:h-[700px]">
+      <CardContent className="md:h-[715px]">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={loanBalanceScenario}>
             <CartesianGrid strokeDasharray="3 3" vertical={false} />

@@ -10,7 +10,7 @@ export default function InterestPaidContainer() {
       </CardHeader>
       <CardContent>
         <div className="flex justify-between items-center">
-          <span className="text-4xl font-bold text-orange-500">$180,234</span>
+          <span className="text-3xl font-bold text-cc-orange">$180,234</span>
           <div className="text-xs text-gray-500 text-right">
             <p>Original Projected Interest: $102,836.87</p>
             <p>Total Interest Saved: $582,973.98</p>

@@ -10,7 +10,7 @@ export default function TimeSavedContainer() {
       </CardHeader>
       <CardContent>
         <div className="flex justify-between items-center">
-          <span className="text-4xl font-bold text-orange-500">18 Years</span>
+          <span className="text-3xl font-bold text-cc-orange">18 Years</span>
           <div className="text-xs text-gray-500 text-right">
             <p>Original time: 30 years</p>
             <p>Time Remaining: 12 years</p>
