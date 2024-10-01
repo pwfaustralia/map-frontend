@@ -53,5 +53,6 @@ export const YODLEE_API_ROUTES = {
     count: '/transactions/count',
     categories: '/transactions/categories',
     accounts: '/accounts',
+    summary: '/derived/transactionSummary'
   },
 };

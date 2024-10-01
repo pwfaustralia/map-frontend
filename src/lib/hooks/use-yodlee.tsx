@@ -13,6 +13,8 @@ import {
   TransactionCount,
   TransactionData,
   TransactionFilter,
+  TransactionSummaryData,
+  TransactionSummaryFilter,
   YodleeFetchData,
   YodleeInitConfig,
 } from '../types/yodlee';
@@ -131,6 +133,13 @@ export default function useYodlee(initConfig: {
     });
   };
 
+  const getTransactionSummary = async (filter: TransactionSummaryFilter): Promise<TransactionSummaryData> => {
+    let params = serialize(filter);
+    return await fetchData({
+      url: YODLEE_API_ROUTES.transactions.summary + '?' + params
+    });
+  }
+
   const getTransactions = async (filter: TransactionFilter, accountId: string | undefined) => {
     if (!filter.accountId && accountId) {
       filter.accountId = accountId;
@@ -236,6 +245,7 @@ export default function useYodlee(initConfig: {
     authenticate,
     setUsername,
     initEntities,
+    getTransactionSummary,
     initialModuleConfig,
     error,
     transactionData,

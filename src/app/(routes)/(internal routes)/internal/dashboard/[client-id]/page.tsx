@@ -9,15 +9,17 @@ import InterestPaidContainer from '@/components/dashboard/interest-paid-containe
 import Expendature from '@/components/dashboard/expendature-graph';
 import Summary_Graph from '@/components/budgeting/Graph';
 import Expenses_Summary from '@/components/budgeting/Summary';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import useYodlee from '@/lib/hooks/use-yodlee';
 import { getClientDetails } from '@/app/(actions)/laravel/actions';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { INTERNAL_ROUTES } from '@/lib/routes';
+import { TransactionSummaryData } from '@/lib/types/yodlee';
 
 export default function Internal_DashboardPage() {
   const { 'client-id': clientId } = useParams();
+  const [expensesSummary, setExpensesSummary] = useState<TransactionSummaryData>();
   const session = useSession();
 
   const yodlee = useYodlee({
@@ -35,12 +37,22 @@ export default function Internal_DashboardPage() {
     },
   });
   const {
+    getTransactionSummary,
     authenticate,
     setUsername: setYodleeUsername,
     accountData,
     error,
-    isReady: { accountsReady },
+    isReady: { accountsReady, apiReady },
   } = yodlee;
+
+  useEffect(() => {
+    if (apiReady) {
+      getTransactionSummary({
+        groupBy: 'CATEGORY',
+        categoryType: 'EXPENSE'
+      }).then(expensesData => setExpensesSummary(expensesData))
+    }
+  }, [apiReady])
 
   useEffect(() => {
     getClientDetails(clientId + '').then((clientData) => {
@@ -83,7 +95,7 @@ export default function Internal_DashboardPage() {
         </div>
         <div className="mt-6 grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 gap-4">
           <Summary_Graph />
-          <Expenses_Summary />
+          <Expenses_Summary expensesSummary={expensesSummary} />
         </div>
       </main>
     </>

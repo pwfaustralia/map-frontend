@@ -58,10 +58,20 @@ export interface Account {
 
 export interface AccountFilter {
   accountId?: number | number[];
-  container?: "bank" | "creditCard" | "investment" | "insurance" | "loan" | "reward" | "bill" | "realEstate" | "otherAssets" | "otherLiabilities";
-  include?: "profile" | "holder" | "fullAccountNumber" | "fullAccountNumberList" | "paymentProfile" | "autoRefresh";
+  container?:
+    | 'bank'
+    | 'creditCard'
+    | 'investment'
+    | 'insurance'
+    | 'loan'
+    | 'reward'
+    | 'bill'
+    | 'realEstate'
+    | 'otherAssets'
+    | 'otherLiabilities';
+  include?: 'profile' | 'holder' | 'fullAccountNumber' | 'fullAccountNumberList' | 'paymentProfile' | 'autoRefresh';
   providerAccountId?: number | number[];
-  status?: "ACTIVE" | "INACTIVE" | "TO_BE_CLOSED" | "CLOSED"
+  status?: 'ACTIVE' | 'INACTIVE' | 'TO_BE_CLOSED' | 'CLOSED';
 }
 
 export interface CurrencyAmount {
@@ -139,6 +149,44 @@ export interface TransactionCount {
 
 export type YodleEntities = 'accounts' | 'transactions' | 'categories';
 
+export interface TransactionSummaryFilter {
+  accountId?: number;
+  categoryId?: number;
+  categoryType?: 'INCOME' | 'EXPENSE' | 'TRANSFER' | 'UNCATEGORIZE' | 'DEFERRED_COMPENSATION';
+  fromDate?: 'string'; // YYYY-MM-DD
+  toDate?: 'string'; // YYYY-MM-DD
+  groupBy?: 'CATEGORY_TYPE' | 'HIGH_LEVEL_CATEGORY' | 'CATEGORY';
+  include?: 'details';
+  includeUserCategory?: boolean;
+  interval?: 'D' | 'W' | 'M' | 'Y';
+}
+
+export interface TransactionSummaryData {
+  transactionSummary: {
+    categoryType: TransactionSummaryFilter['categoryType'];
+    debitTotal: {
+      amount: number;
+      currency: string;
+    };
+    categorySummary: {
+      categoryName: string;
+      categoryId: string;
+      debitTotal: {
+        amount: number;
+        currency: string;
+      };
+      links: {
+        transactions: string;
+      };
+    }[];
+    links: {
+      transactions: string;
+    };
+  }[];
+  links: {
+    transactions: string;
+  };
+}
 
 export type YodleeEntityTypeMap = {
   transactions: TransactionFilter;

@@ -71,9 +71,9 @@ const currencyToLocaleMap = {
   CNY: 'zh-CN', // Chinese Yuan
 };
 
-export function formatCurrency(amount:number, currency:keyof typeof currencyToLocaleMap | string = 'USD' ) {
+export function formatCurrency(amount: number, currency: keyof typeof currencyToLocaleMap | string = 'AUD') {
   const locale = currencyToLocaleMap[currency as keyof typeof currencyToLocaleMap] || 'en-US';
-  
+
   return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency: currency,
