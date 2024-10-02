@@ -80,3 +80,11 @@ export function formatCurrency(amount: number, currency: keyof typeof currencyTo
     minimumFractionDigits: 2, // To ensure 2 decimal places for most currencies
   }).format(amount);
 }
+
+export async function sleep(seconds: number) {
+  return await new Promise((res) => {
+    setTimeout(() => {
+      res(true);
+    }, seconds * 1000);
+  });
+}

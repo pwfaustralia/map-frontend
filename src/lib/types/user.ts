@@ -33,7 +33,7 @@ export default interface Client {
   state?: string;
   country?: string;
   yodlee_username: string;
-  yodlee_status: string;
+  yodlee_status: 'IMPORT_SUCCESS' | 'IMPORT_FAILED' | 'IMPORTING';
 }
 
 export interface IUser {

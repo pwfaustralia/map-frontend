@@ -15,7 +15,7 @@ import dayjs from 'dayjs';
 import useEmblaCarousel from 'embla-carousel-react';
 import { SearchIcon } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { renderAccountsSlider, renderAccountsSliderPagination } from './_accounts-slider';
+import { RenderAccountsSlider, RenderAccountsSliderPagination } from './_accounts-slider';
 import {
   renderTransactionTableFilter,
   transactionTableFilter,
@@ -228,10 +228,20 @@ export default function MyAccountPage() {
               <h3 className="text-xl opacity-[0.6] text-center">No account connected.</h3>
             </>
           )}
-          {renderAccountsSlider(emblaRef, accountData, { selectedAccount, setSelectedAccount }, handleGetTransactions)}
+          <RenderAccountsSlider
+            {...{
+              emblaRef,
+              accountData,
+              selectedAccount,
+              setSelectedAccount,
+              handleGetTransactions,
+              clientId: sessionData?.user?.clients?.[0]?.id + '',
+              yodleeStatus: sessionData?.user?.clients?.[0]?.yodlee_status || 'IMPORT_FAILED',
+            }}
+          />
         </div>
         <div className="flex items-center justify-end space-x-4">
-          {renderAccountsSliderPagination(emblaApi, selectedIndex)}
+          <RenderAccountsSliderPagination {...{ emblaApi, selectedIndex }} />
         </div>
       </div>
 

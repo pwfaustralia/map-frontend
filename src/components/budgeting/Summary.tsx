@@ -9,7 +9,11 @@ import { formatCurrency } from '@/lib/utils';
 
 const COLORS = ['#FF6B6B', '#FFD93D', '#6BCB77', '#4D96FF', '#9D65C9', '#FF9671', '#FFC75F', '#F9F871'];
 
-export default function Expenses_Summary({ expensesSummary }: { expensesSummary: TransactionSummaryData | undefined }) {
+export default function Expenses_Summary({
+  expensesSummary,
+}: {
+  expensesSummary?: TransactionSummaryData | undefined;
+}) {
   const { debitTotal, categorySummary } = expensesSummary?.transactionSummary?.[0] || {};
   const total = formatCurrency(debitTotal?.amount || 0, debitTotal?.currency);
   const expensesData = (categorySummary || [])?.map((q, i) => ({

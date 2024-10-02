@@ -2,8 +2,8 @@
 
 import { getClientDetails } from '@/app/(actions)/laravel/actions';
 import {
-  renderAccountsSlider,
-  renderAccountsSliderPagination,
+  RenderAccountsSlider,
+  RenderAccountsSliderPagination,
 } from '@/app/(routes)/(client routes)/my-account/_accounts-slider';
 import {
   renderTransactionTableFilter,
@@ -259,10 +259,20 @@ export default function ViewClientPage({ searchParams }: { searchParams: any }) 
               <h3 className="text-xl opacity-[0.6] text-center">No account connected.</h3>
             </>
           )}
-          {renderAccountsSlider(emblaRef, accountData, { selectedAccount, setSelectedAccount }, handleGetTransactions)}
+          <RenderAccountsSlider
+            {...{
+              emblaRef,
+              accountData,
+              selectedAccount,
+              setSelectedAccount,
+              handleGetTransactions,
+              clientId: clientId + '',
+              yodleeStatus: client.yodlee_status,
+            }}
+          />
         </div>
         <div className="flex items-center justify-end space-x-4">
-          {renderAccountsSliderPagination(emblaApi, selectedIndex)}
+          <RenderAccountsSliderPagination {...{ emblaApi, selectedIndex }} />
         </div>
       </div>
       <div className="flex items-start lg:space-x-4">
