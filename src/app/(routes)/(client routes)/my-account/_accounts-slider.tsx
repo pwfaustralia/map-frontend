@@ -69,7 +69,7 @@ export const RenderAccountsSlider = (props: {
                 currentBalance,
               } = account;
               return (
-                <div className="relative">
+                <div className="relative" key={id}>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild className="shrink absolute right-0 top-3 z-10">
                       <Button variant="ghost-2">
@@ -91,7 +91,6 @@ export const RenderAccountsSlider = (props: {
                   </DropdownMenu>
                   <Link href={'/internal/clients/9d0a48bd-674f-41ee-85b4-29cba3706d1c?accountId=' + id}>
                     <Card
-                      key={id}
                       className={clsx(
                         'cursor-pointer min-w-[340px] snap-start select-none hover:border hover:border-accent active:scale-95 transition-transform h-full',
                         {
