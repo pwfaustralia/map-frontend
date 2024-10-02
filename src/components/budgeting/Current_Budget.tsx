@@ -5,7 +5,7 @@ import { PenBoxIcon } from 'lucide-react';
 
 export default function Current_Budget() {
   return (
-    <Card className="mb-3">
+    <Card className="mb-3 border-gray-300 shadow-lg shadow-gray-400">
       <CardHeader>
         <CardTitle>
           <div className="inline-flex">

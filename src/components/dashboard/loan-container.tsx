@@ -15,48 +15,52 @@ export default function LoanContainer({ account }: { account?: Account }) {
         <CardDescription className="text-black">{account.accountNumber}</CardDescription>
       </CardHeader>
       <CardContent>
-        {account.originalLoanAmount &&
+        {account.originalLoanAmount && (
           <div className="flex items-center justify-between">
             <div className="text-sm text-black">Starting Balance</div>
-            <div className="text-2xl font-bold text-red-500">{
-              formatCurrency(account.originalLoanAmount.amount, account.originalLoanAmount.currency)}</div>
+            <div className="text-2xl font-bold text-red-500">
+              {formatCurrency(account.originalLoanAmount.amount, account.originalLoanAmount.currency)}
+            </div>
           </div>
-        }
+        )}
       </CardContent>
       <CardContent>
-        {account.balance &&
+        {account.balance && (
           <div className="flex items-center justify-between">
             <div className="text-sm text-black">Current Balance</div>
             <div className="text-2xl font-bold text-green-500">
-              {formatCurrency(account.balance.amount, account.balance.currency)}</div>
+              {formatCurrency(account.balance.amount, account.balance.currency)}
+            </div>
           </div>
-        }
+        )}
       </CardContent>
     </Card>
   );
 }
 
 export function LoanContainerLoading() {
-  return <Card className="mb-3">
-    <CardHeader>
-      <Skeleton className="w-full h-[40px]" />
-      <Skeleton className="w-72 h-[25px]" />
-    </CardHeader>
-    <CardContent>
-      <div className="flex items-center justify-between">
-        <div className="text-sm text-black">Starting Balance</div>
-        <div className="text-2xl font-bold text-red-500">
-          <Skeleton className="w-52 h-[40px]" />
+  return (
+    <Card className="mb-3 border-gray-300 shadow-lg shadow-gray-400">
+      <CardHeader>
+        <Skeleton className="w-full h-[40px]" />
+        <Skeleton className="w-72 h-[25px]" />
+      </CardHeader>
+      <CardContent>
+        <div className="flex items-center justify-between">
+          <div className="text-sm text-black">Starting Balance</div>
+          <div className="text-2xl font-bold text-red-500">
+            <Skeleton className="w-52 h-[40px]" />
+          </div>
         </div>
-      </div>
-    </CardContent>
-    <CardContent>
-      <div className="flex items-center justify-between">
-        <div className="text-sm text-black">Current Balance</div>
-        <div className="text-2xl font-bold text-green-500">
-          <Skeleton className="w-52 h-[40px]" />
+      </CardContent>
+      <CardContent>
+        <div className="flex items-center justify-between">
+          <div className="text-sm text-black">Current Balance</div>
+          <div className="text-2xl font-bold text-green-500">
+            <Skeleton className="w-52 h-[40px]" />
+          </div>
         </div>
-      </div>
-    </CardContent>
-  </Card>
+      </CardContent>
+    </Card>
+  );
 }

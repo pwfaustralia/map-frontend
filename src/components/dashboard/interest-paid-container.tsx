@@ -4,7 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 
 export default function InterestPaidContainer() {
   return (
-    <Card className="w-full">
+    <Card className="w-full border-gray-300 shadow-lg shadow-gray-400">
       <CardHeader className="pb-2">
         <CardTitle className="text-lg font-medium text-gray-600">Interest Paid</CardTitle>
       </CardHeader>

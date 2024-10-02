@@ -1,16 +1,7 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Legend,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis
-} from 'recharts';
+import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 const monthlyData = [
   { month: 'JAN', income: 1000, expenses: 0 },
@@ -43,7 +34,7 @@ const COLORS = ['#FF6B6B', '#FFD93D', '#6BCB77', '#4D96FF', '#9D65C9', '#FF9671'
 
 export default function Summary_Graph() {
   return (
-    <Card className="col-span-1 order-1 md:order-1 lg:order-1 xl:order-1">
+    <Card className="col-span-1 order-1 md:order-1 lg:order-1 xl:order-1 border-gray-300 shadow-lg shadow-gray-400">
       <CardHeader>
         <CardTitle>Years/Interest Saved</CardTitle>
       </CardHeader>

@@ -4,7 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 
 export default function TimeSavedContainer() {
   return (
-    <Card className="w-full mb-3">
+    <Card className="w-full mb-3 border-gray-300 shadow-lg shadow-gray-400">
       <CardHeader className="pb-2">
         <CardTitle className="text-lg font-medium text-gray-600">Time Saved</CardTitle>
       </CardHeader>

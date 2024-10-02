@@ -6,7 +6,7 @@ import { useSession } from 'next-auth/react';
 export default function WelcomeContainer() {
   const session = useSession();
   return (
-    <Card className="flex flex-col justify-center p-6 bg-green-500">
+    <Card className="flex flex-col justify-center p-6 bg-green-500 border-cc-green shadow-lg shadow-gray-400">
       <CardTitle className="text-3xl font-bold text-primary-foreground">Welcome {session.data?.user.name},</CardTitle>
       <CardDescription className="inline-flex space-x-6 mt-2 text-black text-base">
         <span>

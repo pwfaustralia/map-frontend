@@ -78,7 +78,7 @@ export default function Graph() {
   }, []);
 
   return (
-    <Card>
+    <Card className="border-gray-300 shadow-lg shadow-gray-400">
       <CardHeader className="flex flex-row items-center space-x-4">
         <CardTitle>Projected Savings</CardTitle>
         {!loanBalanceScenario && <Loader2 className="mr-2 h-6 w-6h-6 animate-spin" />}
@@ -88,13 +88,7 @@ export default function Graph() {
         <ChartContainer config={chartConfig}>
           <BarChart accessibilityLayer data={loanBalanceScenario}>
             <CartesianGrid vertical={false} />
-            <XAxis
-              dataKey="year"
-              tickLine={false}
-              tickMargin={10}
-              axisLine={false}
-              tickFormatter={(value) => value}
-            />
+            <XAxis dataKey="year" tickLine={false} tickMargin={10} axisLine={false} tickFormatter={(value) => value} />
             <YAxis dataKey="normal" tickLine={false} tickMargin={10} axisLine={false} />
             <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dashed" />} />
             <Bar dataKey="normal" fill="var(--color-Normal)" radius={8} />
