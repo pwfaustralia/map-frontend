@@ -41,14 +41,21 @@ export const RenderAccountsSlider = (props: {
         description: 'Please import the accounts and transactions first.',
         variant: 'destructive',
       });
+      setIsLoading(false);
+      return;
     }
-    await sleep(2);
     const d = await setPrimaryLoanAccount(clientId, accountId);
-    console.log(d);
-    toast({
-      title: 'Success',
-      description: 'Primary Loan Account has been updated.',
-    });
+    if (d.success) {
+      toast({
+        title: 'Success',
+        description: 'Primary Loan Account has been updated.',
+      });
+    } else {
+      toast({
+        title: 'Failed',
+        description: 'Failed to set Primary Loan Account.',
+      });
+    }
     setIsLoading(false);
   };
 
