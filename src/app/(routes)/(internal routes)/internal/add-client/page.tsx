@@ -362,7 +362,7 @@ export default function AddClientPage() {
                     Add More Client
                   </Button>
                   <Button className="w-full" type="button" asChild>
-                    <Link href={INTERNAL_ROUTES['My Clients'].path + '/' + createdClient.user_id}>View Client</Link>
+                    <Link href={INTERNAL_ROUTES['My Clients'].path + '/' + createdClient.id}>View Client</Link>
                   </Button>
                 </div>
               </div>

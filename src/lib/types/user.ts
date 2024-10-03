@@ -1,3 +1,5 @@
+import { AccountFilter } from './yodlee';
+
 export enum UserRoles {
   CLIENT = 'Client',
   SUPER_ADMIN = 'Super Admin',
@@ -10,6 +12,18 @@ export interface UserRole {
   role_name: string;
   rolePermissions: string[];
 }
+
+export type Account = {
+  id: string;
+  container: AccountFilter['container'];
+  is_primary: number;
+  account_id: number;
+  client_id: string;
+  original_loan_amount: {
+    amount: string;
+    currency: string;
+  };
+};
 
 export default interface Client {
   id: string;
@@ -34,6 +48,7 @@ export default interface Client {
   country?: string;
   yodlee_username: string;
   yodlee_status: 'IMPORT_SUCCESS' | 'IMPORT_FAILED' | 'IMPORTING';
+  primary_account: Account | null;
 }
 
 export interface IUser {

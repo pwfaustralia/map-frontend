@@ -12,7 +12,7 @@ import Client from '@/lib/types/user';
 import { AccountData } from '@/lib/types/yodlee';
 import { sleep } from '@/lib/utils';
 import clsx from 'clsx';
-import { ArrowLeftCircleIcon, ArrowRightCircleIcon, EllipsisVerticalIcon, StarIcon } from 'lucide-react';
+import { ArrowLeftCircleIcon, ArrowRightCircleIcon, EllipsisVerticalIcon, Loader2, StarIcon } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
@@ -23,16 +23,26 @@ export const RenderAccountsSlider = (props: {
   selectedAccount: any;
   setSelectedAccount: any;
   handleGetTransactions: any;
-  clientId: string;
-  yodleeStatus: Client['yodlee_status'];
+  client: Client | undefined;
+  hideMenu?: boolean;
 }) => {
   const pathname = usePathname();
-  const { accountData, emblaRef, selectedAccount, setSelectedAccount, handleGetTransactions, clientId, yodleeStatus } =
-    props;
+  const {
+    accountData,
+    emblaRef,
+    selectedAccount,
+    setSelectedAccount,
+    handleGetTransactions,
+    client,
+    hideMenu = true,
+  } = props;
+  const { id: clientId, yodlee_status: yodleeStatus, primary_account } = client || {};
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [primaryAccountId, setPrimaryAccountId] = useState(primary_account?.account_id);
 
   const handleSetPrimaryLoanAccount = async (accountId: number) => {
+    if (!clientId) return;
     setIsLoading(true);
     if (yodleeStatus !== 'IMPORT_SUCCESS') {
       await sleep(1);
@@ -44,16 +54,18 @@ export const RenderAccountsSlider = (props: {
       setIsLoading(false);
       return;
     }
-    const d = await setPrimaryLoanAccount(clientId, accountId);
-    if (d.success) {
+    const request = await setPrimaryLoanAccount(clientId, accountId);
+    if (request.success) {
       toast({
         title: 'Success',
-        description: 'Primary Loan Account has been updated.',
+        description: request.message,
       });
+      setPrimaryAccountId(accountId);
     } else {
       toast({
         title: 'Failed',
-        description: 'Failed to set Primary Loan Account.',
+        description: request.message,
+        variant: 'destructive',
       });
     }
     setIsLoading(false);
@@ -65,39 +77,36 @@ export const RenderAccountsSlider = (props: {
         <div ref={emblaRef}>
           <div className="flex space-x-6">
             {accountData.account.map((account) => {
-              const {
-                id,
-                accountName,
-                accountNumber,
-                accountStatus,
-                accountType,
-                providerName,
-                balance,
-                amountDue,
-                availableBalance,
-                currentBalance,
-              } = account;
+              const { id, accountName, accountNumber, originalLoanAmount, accountType, currentBalance, balance } =
+                account;
               return (
                 <div className="relative" key={id}>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild className="shrink absolute right-0 top-3 z-10">
-                      <Button variant="ghost-2">
-                        <EllipsisVerticalIcon />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      <DropdownMenuItem
-                        disabled={isLoading}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleSetPrimaryLoanAccount(id);
-                        }}
-                      >
-                        <StarIcon className="h-4 w-4 mr-2" />
-                        <span>Set as Primary Loan Account</span>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  {!hideMenu && (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild className="shrink absolute right-0 top-3 z-10">
+                        <Button variant="ghost-2">
+                          <EllipsisVerticalIcon />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        <DropdownMenuItem
+                          className="cursor-pointer"
+                          disabled={isLoading}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleSetPrimaryLoanAccount(id);
+                          }}
+                        >
+                          {isLoading ? (
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          ) : (
+                            <StarIcon className="h-4 w-4 mr-2" />
+                          )}
+                          <span>Set as Primary Loan Account</span>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  )}
                   <Link
                     href={{
                       pathname,
@@ -109,9 +118,10 @@ export const RenderAccountsSlider = (props: {
                   >
                     <Card
                       className={clsx(
-                        'cursor-pointer min-w-[340px] snap-start select-none hover:border hover:border-accent active:scale-95 transition-transform h-full',
+                        'relative overflow-hidden cursor-pointer min-w-[340px] snap-start select-none hover:border hover:border-accent active:scale-95 transition-transform h-full',
                         {
                           'shadow-xl border border-accent': selectedAccount?.id === id,
+                          'pl-[70px]': primaryAccountId === id,
                         }
                       )}
                       onClick={(e) => {
@@ -121,7 +131,15 @@ export const RenderAccountsSlider = (props: {
                         });
                       }}
                     >
+                      {primaryAccountId === id && (
+                        <div className="absolute left-0 top-0 h-16 w-16">
+                          <div className="absolute transform rotate-[-45deg] bg-primary text-center text-white font-semibold py-2 left-[-45px] top-[22px] w-[170px]">
+                            Primary
+                          </div>
+                        </div>
+                      )}
                       <CardHeader className="flex flex-row justify-between space-x-3 items-start pr-0">
+                        {/* <div className="w-[70px] block h-full" /> */}
                         <CardTitle className="text-base">{accountName}</CardTitle>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild className="shrink opacity-0">
@@ -138,9 +156,17 @@ export const RenderAccountsSlider = (props: {
                         <p className="text-2xl">{accountNumber}</p>
                       </CardContent>
                       <CardFooter>
-                        <p className="font-semibold text-primary">
-                          {currentBalance?.currency} {currentBalance?.amount}
-                        </p>
+                        <div>
+                          <p className="font-semibold text-destructive">
+                            {originalLoanAmount?.currency} {originalLoanAmount?.amount}
+                          </p>
+                          <p className="font-semibold text-accent">
+                            {balance?.currency} {balance?.amount}
+                          </p>
+                          <p className="font-semibold text-accent">
+                            {currentBalance?.currency} {currentBalance?.amount}
+                          </p>
+                        </div>
                       </CardFooter>
                     </Card>
                   </Link>

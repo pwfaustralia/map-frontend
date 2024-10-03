@@ -3,7 +3,7 @@ import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { getNormalScenarioLoanBalances, getOffsetScenarioLoanBalances } from '@/app/(actions)/laravel/actions';
-import { LoanData } from '@/lib/types/user';
+import Client, { LoanData } from '@/lib/types/user';
 import { useEffect, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 export const description = 'Mortgage Projection';
@@ -57,32 +57,51 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export default function Graph() {
+export default function Graph({ clientData }: { clientData?: Client }) {
+  const { primary_account } = clientData || {};
+  const { account_id } = primary_account || {};
   const [loanBalanceScenario, setLoanBalanceScenario] = useState<LoanData[]>();
+  const [hasPrimaryLoanAccount, setHasPrimaryLoanAccount] = useState(true);
 
   useEffect(() => {
-    getNormalScenarioLoanBalances(11176114).then((normal: LoanData[]) => {
-      if (!normal?.length) return;
-      getOffsetScenarioLoanBalances(11176114).then((offset: LoanData[]) => {
-        let chartData = new Array(normal.length).fill(0);
-        chartData = chartData
-          .map((a, i) => ({
-            year: normal[i].year,
-            normal: normal[i].balance,
-            offset: offset.find((q) => q.year === normal[i].year)?.balance,
-          }))
-          .sort((a, b) => a.year - b.year);
-        setLoanBalanceScenario(chartData);
+    if (account_id) {
+      getNormalScenarioLoanBalances(account_id).then((normal: LoanData[]) => {
+        if (!normal?.length) return;
+        getOffsetScenarioLoanBalances(account_id).then((offset: LoanData[]) => {
+          let chartData = new Array(normal.length).fill(0);
+          chartData = chartData
+            .map((a, i) => ({
+              year: normal[i].year,
+              normal: normal[i].balance,
+              offset: offset.find((q) => q.year === normal[i].year)?.balance,
+            }))
+            .sort((a, b) => a.year - b.year);
+          setLoanBalanceScenario(chartData);
+        });
       });
-    });
-  }, []);
+    }
+  }, [account_id]);
+
+  useEffect(() => {
+    if (clientData) {
+      setHasPrimaryLoanAccount(!!clientData.primary_account);
+    }
+  }, [clientData]);
+
+  const isLoading = hasPrimaryLoanAccount && !loanBalanceScenario;
 
   return (
     <Card className="border-gray-300 shadow-lg shadow-gray-400">
       <CardHeader className="flex flex-row items-center space-x-4">
         <CardTitle>Projected Savings</CardTitle>
-        {!loanBalanceScenario && <Loader2 className="mr-2 h-6 w-6h-6 animate-spin" />}
-        <CardDescription>January - June 2024</CardDescription>
+        {isLoading && <Loader2 className="mr-2 h-6 w-6 animate-spin" />}
+        <CardDescription>
+          {!isLoading && !hasPrimaryLoanAccount && (
+            <div className="h-full place-items-center flex">
+              <p>No primary loan account</p>
+            </div>
+          )}
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>

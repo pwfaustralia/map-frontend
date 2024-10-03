@@ -16,11 +16,12 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { INTERNAL_ROUTES } from '@/lib/routes';
 import { TransactionSummaryData } from '@/lib/types/yodlee';
+import Client from '@/lib/types/user';
 
 export default function Internal_DashboardPage() {
   const { 'client-id': clientId } = useParams();
+  const [clientData, setClientData] = useState<Client>();
   const [expensesSummary, setExpensesSummary] = useState<TransactionSummaryData>();
-  const session = useSession();
 
   const yodlee = useYodlee({
     initialModuleConfig: {
@@ -49,13 +50,14 @@ export default function Internal_DashboardPage() {
     if (apiReady) {
       getTransactionSummary({
         groupBy: 'CATEGORY',
-        categoryType: 'EXPENSE'
-      }).then(expensesData => setExpensesSummary(expensesData))
+        categoryType: 'EXPENSE',
+      }).then((expensesData) => setExpensesSummary(expensesData));
     }
-  }, [apiReady])
+  }, [apiReady]);
 
   useEffect(() => {
     getClientDetails(clientId + '').then((clientData) => {
+      setClientData(clientData);
       setYodleeUsername(clientData.yodlee_username);
     });
   }, []);
@@ -67,7 +69,7 @@ export default function Internal_DashboardPage() {
           <div className="col-span-2">
             <WelcomeContainer />
             <div className="col-span-1 text-3xl font-semibold my-10">Client Overview</div>
-            <Graph />
+            <Graph clientData={clientData} />
           </div>
           <div className="mb-3">
             <div className="col-span-1 text-3xl font-semibold mb-3">Client Loans</div>
@@ -84,7 +86,11 @@ export default function Internal_DashboardPage() {
                   href={INTERNAL_ROUTES['My Clients'].path + '/' + clientId + '?accountId=' + account.id}
                   key={account.id}
                 >
-                  <LoanContainer account={account} key={account.id} />
+                  <LoanContainer
+                    account={account}
+                    key={account.id}
+                    primaryAccountId={clientData?.primary_account?.account_id}
+                  />
                 </Link>
               ))}
 

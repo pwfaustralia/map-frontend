@@ -4,12 +4,33 @@ import { Account } from '@/lib/types/yodlee';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { formatCurrency } from '@/lib/utils';
 import { Skeleton } from '../ui/skeleton';
+import clsx from 'clsx';
 
-export default function LoanContainer({ account }: { account?: Account }) {
+export default function LoanContainer({
+  account,
+  primaryAccountId,
+}: {
+  account?: Account;
+  primaryAccountId: number | undefined;
+}) {
   if (!account) return <LoanContainerLoading />;
 
   return (
-    <Card className="mb-3 cursor-pointer min-w-[340px] snap-start select-none hover:border hover:border-accent active:scale-95 transition-transform">
+    <Card
+      className={clsx(
+        'relative overflow-hidden mb-3 cursor-pointer min-w-[340px] snap-start select-none hover:border hover:border-accent active:scale-95 transition-transform',
+        {
+          'pl-[70px]': primaryAccountId === account.id,
+        }
+      )}
+    >
+      {primaryAccountId === account.id && (
+        <div className="absolute left-0 top-0 h-16 w-16">
+          <div className="absolute transform rotate-[-45deg] bg-primary text-center text-white font-semibold py-2 left-[-45px] top-[22px] w-[170px]">
+            Primary
+          </div>
+        </div>
+      )}
       <CardHeader>
         <CardTitle>{account.accountName}</CardTitle>
         <CardDescription className="text-black">{account.accountNumber}</CardDescription>

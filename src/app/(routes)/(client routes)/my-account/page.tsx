@@ -25,7 +25,7 @@ import {
 import { Link1Icon } from '@radix-ui/react-icons';
 import { useSession } from 'next-auth/react';
 
-export default function MyAccountPage() {
+export default function MyAccountPage({ searchParams }: { searchParams: any }) {
   const { data: sessionData } = useSession();
   const [isOpenDatePicker, setIsOpenDatePicker] = useState({
     fromDate: false,
@@ -78,7 +78,9 @@ export default function MyAccountPage() {
   } = yodlee;
   const tableFilter = useTableFilter(transactionTableFilter(yodlee, { isOpenDatePicker, setIsOpenDatePicker }));
   const { filters, resetFilters, searchFilter, getActiveFilters, getFilter } = tableFilter;
-  const [selectedAccount, setSelectedAccount] = useState<Account>();
+  const [selectedAccount, setSelectedAccount] = useState<Account | { accountName?: any; id?: any }>({
+    id: searchParams.accountId,
+  });
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
@@ -142,8 +144,9 @@ export default function MyAccountPage() {
   }, []);
 
   useEffect(() => {
-    if (!selectedAccount && accountData?.account) {
-      setSelectedAccount(accountData?.account[0]);
+    if (!selectedAccount?.accountName && accountData?.account) {
+      let selected = accountData?.account.find((q) => q.id == selectedAccount?.id) || accountData.account[0];
+      setSelectedAccount(selected);
     }
   }, [accountData]);
 
@@ -163,6 +166,11 @@ export default function MyAccountPage() {
       setYodleeUsername(sessionData?.user?.clients?.[0]?.yodlee_username);
     }
   }, [sessionData]);
+
+  useEffect(() => {
+    let index = accountData?.account?.findIndex((q) => q.id === selectedAccount?.id);
+    if (index) emblaApi?.scrollTo(index);
+  }, [selectedAccount, emblaApi]);
 
   if (error?.errorCode === '0') {
     return (
@@ -235,8 +243,7 @@ export default function MyAccountPage() {
               selectedAccount,
               setSelectedAccount,
               handleGetTransactions,
-              clientId: sessionData?.user?.clients?.[0]?.id + '',
-              yodleeStatus: sessionData?.user?.clients?.[0]?.yodlee_status || 'IMPORT_FAILED',
+              client: sessionData?.user?.clients?.[0],
             }}
           />
         </div>

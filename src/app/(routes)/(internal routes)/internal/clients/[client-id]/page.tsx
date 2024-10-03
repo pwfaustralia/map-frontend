@@ -266,8 +266,8 @@ export default function ViewClientPage({ searchParams }: { searchParams: any }) 
               selectedAccount,
               setSelectedAccount,
               handleGetTransactions,
-              clientId: clientId + '',
-              yodleeStatus: client.yodlee_status,
+              client,
+              hideMenu: false,
             }}
           />
         </div>

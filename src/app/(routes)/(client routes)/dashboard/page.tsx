@@ -1,12 +1,14 @@
 'use client';
 
-import WelcomeContainer from '@/components/dashboard/welcome-container';
+import Graph from '@/components/dashboard/graph';
+import InterestPaidContainer from '@/components/dashboard/interest-paid-container';
 import LoanContainer, { LoanContainerLoading } from '@/components/dashboard/loan-container';
 import TimeSavedContainer from '@/components/dashboard/time-saved-container';
-import InterestPaidContainer from '@/components/dashboard/interest-paid-container';
-import Graph from '@/components/dashboard/graph';
-import { useSession } from 'next-auth/react';
+import WelcomeContainer from '@/components/dashboard/welcome-container';
 import useYodlee from '@/lib/hooks/use-yodlee';
+import { CLIENT_ROUTES } from '@/lib/routes';
+import { useSession } from 'next-auth/react';
+import Link from 'next/link';
 import { useEffect } from 'react';
 
 export default function DashboardPage() {
@@ -55,7 +57,14 @@ export default function DashboardPage() {
           )}
           {!accountsReady && !error && <LoanContainerLoading />}
           {accountsReady &&
-            accountData?.account?.map((account) => <LoanContainer account={account} key={account.id} />)}
+            accountData?.account?.map((account) => (
+              <Link href={CLIENT_ROUTES['My Accounts'].path + '/' + '?accountId=' + account.id} key={account.id}>
+                <LoanContainer
+                  account={account}
+                  primaryAccountId={session.data?.user?.clients?.[0]?.primary_account?.account_id}
+                />
+              </Link>
+            ))}
 
           <TimeSavedContainer />
 
