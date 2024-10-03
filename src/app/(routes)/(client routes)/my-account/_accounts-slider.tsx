@@ -14,6 +14,7 @@ import { sleep } from '@/lib/utils';
 import clsx from 'clsx';
 import { ArrowLeftCircleIcon, ArrowRightCircleIcon, EllipsisVerticalIcon, StarIcon } from 'lucide-react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
 export const RenderAccountsSlider = (props: {
@@ -25,6 +26,7 @@ export const RenderAccountsSlider = (props: {
   clientId: string;
   yodleeStatus: Client['yodlee_status'];
 }) => {
+  const pathname = usePathname();
   const { accountData, emblaRef, selectedAccount, setSelectedAccount, handleGetTransactions, clientId, yodleeStatus } =
     props;
   const { toast } = useToast();
@@ -89,7 +91,15 @@ export const RenderAccountsSlider = (props: {
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
-                  <Link href={'/internal/clients/9d0a48bd-674f-41ee-85b4-29cba3706d1c?accountId=' + id}>
+                  <Link
+                    href={{
+                      pathname,
+                      query: { accountId: id },
+                    }}
+                    passHref
+                    shallow
+                    replace
+                  >
                     <Card
                       key={id}
                       className={clsx(
