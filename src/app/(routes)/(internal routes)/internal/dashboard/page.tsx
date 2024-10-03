@@ -1,14 +1,13 @@
 'use client';
 
-import { useSession } from 'next-auth/react';
-import WelcomeContainer from '@/components/dashboard/welcome-container';
-import LoanContainer from '@/components/dashboard/loan-container';
-import Graph from '@/components/dashboard/graph';
-import TimeSavedContainer from '@/components/dashboard/time-saved-container';
-import InterestPaidContainer from '@/components/dashboard/interest-paid-container';
-import Expendature from '@/components/dashboard/expendature-graph';
 import Summary_Graph from '@/components/budgeting/Graph';
 import Expenses_Summary from '@/components/budgeting/Summary';
+import Graph from '@/components/dashboard/graph';
+import InterestPaidContainer from '@/components/dashboard/interest-paid-container';
+import LoanContainer from '@/components/dashboard/loan-container';
+import TimeSavedContainer from '@/components/dashboard/time-saved-container';
+import WelcomeContainer from '@/components/dashboard/welcome-container';
+import { useSession } from 'next-auth/react';
 
 export default function Internal_DashboardPage() {
   const session = useSession();
@@ -23,11 +22,11 @@ export default function Internal_DashboardPage() {
           </div>
           <div className="mb-3">
             <div className="col-span-1 text-3xl font-semibold mb-6">Client Loans</div>
-            <LoanContainer />
+            <LoanContainer primaryAccountId={session.data?.user.clients?.[0]?.primary_account?.account_id} />
 
-            <LoanContainer />
+            <LoanContainer primaryAccountId={session.data?.user.clients?.[0]?.primary_account?.account_id} />
 
-            <LoanContainer />
+            <LoanContainer primaryAccountId={session.data?.user.clients?.[0]?.primary_account?.account_id} />
 
             <TimeSavedContainer />
 
