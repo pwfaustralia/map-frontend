@@ -120,7 +120,7 @@ export const RenderAccountsSlider = (props: {
                       className={clsx(
                         'relative overflow-hidden cursor-pointer min-w-[340px] snap-start select-none hover:border hover:border-accent active:scale-95 transition-transform h-full border-gray-300 shadow-lg shadow-gray-400',
                         {
-                          ' border-gray-300 shadow-lg shadow-green-100': selectedAccount?.id === id,
+                          ' border-gray-300 shadow-xl shadow-green-100': selectedAccount?.id === id,
                           'pl-[70px]': primaryAccountId === id,
                         }
                       )}
