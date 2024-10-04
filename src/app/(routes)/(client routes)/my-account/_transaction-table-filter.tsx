@@ -241,7 +241,7 @@ export const transactionTableFilter = (
 
 export const renderTransactionTableFilter = ({ filters, getFilter }: any) =>
   filters.map(({ id, active, label, modifier, modifierOptions, excludeModifiers, hidden }: any) => (
-    <div key={id} className={clsx('flex flex-col gap-3 select-none', { hidden })}>
+    <div key={id} className={clsx('flex flex-col gap-3 select-none ', { hidden })}>
       <div className="flex items-center gap-2">
         <Checkbox
           checked={active}
@@ -255,7 +255,7 @@ export const renderTransactionTableFilter = ({ filters, getFilter }: any) =>
         </label>
       </div>
       {active && (
-        <div className="flex flex-col gap-3 pl-5">
+        <div className="flex flex-col gap-3 pl-5 ">
           <div>
             <Select
               onValueChange={(value: TableFilterModifier) => {

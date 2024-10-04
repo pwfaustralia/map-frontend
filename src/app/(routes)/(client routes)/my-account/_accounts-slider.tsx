@@ -75,7 +75,7 @@ export const RenderAccountsSlider = (props: {
     accountData?.account?.length && (
       <>
         <div ref={emblaRef}>
-          <div className="flex space-x-6">
+          <div className="flex space-x-6 ">
             {accountData.account.map((account) => {
               const { id, accountName, accountNumber, originalLoanAmount, accountType, currentBalance, balance } =
                 account;
@@ -118,9 +118,9 @@ export const RenderAccountsSlider = (props: {
                   >
                     <Card
                       className={clsx(
-                        'relative overflow-hidden cursor-pointer min-w-[340px] snap-start select-none hover:border hover:border-accent active:scale-95 transition-transform h-full',
+                        'relative overflow-hidden cursor-pointer min-w-[340px] snap-start select-none hover:border hover:border-accent active:scale-95 transition-transform h-full border-gray-300 shadow-lg shadow-gray-400',
                         {
-                          'shadow-xl border border-accent': selectedAccount?.id === id,
+                          ' border-gray-300 shadow-lg shadow-green-100': selectedAccount?.id === id,
                           'pl-[70px]': primaryAccountId === id,
                         }
                       )}
@@ -138,7 +138,7 @@ export const RenderAccountsSlider = (props: {
                           </div>
                         </div>
                       )}
-                      <CardHeader className="flex flex-row justify-between space-x-3 items-start pr-0">
+                      <CardHeader className="flex flex-row justify-between space-x-3 items-start pr-0 ">
                         {/* <div className="w-[70px] block h-full" /> */}
                         <CardTitle className="text-base">{accountName}</CardTitle>
                         <DropdownMenu>

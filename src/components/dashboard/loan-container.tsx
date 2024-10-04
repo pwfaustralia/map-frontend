@@ -18,7 +18,7 @@ export default function LoanContainer({
   return (
     <Card
       className={clsx(
-        'relative overflow-hidden mb-3 cursor-pointer min-w-[340px] snap-start select-none hover:border hover:border-accent active:scale-95 transition-transform',
+        'relative overflow-hidden mb-3 cursor-pointer min-w-[340px] snap-start select-none hover:border hover:border-accent active:scale-95 transition-transform border-gray-300 shadow-lg shadow-gray-400',
         {
           'pl-[70px]': primaryAccountId === account.id,
         }

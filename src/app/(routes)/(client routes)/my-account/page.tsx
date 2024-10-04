@@ -230,10 +230,10 @@ export default function MyAccountPage({ searchParams }: { searchParams: any }) {
       </div>
 
       <div>
-        <div className="faded rounded-3xl w-full lg:px-[300px] px-0 py-10 overflow-hidden">
+        <div className="faded rounded-3xl w-full lg:px-[300px] px-0 py-10 overflow-hidden ">
           {!accountData?.account?.length && (
             <>
-              <h3 className="text-xl opacity-[0.6] text-center">No account connected.</h3>
+              <h3 className="text-xl opacity-[0.6] text-center ">No account connected.</h3>
             </>
           )}
           <RenderAccountsSlider
@@ -247,14 +247,14 @@ export default function MyAccountPage({ searchParams }: { searchParams: any }) {
             }}
           />
         </div>
-        <div className="flex items-center justify-end space-x-4">
+        <div className="flex items-center justify-end space-x-4 ">
           <RenderAccountsSliderPagination {...{ emblaApi, selectedIndex }} />
         </div>
       </div>
 
       <div className="flex items-start lg:space-x-4">
         <div className="sticky top-[20px] lg:block hidden">
-          <ScrollArea className="bg-white rounded-[20px] border border-grey-2 min-w-[320px] max-w-[320px] p-5">
+          <ScrollArea className="bg-white rounded-[20px]  border-gray-300 shadow-lg shadow-gray-400 min-w-[320px] max-w-[320px] p-5">
             <div className="max-h-[calc(_100vh_-_190px_)]">
               <div className="flex flex-col items-start gap-3 sticky top-0 bg-white z-10 p-5 full">
                 <h1 className="text-[20px] font-bold">Filter Transactions By</h1>
@@ -281,7 +281,7 @@ export default function MyAccountPage({ searchParams }: { searchParams: any }) {
         </div>
 
         <div className="w-full">
-          <div className="rounded-[20px] overflow-hidden border border-grey-2">
+          <div className="rounded-[20px] overflow-hidden border-gray-300 shadow-lg shadow-gray-400">
             {selectedAccount && (
               <YodleeTransactionsTable
                 tableRef={tableRef}
