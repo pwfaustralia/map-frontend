@@ -49,6 +49,10 @@ export const fetchYodlee = async (endpoint: string, { headers = {}, ...params }:
   )[1];
 
   return await fetch(process.env.YODLEE_BASE_URL + endpoint, {
+    cache: 'force-cache',
+    next: {
+      revalidate: 600,
+    },
     headers: {
       Accept: 'application/json',
       'Api-Version': '1.1',
