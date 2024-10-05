@@ -243,7 +243,7 @@ export default function MyAccountPage({ searchParams }: { searchParams: any }) {
               selectedAccount,
               setSelectedAccount,
               handleGetTransactions,
-              client: sessionData?.user?.clients?.[0],
+              clientData: sessionData?.user?.clients?.[0],
             }}
           />
         </div>

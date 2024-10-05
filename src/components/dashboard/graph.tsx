@@ -1,50 +1,12 @@
 'use client';
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
+import { LARAVEL_API_ROUTES } from '@/app/(actions)/laravel/laravel-api-routes';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-import { getNormalScenarioLoanBalances, getOffsetScenarioLoanBalances } from '@/app/(actions)/laravel/actions';
 import Client, { LoanData } from '@/lib/types/user';
-import { useEffect, useState } from 'react';
 import { Loader2 } from 'lucide-react';
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
+import useSWR from 'swr';
 export const description = 'Mortgage Projection';
-
-const chartData = [
-  {
-    month: 'January',
-    Normal: 588536.0,
-    Offset: 588536.0,
-  },
-  {
-    month: 'February',
-    Normal: 520922.68,
-    Offset: 480143.32,
-  },
-  {
-    month: 'March',
-    Normal: 455992.4,
-    Offset: 367869.38,
-  },
-  {
-    month: 'April',
-    Normal: 374921.79,
-    Offset: 244491.24,
-  },
-  {
-    month: 'May',
-    Normal: 273698.71,
-    Offset: 113431.03,
-  },
-  {
-    month: 'June',
-    Normal: 147313.65,
-    Offset: 6896.61,
-  },
-  {
-    month: 'July',
-    Normal: 40582.08,
-    Offset: 0,
-  },
-];
 
 const chartConfig = {
   Normal: {
@@ -60,35 +22,22 @@ const chartConfig = {
 export default function Graph({ clientData }: { clientData?: Client }) {
   const { primary_account } = clientData || {};
   const { account_id } = primary_account || {};
-  const [loanBalanceScenario, setLoanBalanceScenario] = useState<LoanData[]>();
-  const [hasPrimaryLoanAccount, setHasPrimaryLoanAccount] = useState(true);
-
-  useEffect(() => {
-    if (account_id) {
-      getNormalScenarioLoanBalances(account_id).then((normal: LoanData[]) => {
-        if (!normal?.length) return;
-        getOffsetScenarioLoanBalances(account_id).then((offset: LoanData[]) => {
-          let chartData = new Array(normal.length).fill(0);
-          chartData = chartData
-            .map((a, i) => ({
-              year: normal[i].year,
-              normal: normal[i].balance,
-              offset: offset.find((q) => q.year === normal[i].year)?.balance,
-            }))
-            .sort((a, b) => a.year - b.year);
-          setLoanBalanceScenario(chartData);
-        });
-      });
-    }
-  }, [account_id]);
-
-  useEffect(() => {
-    if (clientData) {
-      setHasPrimaryLoanAccount(!!clientData.primary_account);
-    }
-  }, [clientData]);
-
-  const isLoading = hasPrimaryLoanAccount && !loanBalanceScenario;
+  const { data: normalData, isLoading: isNormalDataLoading } = useSWR<LoanData[]>(
+    !account_id ? null : LARAVEL_API_ROUTES.listLoanBalances('normal', account_id, 'year')
+  );
+  const { data: offsetData, isLoading: isOffsetDataLoading } = useSWR<LoanData[]>(
+    !account_id ? null : LARAVEL_API_ROUTES.listLoanBalances('offset', account_id, 'year')
+  );
+  const isLoading = !clientData || isNormalDataLoading || isOffsetDataLoading;
+  const loanBalanceScenario = (
+    normalData
+      ? normalData.map((normal, index) => ({
+          year: normal.year,
+          normal: normal.balance,
+          offset: (offsetData || []).find((offset) => offset.year === normal.year)?.balance,
+        }))
+      : []
+  ).sort((a, b) => a.year - b.year);
 
   return (
     <Card className="border-gray-300 shadow-lg shadow-gray-400">
@@ -96,7 +45,7 @@ export default function Graph({ clientData }: { clientData?: Client }) {
         <CardTitle>Projected Savings</CardTitle>
         {isLoading && <Loader2 className="mr-2 h-6 w-6 animate-spin" />}
         <CardDescription>
-          {!isLoading && !hasPrimaryLoanAccount && (
+          {!isLoading && clientData && (
             <div className="h-full place-items-center flex">
               <p>No primary loan account</p>
             </div>

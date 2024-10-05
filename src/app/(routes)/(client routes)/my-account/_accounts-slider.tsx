@@ -23,7 +23,7 @@ export const RenderAccountsSlider = (props: {
   selectedAccount: any;
   setSelectedAccount: any;
   handleGetTransactions: any;
-  client: Client | undefined;
+  clientData: Client | undefined;
   hideMenu?: boolean;
 }) => {
   const pathname = usePathname();
@@ -33,10 +33,10 @@ export const RenderAccountsSlider = (props: {
     selectedAccount,
     setSelectedAccount,
     handleGetTransactions,
-    client,
+    clientData,
     hideMenu = true,
   } = props;
-  const { id: clientId, yodlee_status: yodleeStatus, primary_account } = client || {};
+  const { id: clientId, yodlee_status: yodleeStatus, primary_account } = clientData || {};
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [primaryAccountId, setPrimaryAccountId] = useState(primary_account?.account_id);

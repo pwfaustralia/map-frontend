@@ -29,6 +29,20 @@ export const fetchLaravel = async (endpoint: string, { headers = {}, ...params }
   });
 };
 
+export const fetchLaravelJson = async (endpoint: string, { headers = {}, ...params }: RequestInit = {}) => {
+  const accessToken = cookies().get(process.env.LARAVEL_ACCESSTOKEN_COOKIE_KEY!);
+
+  return await fetch(process.env.LARAVEL_BASE_URL + '/api' + endpoint, {
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      ...(accessToken ? { Cookie: serialize('laravel_access_token', accessToken.value) } : {}),
+      ...headers,
+    },
+    ...params,
+  }).then((resp) => resp.json());
+};
+
 export const fetchYodlee = async (endpoint: string, { headers = {}, ...params }: RequestInit = {}) => {
   const accessToken = decodeURIComponent(cookies().get(process.env.YODLEE_ACCESSTOKEN_COOKIE_KEY!)?.value!)?.split(
     '='

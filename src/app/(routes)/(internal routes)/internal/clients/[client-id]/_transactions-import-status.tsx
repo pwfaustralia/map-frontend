@@ -1,17 +1,15 @@
-import { fetchLaravel } from '@/app/(actions)/fetcher/actions';
-import { getYodleeStatus, importAccountTransactions } from '@/app/(actions)/laravel/actions';
+import { importAccountTransactions } from '@/app/(actions)/laravel/actions';
 import { LARAVEL_API_ROUTES } from '@/app/(actions)/laravel/laravel-api-routes';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import Client from '@/lib/types/user';
-import dayjs from 'dayjs';
 import { Loader2 } from 'lucide-react';
 import { useEffect } from 'react';
 import useSWRMutation from 'swr/mutation';
 
 interface TransactionStatusProps {
-  client: Client;
+  clientData: Client;
 }
 
 const ImportTransactionsSection = ({
@@ -39,7 +37,7 @@ const ImportTransactionsSection = ({
       toast({
         title: 'Import Failed',
         description: data.message,
-        variant: 'destructive'
+        variant: 'destructive',
       });
     }
   }, [data]);
@@ -69,22 +67,22 @@ const ImportTransactionsSection = ({
 };
 
 export default function TransactionImportStatus(props: TransactionStatusProps) {
-  const { client } = props;
+  const { clientData } = props;
 
-  if (client.yodlee_status === 'IMPORT_SUCCESS') {
+  if (clientData.yodlee_status === 'IMPORT_SUCCESS') {
     return (
       <div className="space-x-3">
-        <Badge>{client.accounts_count} Accounts</Badge>
-        <Badge>{client.transactions_count} Transactions</Badge>
+        <Badge>{clientData.accounts_count} Accounts</Badge>
+        <Badge>{clientData.transactions_count} Transactions</Badge>
       </div>
     );
   }
 
   return (
     <ImportTransactionsSection
-      clientId={client.id}
-      yodleeUsername={client.yodlee_username}
-      status={client.yodlee_status}
+      clientId={clientData.id}
+      yodleeUsername={clientData.yodlee_username}
+      status={clientData.yodlee_status}
     />
   );
 }

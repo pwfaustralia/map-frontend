@@ -1,7 +1,7 @@
 'use server';
 
 import { UserSchema } from '@/lib/schema/user';
-import Client, { IUser } from '@/lib/types/user';
+import Client from '@/lib/types/user';
 import { parse } from 'cookie';
 import { cookies } from 'next/headers';
 import { z } from 'zod';
@@ -38,16 +38,6 @@ export async function revalidateUserCookies() {
   return true;
 }
 
-export async function getUserDetails(userId: string): Promise<IUser> {
-  const user = await fetchLaravel(LARAVEL_API_ROUTES.getUserDetailsFn(userId)).then((resp) => resp.json());
-  return user;
-}
-
-export async function getClientDetails(clientId: string): Promise<Client> {
-  const user = await fetchLaravel(LARAVEL_API_ROUTES.getClientDetailsFn(clientId)).then((resp) => resp.json());
-  return user;
-}
-
 export async function updateClient(client: Client) {
   const response = await fetchLaravel(LARAVEL_API_ROUTES.updateClient(client.id), {
     method: 'PUT',
@@ -67,34 +57,6 @@ export async function importAccountTransactions(yodleeUsername: string, clientId
       yodlee_username: yodleeUsername,
       client_id: clientId,
     }),
-  }).then((resp) => resp.json());
-  return response;
-}
-
-export async function getYodleeStatus(clientId: string) {
-  const response = await fetchLaravel(LARAVEL_API_ROUTES.getClientYodleeStatus(clientId), {
-    method: 'GET',
-  }).then((resp) => resp.json());
-  return response;
-}
-
-export async function getNormalScenarioLoanBalances(accountId: number) {
-  const response = await fetchLaravel(LARAVEL_API_ROUTES.listLoanBalances('normal', accountId, 'year'), {
-    method: 'GET',
-  }).then((resp) => resp.json());
-  return response;
-}
-
-export async function getOffsetScenarioLoanBalances(accountId: number) {
-  const response = await fetchLaravel(LARAVEL_API_ROUTES.listLoanBalances('offset', accountId, 'year'), {
-    method: 'GET',
-  }).then((resp) => resp.json());
-  return response;
-}
-
-export async function getPrimaryLoanAccount(clientId: string) {
-  const response = await fetchLaravel(LARAVEL_API_ROUTES.getPrimaryLoanAccount(clientId), {
-    method: 'GET',
   }).then((resp) => resp.json());
   return response;
 }

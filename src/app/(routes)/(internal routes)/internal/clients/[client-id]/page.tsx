@@ -1,6 +1,6 @@
 'use client';
 
-import { getClientDetails } from '@/app/(actions)/laravel/actions';
+import { LARAVEL_API_ROUTES } from '@/app/(actions)/laravel/laravel-api-routes';
 import {
   RenderAccountsSlider,
   RenderAccountsSliderPagination,
@@ -26,14 +26,15 @@ import useEmblaCarousel from 'embla-carousel-react';
 import { EditIcon, SearchIcon } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
+import useSWR from 'swr';
 import EditClientPage from './_edit/_page';
 import TransactionImportStatus from './_transactions-import-status';
 
 function Header({
-  client,
+  clientData,
   setIsEditing,
 }: {
-  client: Client;
+  clientData: Client;
   isEditing: boolean;
   setIsEditing: Dispatch<SetStateAction<boolean>>;
 }) {
@@ -41,9 +42,9 @@ function Header({
     <div className="flex items-center justify-between">
       <div className="flex items-center space-x-3 my-4">
         <h1 className="font-bold text-2xl">
-          {client.first_name} {client.last_name}
+          {clientData.first_name} {clientData.last_name}
         </h1>
-        {client.yodlee_username && <h2>({client.yodlee_username})</h2>}
+        {clientData.yodlee_username && <h2>({clientData.yodlee_username})</h2>}
         <Button
           variant="ghost-2"
           onClick={() => {
@@ -55,7 +56,7 @@ function Header({
       </div>
 
       <div>
-        <TransactionImportStatus client={client} />
+        <TransactionImportStatus clientData={clientData} />
       </div>
     </div>
   );
@@ -64,8 +65,10 @@ function Header({
 export default function ViewClientPage({ searchParams }: { searchParams: any }) {
   const [isOpenDatePicker, setIsOpenDatePicker] = useState({ fromDate: false, toDate: false });
   const { 'client-id': clientId } = useParams();
+  const { data: clientData, mutate: mutateClient } = useSWR<Client>(
+    LARAVEL_API_ROUTES.getClientDetailsFn(clientId + '')
+  );
   const [isEditing, setIsEditing] = useState(false);
-  const [client, setClient] = useState<Client>();
   const tableRef = useRef<any>();
 
   const yodlee = useYodlee({
@@ -165,14 +168,10 @@ export default function ViewClientPage({ searchParams }: { searchParams: any }) 
   }, [emblaApi]);
 
   useEffect(() => {
-    getClientDetails(clientId + '').then((clientData) => {
-      setClient(clientData);
+    if (clientData?.yodlee_username) {
       setYodleeUsername(clientData.yodlee_username || 'na');
-    });
-    return () => {
-      closeFastLink();
-    };
-  }, []);
+    }
+  }, [clientData]);
 
   useEffect(() => {
     if (!selectedAccount?.accountName && accountData?.account) {
@@ -197,7 +196,13 @@ export default function ViewClientPage({ searchParams }: { searchParams: any }) 
     if (index) emblaApi?.scrollTo(index);
   }, [selectedAccount, emblaApi]);
 
-  if (!client) {
+  useEffect(() => {
+    return () => {
+      closeFastLink();
+    };
+  }, []);
+
+  if (!clientData) {
     return (
       <>
         <h1 className="font-bold text-2xl my-4 mb-7">
@@ -215,7 +220,7 @@ export default function ViewClientPage({ searchParams }: { searchParams: any }) 
   if (isEditing) {
     return (
       <EditClientPage
-        {...{ client, setClient, isEditing, setIsEditing }}
+        {...{ clientData, setClient: mutateClient, isEditing, setIsEditing }}
         onEdit={async (data) => {
           await authenticate(true, data.yodlee_username);
         }}
@@ -226,7 +231,7 @@ export default function ViewClientPage({ searchParams }: { searchParams: any }) 
   if (error?.errorCode === '0') {
     return (
       <>
-        <Header {...{ isEditing, setIsEditing, client }} />
+        <Header {...{ isEditing, setIsEditing, clientData, mutateClient }} />
         <div className="rounded-3xl w-full bg-white py-10 px-12 overflow-hidden">
           <h3 className="text-xl opacity-[0.6] text-center">{error?.errorMessage}</h3>
         </div>
@@ -237,7 +242,7 @@ export default function ViewClientPage({ searchParams }: { searchParams: any }) 
   if (!accountsReady) {
     return (
       <>
-        <Header {...{ isEditing, setIsEditing, client }} />
+        <Header {...{ isEditing, setIsEditing, clientData, mutateClient }} />
 
         <div className="rounded-3xl w-full bg-white py-10 px-12 overflow-hidden flex space-x-5">
           <Skeleton className="w-[230px] h-[230px]" />
@@ -251,7 +256,7 @@ export default function ViewClientPage({ searchParams }: { searchParams: any }) 
   return (
     <div className="flex flex-col space-y-5">
       {yodleeTags}
-      <Header {...{ isEditing, setIsEditing, client }} />
+      <Header {...{ isEditing, setIsEditing, clientData }} />
       <div>
         <div className="faded rounded-3xl w-full lg:px-[300px] px-0 py-10 overflow-hidden">
           {!accountData?.account?.length && (
@@ -266,7 +271,7 @@ export default function ViewClientPage({ searchParams }: { searchParams: any }) 
               selectedAccount,
               setSelectedAccount,
               handleGetTransactions,
-              client,
+              clientData,
               hideMenu: false,
             }}
           />

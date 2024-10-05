@@ -1,16 +1,16 @@
+import { Toaster } from '@/components/ui/toaster';
 import { authOptions } from '@/lib-server/auth-options';
 import SessionWrapper from '@/lib-server/session-wrapper';
 import { AuthWrapper } from '@/lib/provider/auth-wrapper';
 import { NEXT_APP_ROUTES } from '@/lib/routes';
 import { getPrivateRoutes, getUserRedirectPage } from '@/lib/utils';
+import clsx from 'clsx';
 import type { Metadata } from 'next';
 import { getServerSession } from 'next-auth/next';
 import { Inter } from 'next/font/google';
 import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import './globals.css';
-import clsx from 'clsx';
-import { Toaster } from '@/components/ui/toaster';
 
 const inter = Inter({ subsets: ['latin'] });
 

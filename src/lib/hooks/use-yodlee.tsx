@@ -92,7 +92,7 @@ export default function useYodlee(initConfig: {
     return config().accessToken;
   };
 
-  const fetchData = async ({ url, before = async () => { }, after = async () => { } }: YodleeFetchData) => {
+  const fetchData = async ({ url, before = async () => {}, after = async () => {} }: YodleeFetchData) => {
     if (!apiReady) return;
     await before();
     const data = await fetchYodlee(url, {
@@ -136,9 +136,9 @@ export default function useYodlee(initConfig: {
   const getTransactionSummary = async (filter: TransactionSummaryFilter): Promise<TransactionSummaryData> => {
     let params = serialize(filter);
     return await fetchData({
-      url: YODLEE_API_ROUTES.transactions.summary + '?' + params
+      url: YODLEE_API_ROUTES.transactions.summary + '?' + params,
     });
-  }
+  };
 
   const getTransactions = async (filter: TransactionFilter, accountId: string | undefined) => {
     if (!filter.accountId && accountId) {
@@ -153,7 +153,7 @@ export default function useYodlee(initConfig: {
       after: async (data) => {
         await fetchData({
           url: YODLEE_API_ROUTES.transactions.count + '?' + params,
-          before: () => { },
+          before: () => {},
           after: (count) => {
             setTransactionCount(count);
             setTransactionData(data);

@@ -1,27 +1,26 @@
 'use client';
 
-import { useSession } from 'next-auth/react';
-import WelcomeContainer from '@/components/dashboard/welcome-container';
-import LoanContainer, { LoanContainerLoading } from '@/components/dashboard/loan-container';
-import Graph from '@/components/dashboard/graph';
-import TimeSavedContainer from '@/components/dashboard/time-saved-container';
-import InterestPaidContainer from '@/components/dashboard/interest-paid-container';
-import Expendature from '@/components/dashboard/expendature-graph';
+import { LARAVEL_API_ROUTES } from '@/app/(actions)/laravel/laravel-api-routes';
 import Summary_Graph from '@/components/budgeting/Graph';
 import Expenses_Summary from '@/components/budgeting/Summary';
-import { useEffect, useState } from 'react';
+import Graph from '@/components/dashboard/graph';
+import InterestPaidContainer from '@/components/dashboard/interest-paid-container';
+import LoanContainer, { LoanContainerLoading } from '@/components/dashboard/loan-container';
+import TimeSavedContainer from '@/components/dashboard/time-saved-container';
+import WelcomeContainer from '@/components/dashboard/welcome-container';
 import useYodlee from '@/lib/hooks/use-yodlee';
-import { getClientDetails } from '@/app/(actions)/laravel/actions';
-import { useParams } from 'next/navigation';
-import Link from 'next/link';
 import { INTERNAL_ROUTES } from '@/lib/routes';
-import { TransactionSummaryData } from '@/lib/types/yodlee';
 import Client from '@/lib/types/user';
+import { TransactionSummaryData } from '@/lib/types/yodlee';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import useSWR from 'swr';
 
 export default function Internal_DashboardPage() {
   const { 'client-id': clientId } = useParams();
-  const [clientData, setClientData] = useState<Client>();
   const [expensesSummary, setExpensesSummary] = useState<TransactionSummaryData>();
+  const { data: clientData } = useSWR<Client>(LARAVEL_API_ROUTES.getClientDetailsFn(clientId + ''));
 
   const yodlee = useYodlee({
     initialModuleConfig: {
@@ -56,11 +55,10 @@ export default function Internal_DashboardPage() {
   }, [apiReady]);
 
   useEffect(() => {
-    getClientDetails(clientId + '').then((clientData) => {
-      setClientData(clientData);
+    if (clientData?.yodlee_username) {
       setYodleeUsername(clientData.yodlee_username);
-    });
-  }, []);
+    }
+  }, [clientData]);
 
   return (
     <>
