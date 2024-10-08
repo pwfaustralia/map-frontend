@@ -72,4 +72,5 @@ export interface LoanData {
   offset_amount: number | null;
   credit_card_amount: number | null;
   offset_balance: number | null;
+  currency: string;
 }

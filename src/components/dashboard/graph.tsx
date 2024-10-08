@@ -2,8 +2,10 @@
 import { LARAVEL_API_ROUTES } from '@/app/(actions)/laravel/laravel-api-routes';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { INTERNAL_ROUTES } from '@/lib/routes';
 import Client, { LoanData } from '@/lib/types/user';
 import { Loader2 } from 'lucide-react';
+import Link from 'next/link';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 import useSWR from 'swr';
 export const description = 'Mortgage Projection';
@@ -45,10 +47,14 @@ export default function Graph({ clientData }: { clientData?: Client }) {
         <CardTitle>Projected Savings</CardTitle>
         {isLoading && <Loader2 className="mr-2 h-6 w-6 animate-spin" />}
         <CardDescription>
-          {!isLoading && clientData && (
+          {!isLoading && clientData && !loanBalanceScenario?.length ? (
             <div className="h-full place-items-center flex">
               <p>No primary loan account</p>
             </div>
+          ) : (
+            clientData && (
+              <Link href={INTERNAL_ROUTES['My Clients'].path + `/${clientData.id}/loan-balance`}>View Details</Link>
+            )
           )}
         </CardDescription>
       </CardHeader>
