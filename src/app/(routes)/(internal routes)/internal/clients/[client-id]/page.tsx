@@ -199,7 +199,7 @@ export default function ViewClientPage({ searchParams }: { searchParams: any }) 
 
   useEffect(() => {
     toggleEditingProfile(isEditing);
-  }, [isEditing])
+  }, [isEditing]);
 
   useEffect(() => {
     return () => {
@@ -291,7 +291,7 @@ export default function ViewClientPage({ searchParams }: { searchParams: any }) 
         </div>
 
         <div style={{ width: 'calc( 100% - 320px )' }}>
-          <div className="!mb-[-130px] space-y-4">
+          <div className="!mb-[-100px] space-y-4">
             <div className="flex items-center justify-end space-x-4">
               <RenderAccountsSliderPagination {...{ emblaApi, selectedIndex }} />
             </div>
