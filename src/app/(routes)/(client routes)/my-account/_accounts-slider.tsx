@@ -10,7 +10,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import Client from '@/lib/types/user';
 import { AccountData } from '@/lib/types/yodlee';
-import { sleep } from '@/lib/utils';
+import { formatCurrency, sleep } from '@/lib/utils';
 import clsx from 'clsx';
 import { ArrowLeftCircleIcon, ArrowRightCircleIcon, EllipsisVerticalIcon, Loader2, StarIcon } from 'lucide-react';
 import Link from 'next/link';
@@ -141,7 +141,8 @@ export const RenderAccountsSlider = (props: {
                       )}
                       <CardHeader className="flex flex-row justify-between space-x-3 items-start pr-0 ">
                         {/* <div className="w-[70px] block h-full" /> */}
-                        <CardTitle className="text-lg font-bold">{accountName}
+                        <CardTitle className="text-lg font-bold">
+                          {accountName}
                           <p className="font-light text-xs">{accountType}</p>
                         </CardTitle>
                         <DropdownMenu>
@@ -157,20 +158,24 @@ export const RenderAccountsSlider = (props: {
                       </CardContent>
                       <CardFooter>
                         <div>
-                          {originalLoanAmount &&
+                          {originalLoanAmount && (
                             <p className="font-semibold">
                               Loan Amount:&nbsp;
-                              {originalLoanAmount.currency} {originalLoanAmount.amount}
+                              {formatCurrency(originalLoanAmount.amount, originalLoanAmount.currency)}
                             </p>
-                          }
-                          {!currentBalance && balance &&
+                          )}
+                          {!currentBalance && balance && (
                             <p className="font-semibold">
-                              Balance:&nbsp;{balance?.currency} {balance?.amount}
+                              Balance:&nbsp;
+                              {formatCurrency(balance.amount, balance.currency)}
                             </p>
-                          }
-                          {currentBalance && <p className="font-semibold">
-                            Current Balance:&nbsp;{currentBalance.currency} {currentBalance.amount}
-                          </p>}
+                          )}
+                          {currentBalance && (
+                            <p className="font-semibold">
+                              Current Balance:&nbsp;
+                              {formatCurrency(currentBalance.amount, currentBalance.currency)}
+                            </p>
+                          )}
                         </div>
                       </CardFooter>
                     </Card>
