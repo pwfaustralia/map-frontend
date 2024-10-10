@@ -73,9 +73,9 @@ export default function Internal_ClientsPage() {
     () =>
       isLoading
         ? clientsTableColumnDef.map((column) => ({
-            ...column,
-            cell: () => <Skeleton className="h-[30px]" />,
-          }))
+          ...column,
+          cell: () => <Skeleton className="h-[30px]" />,
+        }))
         : clientsTableColumnDef,
     [isLoading]
   );
@@ -218,10 +218,10 @@ export default function Internal_ClientsPage() {
   useEffect(() => {
     router.replace(
       pathname +
-        '?' +
-        serialize({
-          page: pagination.pageIndex.toString(),
-        })
+      '?' +
+      serialize({
+        page: pagination.pageIndex.toString(),
+      })
     );
     fetchData({
       q: '*',
@@ -304,7 +304,7 @@ export default function Internal_ClientsPage() {
             </div>
           </ScrollArea>
         </div>
-        <div className="w-full">
+        <div style={{ width: 'calc( 100% - 320px )' }}>
           <div className="rounded-[20px] overflow-hidden border border-grey-2">
             <Table className="bg-white">
               <TableHeader className="bg-grey-2">
@@ -328,7 +328,7 @@ export default function Internal_ClientsPage() {
                     <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id}>
-                          {!cell.id.endsWith('select') ? (
+                          {!cell.id.endsWith('select') && !cell.id.endsWith('actions') ? (
                             <Link href={INTERNAL_ROUTES.Dashboard.path + '/' + row.original?.document?.id}>
                               {flexRender(cell.column.columnDef.cell, cell.getContext())}
                             </Link>

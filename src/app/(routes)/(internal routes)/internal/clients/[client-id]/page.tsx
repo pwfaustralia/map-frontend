@@ -29,6 +29,7 @@ import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import useSWR from 'swr';
 import EditClientPage from './_edit/_page';
 import TransactionImportStatus from './_transactions-import-status';
+import { useClientStore } from '@/store/client-store';
 
 function Header({
   clientData,
@@ -63,12 +64,13 @@ function Header({
 }
 
 export default function ViewClientPage({ searchParams }: { searchParams: any }) {
+  const { isEditingProfile, toggleEditingProfile } = useClientStore();
   const [isOpenDatePicker, setIsOpenDatePicker] = useState({ fromDate: false, toDate: false });
   const { 'client-id': clientId } = useParams();
   const { data: clientData, mutate: mutateClient } = useSWR<Client>(
     LARAVEL_API_ROUTES.getClientDetailsFn(clientId + '')
   );
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(isEditingProfile);
   const tableRef = useRef<any>();
 
   const yodlee = useYodlee({
@@ -129,7 +131,6 @@ export default function ViewClientPage({ searchParams }: { searchParams: any }) 
     axis: 'x',
     align: 'start',
     skipSnaps: true,
-    containScroll: false,
   });
 
   const handleGetTransactions = (filter: TransactionFilter) => {
@@ -168,7 +169,7 @@ export default function ViewClientPage({ searchParams }: { searchParams: any }) 
   }, [emblaApi]);
 
   useEffect(() => {
-    if (clientData?.yodlee_username) {
+    if (clientData) {
       setYodleeUsername(clientData.yodlee_username || 'na');
     }
   }, [clientData]);
@@ -195,6 +196,10 @@ export default function ViewClientPage({ searchParams }: { searchParams: any }) 
     let index = accountData?.account?.findIndex((q) => q.id === selectedAccount?.id);
     if (index) emblaApi?.scrollTo(index);
   }, [selectedAccount, emblaApi]);
+
+  useEffect(() => {
+    toggleEditingProfile(isEditing);
+  }, [isEditing])
 
   useEffect(() => {
     return () => {
@@ -257,32 +262,9 @@ export default function ViewClientPage({ searchParams }: { searchParams: any }) 
     <div className="flex flex-col space-y-5">
       {yodleeTags}
       <Header {...{ isEditing, setIsEditing, clientData }} />
-      <div>
-        <div className="faded rounded-3xl w-full lg:px-[300px] px-0 py-10 overflow-hidden">
-          {!accountData?.account?.length && (
-            <>
-              <h3 className="text-xl opacity-[0.6] text-center">No account connected.</h3>
-            </>
-          )}
-          <RenderAccountsSlider
-            {...{
-              emblaRef,
-              accountData,
-              selectedAccount,
-              setSelectedAccount,
-              handleGetTransactions,
-              clientData,
-              hideMenu: false,
-            }}
-          />
-        </div>
-        <div className="flex items-center justify-end space-x-4">
-          <RenderAccountsSliderPagination {...{ emblaApi, selectedIndex }} />
-        </div>
-      </div>
       <div className="flex items-start lg:space-x-4">
         <div className="sticky top-[20px] lg:block hidden">
-          <ScrollArea className="bg-white rounded-[20px] border border-grey-2 min-w-[320px] max-w-[320px] p-5">
+          <ScrollArea className="bg-white rounded-[20px] border border-grey-2 min-w-[320px] max-w-[320px]">
             <div className="max-h-[calc(_100vh_-_190px_)]">
               <div className="flex flex-col items-start gap-3 sticky top-0 bg-white z-10 p-5 full">
                 <h1 className="text-[20px] font-bold">Filter Transactions By</h1>
@@ -308,8 +290,31 @@ export default function ViewClientPage({ searchParams }: { searchParams: any }) 
           </ScrollArea>
         </div>
 
-        <div className="w-full">
-          <div className="rounded-[20px] overflow-hidden border border-grey-2">
+        <div style={{ width: 'calc( 100% - 320px )' }}>
+          <div className="!mb-[-130px] space-y-4">
+            <div className="flex items-center justify-end space-x-4">
+              <RenderAccountsSliderPagination {...{ emblaApi, selectedIndex }} />
+            </div>
+            <div className="rounded-3xl w-full overflow-hidden">
+              {!accountData?.account?.length && (
+                <>
+                  <h3 className="text-xl opacity-[0.6] text-center">No account connected.</h3>
+                </>
+              )}
+              <RenderAccountsSlider
+                {...{
+                  emblaRef,
+                  accountData,
+                  selectedAccount,
+                  setSelectedAccount,
+                  handleGetTransactions,
+                  clientData,
+                  hideMenu: false,
+                }}
+              />
+            </div>
+          </div>
+          <div className="rounded-[20px] overflow-hidden border border-grey-2 z-[2] relative">
             {selectedAccount && (
               <YodleeTransactionsTable
                 tableRef={tableRef}

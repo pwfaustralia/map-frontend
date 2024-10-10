@@ -11,9 +11,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { INTERNAL_ROUTES } from '@/lib/routes';
 import { TableFilter } from '@/lib/types/table';
+import { useClientStore } from '@/store/client-store';
 import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown, MoreHorizontal, SlidersHorizontal } from 'lucide-react';
+import Link from 'next/link';
 
 export const clientsTableColumnDef: ColumnDef<any>[] = [
   {
@@ -168,30 +171,40 @@ export const clientsTableColumnDef: ColumnDef<any>[] = [
         </DropdownMenuContent>
       </DropdownMenu>
     ),
-    cell: ({ row }) => {
-      const client = row.original;
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost-2" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(client.document.id)}>
-              Copy ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Edit</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
+    cell: (props) => <ActionCell {...props} />,
   },
 ];
+
+function ActionCell({ row }: any) {
+  const { toggleEditingProfile } = useClientStore();
+  const client = row.original;
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost-2" className="h-8 w-8 p-0">
+          <span className="sr-only">Open menu</span>
+          <MoreHorizontal className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+        <DropdownMenuItem className="cursor-pointer" asChild>
+          <Link href={INTERNAL_ROUTES['My Clients'].path + '/' + client.document.id}>
+            View Transactions
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem className="cursor-pointer" onClick={() => toggleEditingProfile(true)} asChild>
+          <Link href={INTERNAL_ROUTES['My Clients'].path + '/' + client.document.id}>
+            Edit Profile
+          </Link>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
 export const clientsTableFilters: TableFilter[] = [
   {
     id: 'email',

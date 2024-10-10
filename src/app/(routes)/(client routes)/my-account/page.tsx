@@ -87,7 +87,6 @@ export default function MyAccountPage({ searchParams }: { searchParams: any }) {
     axis: 'x',
     align: 'start',
     skipSnaps: true,
-    containScroll: false,
   });
 
   const handleOpenFastLink = () => {
@@ -162,8 +161,8 @@ export default function MyAccountPage({ searchParams }: { searchParams: any }) {
   }, [categoriesReady]);
 
   useEffect(() => {
-    if (sessionData?.user?.clients?.[0]?.yodlee_username) {
-      setYodleeUsername(sessionData?.user?.clients?.[0]?.yodlee_username);
+    if (sessionData?.user?.clients?.[0]) {
+      setYodleeUsername(sessionData.user.clients[0]?.yodlee_username);
     }
   }, [sessionData]);
 
@@ -229,32 +228,9 @@ export default function MyAccountPage({ searchParams }: { searchParams: any }) {
         </Dialog>
       </div>
 
-      <div>
-        <div className="faded rounded-3xl w-full lg:px-[300px] px-0 py-10 overflow-hidden ">
-          {!accountData?.account?.length && (
-            <>
-              <h3 className="text-xl opacity-[0.6] text-center ">No account connected.</h3>
-            </>
-          )}
-          <RenderAccountsSlider
-            {...{
-              emblaRef,
-              accountData,
-              selectedAccount,
-              setSelectedAccount,
-              handleGetTransactions,
-              clientData: sessionData?.user?.clients?.[0],
-            }}
-          />
-        </div>
-        <div className="flex items-center justify-end space-x-4 ">
-          <RenderAccountsSliderPagination {...{ emblaApi, selectedIndex }} />
-        </div>
-      </div>
-
       <div className="flex items-start lg:space-x-4">
         <div className="sticky top-[20px] lg:block hidden">
-          <ScrollArea className="bg-white rounded-[20px]  border-gray-300 shadow-lg shadow-gray-400 min-w-[320px] max-w-[320px] p-5">
+          <ScrollArea className="bg-white rounded-[20px] border border-grey-2 min-w-[320px] max-w-[320px]">
             <div className="max-h-[calc(_100vh_-_190px_)]">
               <div className="flex flex-col items-start gap-3 sticky top-0 bg-white z-10 p-5 full">
                 <h1 className="text-[20px] font-bold">Filter Transactions By</h1>
@@ -280,8 +256,30 @@ export default function MyAccountPage({ searchParams }: { searchParams: any }) {
           </ScrollArea>
         </div>
 
-        <div className="w-full">
-          <div className="rounded-[20px] overflow-hidden border-gray-300 shadow-lg shadow-gray-400">
+        <div style={{ width: 'calc( 100% - 320px )' }}>
+          <div className="!mb-[-130px] space-y-4">
+            <div className="flex items-center justify-end space-x-4 ">
+              <RenderAccountsSliderPagination {...{ emblaApi, selectedIndex }} />
+            </div>
+            <div className="rounded-3xl w-full overflow-hidden ">
+              {!accountData?.account?.length && (
+                <>
+                  <h3 className="text-xl opacity-[0.6] text-center ">No account connected.</h3>
+                </>
+              )}
+              <RenderAccountsSlider
+                {...{
+                  emblaRef,
+                  accountData,
+                  selectedAccount,
+                  setSelectedAccount,
+                  handleGetTransactions,
+                  clientData: sessionData?.user?.clients?.[0],
+                }}
+              />
+            </div>
+          </div>
+          <div className="rounded-[20px] overflow-hidden border border-grey-2 z-[2] relative">
             {selectedAccount && (
               <YodleeTransactionsTable
                 tableRef={tableRef}

@@ -118,9 +118,10 @@ export const RenderAccountsSlider = (props: {
                   >
                     <Card
                       className={clsx(
-                        'relative overflow-hidden cursor-pointer min-w-[340px] snap-start select-none hover:border hover:border-accent active:scale-95 transition-transform h-full border-gray-300 shadow-lg shadow-gray-400',
+                        'relative overflow-hidden cursor-pointer min-w-[340px] snap-start select-none hover:border active:scale-95 transition-transform h-full bg-accent border-gray-30 pb-24',
                         {
-                          ' border-gray-300 shadow-xl shadow-green-100': selectedAccount?.id === id,
+                          'text-white': selectedAccount?.id !== id,
+                          'bg-grey-3 text-gray-600': selectedAccount?.id === id,
                           'pl-[70px]': primaryAccountId === id,
                         }
                       )}
@@ -140,7 +141,9 @@ export const RenderAccountsSlider = (props: {
                       )}
                       <CardHeader className="flex flex-row justify-between space-x-3 items-start pr-0 ">
                         {/* <div className="w-[70px] block h-full" /> */}
-                        <CardTitle className="text-base">{accountName}</CardTitle>
+                        <CardTitle className="text-lg font-bold">{accountName}
+                          <p className="font-light text-xs">{accountType}</p>
+                        </CardTitle>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild className="shrink opacity-0">
                             <Button variant="ghost-2">
@@ -150,22 +153,24 @@ export const RenderAccountsSlider = (props: {
                         </DropdownMenu>
                       </CardHeader>
                       <CardContent>
-                        <CardDescription>
-                          <span className="font-light">{accountType}</span>
-                        </CardDescription>
-                        <p className="text-2xl">{accountNumber}</p>
+                        <p className="text-2xl font-bold">{accountNumber}</p>
                       </CardContent>
                       <CardFooter>
                         <div>
-                          <p className="font-semibold text-destructive">
-                            {originalLoanAmount?.currency} {originalLoanAmount?.amount}
-                          </p>
-                          <p className="font-semibold text-accent">
-                            {balance?.currency} {balance?.amount}
-                          </p>
-                          <p className="font-semibold text-accent">
-                            {currentBalance?.currency} {currentBalance?.amount}
-                          </p>
+                          {originalLoanAmount &&
+                            <p className="font-semibold">
+                              Loan Amount:&nbsp;
+                              {originalLoanAmount.currency} {originalLoanAmount.amount}
+                            </p>
+                          }
+                          {!currentBalance && balance &&
+                            <p className="font-semibold">
+                              Balance:&nbsp;{balance?.currency} {balance?.amount}
+                            </p>
+                          }
+                          {currentBalance && <p className="font-semibold">
+                            Current Balance:&nbsp;{currentBalance.currency} {currentBalance.amount}
+                          </p>}
                         </div>
                       </CardFooter>
                     </Card>
