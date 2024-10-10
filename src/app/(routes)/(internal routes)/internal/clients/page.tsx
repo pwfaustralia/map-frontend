@@ -73,9 +73,9 @@ export default function Internal_ClientsPage() {
     () =>
       isLoading
         ? clientsTableColumnDef.map((column) => ({
-          ...column,
-          cell: () => <Skeleton className="h-[30px]" />,
-        }))
+            ...column,
+            cell: () => <Skeleton className="h-[30px]" />,
+          }))
         : clientsTableColumnDef,
     [isLoading]
   );
@@ -218,10 +218,10 @@ export default function Internal_ClientsPage() {
   useEffect(() => {
     router.replace(
       pathname +
-      '?' +
-      serialize({
-        page: pagination.pageIndex.toString(),
-      })
+        '?' +
+        serialize({
+          page: pagination.pageIndex.toString(),
+        })
     );
     fetchData({
       q: '*',
@@ -248,7 +248,7 @@ export default function Internal_ClientsPage() {
                   onChange={(event) => handleSearchFilter(event)}
                 />
               </div>
-              <div className="p-[25px] flex gap-4 flex-col">
+              <div className="p-[25px] pt-0 flex gap-4 flex-col">
                 {filters.map(({ id, active, label, modifier, modifierOptions, hidden }) => (
                   <div key={id} className={clsx('flex flex-col gap-3 select-none', { hidden })}>
                     <div className="flex items-center gap-2">

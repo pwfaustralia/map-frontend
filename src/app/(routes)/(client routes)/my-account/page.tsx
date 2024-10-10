@@ -243,7 +243,7 @@ export default function MyAccountPage({ searchParams }: { searchParams: any }) {
                   }}
                 />
               </div>
-              <div className="p-[25px] flex gap-4 flex-col">{renderTransactionTableFilter(tableFilter)}</div>
+              <div className="p-[25px] pt-0 flex gap-4 flex-col">{renderTransactionTableFilter(tableFilter)}</div>
               <div className="flex items-center gap-3 sticky bottom-0 bg-white z-10 shadow-[0_-5px_4px_rgba(0,0,0,0.05)] p-5">
                 <Button className="w-full" onClick={handleFilterTransactions} disabled={!getActiveFilters().length}>
                   Apply Filter
